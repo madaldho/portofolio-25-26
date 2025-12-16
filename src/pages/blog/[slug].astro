@@ -221,23 +221,80 @@ function formatContent(content: any): string {
     return "";
   }
 
-  return textContent
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/`(.+?)`/g, "<code>$1</code>")
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-    .replace(/^- (.+)$/gm, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/^(.+)$/gm, "<p>$1</p>")
-    .replace(/<p><h/g, "<h")
-    .replace(/<\/h([1-6])><\/p>/g, "</h$1>")
-    .replace(/<p><ul>/g, "<ul>")
-    .replace(/<\/ul><\/p>/g, "</ul>")
-    .replace(/<p><pre>/g, "<pre>")
-    .replace(/<\/pre><\/p>/g, "</pre>");
+  // Regex replacements with Tailwind styling matches
+  let formatted = textContent;
+
+  // Headers (H1 - H6)
+  formatted = formatted
+    .replace(
+      /^# (.+)$/gm,
+      '<h1 class="text-4xl md:text-5xl font-bold mb-8 mt-12 text-white first:mt-0">$1</h1>'
+    )
+    .replace(
+      /^## (.+)$/gm,
+      '<h2 class="text-3xl md:text-4xl font-semibold mb-6 mt-10 text-white first:mt-0">$1</h2>'
+    )
+    .replace(
+      /^### (.+)$/gm,
+      '<h3 class="text-2xl md:text-3xl font-semibold mb-5 mt-8 text-white first:mt-0">$1</h3>'
+    )
+    .replace(
+      /^#### (.+)$/gm,
+      '<h4 class="text-xl md:text-2xl font-semibold mb-4 mt-6 text-white first:mt-0">$1</h4>'
+    )
+    .replace(
+      /^##### (.+)$/gm,
+      '<h5 class="text-lg md:text-xl font-semibold mb-3 mt-5 text-white first:mt-0">$1</h5>'
+    )
+    .replace(
+      /^###### (.+)$/gm,
+      '<h6 class="text-base md:text-lg font-semibold mb-2 mt-4 text-white first:mt-0">$1</h6>'
+    );
+
+  // Text formatting
+  formatted = formatted
+    .replace(
+      /\*\*(.+?)\*\*/g,
+      '<strong class="font-semibold text-white">$1</strong>'
+    )
+    .replace(/\*(.+?)\*/g, '<em class="italic text-white/90">$1</em>')
+    .replace(
+      /`(.+?)`/g,
+      '<code class="px-2 py-1 bg-dark-surface border border-dark-border rounded text-sm font-mono text-secondary">$1</code>'
+    );
+
+  // Code blocks
+  formatted = formatted.replace(
+    /```(\w+)?\n([\s\S]*?)```/g,
+    '<pre class="bg-dark-surface border border-dark-border rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-white">$2</code></pre>'
+  );
+
+  // Lists
+  formatted = formatted
+    .replace(/^- (.+)$/gm, '<li class="leading-relaxed text-white/90">$1</li>')
+    .replace(
+      /(<li[\s\S]*?<\/li>)/g,
+      '<ul class="list-disc list-outside mb-6 space-y-3 text-white/90 pl-6">$1</ul>'
+    );
+
+  // Paragraphs
+  // Split by double newline to identify paragraphs
+  formatted = formatted
+    .split(/\n\n+/)
+    .map((block) => {
+      // If block already contains block-level elements (h1-h6, ul, pre), return as is
+      if (block.match(/<\/?(h[1-6]|ul|pre)/)) {
+        return block;
+      }
+      // Otherwise wrap in p
+      if (block.trim().length > 0) {
+        return `<p class="mb-6 text-white/90 leading-relaxed text-base">${block.trim()}</p>`;
+      }
+      return "";
+    })
+    .join("\n");
+
+  return formatted;
 }
 ---
 
