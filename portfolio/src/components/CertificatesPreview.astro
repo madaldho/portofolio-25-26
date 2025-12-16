@@ -1,10 +1,11 @@
 ---
 import { getCertificates, isContentfulConfigured, type ContentfulCertificate } from '../utils/contentful';
-import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+import { getLangFromUrl, useTranslatedPath, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const locale = lang === 'id' ? 'id-ID' : 'en-US';
 const translatePath = useTranslatedPath(lang);
+const t = useTranslations(lang);
 
 let certificates: ContentfulCertificate[] = [];
 let isUsingContentful = false;
@@ -48,12 +49,12 @@ function getImageUrl(cert: ContentfulCertificate): string {
   <div class="max-w-7xl mx-auto px-6">
     <!-- Section Header -->
     <div class="text-center mb-16">
-      <p class="text-accent font-mono text-sm mb-4">// Achievements</p>
+      <p class="text-accent font-mono text-sm mb-4">// {t('section.certificates.label')}</p>
       <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
-        My <span class="gradient-text">Certificates</span>
+        {t('certificates.title')}
       </h2>
       <p class="text-muted max-w-2xl mx-auto">
-        Professional certifications and achievements that showcase my expertise
+        {t('certificates.subtitle')}
       </p>
     </div>
 
@@ -134,8 +135,8 @@ function getImageUrl(cert: ContentfulCertificate): string {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
           </svg>
         </div>
-        <h3 class="text-2xl font-semibold mb-2">No Certificates Yet</h3>
-        <p class="text-muted">Professional certifications will appear here once added.</p>
+        <h3 class="text-2xl font-semibold mb-2">{lang === 'id' ? 'Belum Ada Sertifikat' : 'No Certificates Yet'}</h3>
+        <p class="text-muted">{lang === 'id' ? 'Sertifikasi profesional akan muncul di sini setelah ditambahkan.' : 'Professional certifications will appear here once added.'}</p>
       </div>
     )}
 
@@ -148,7 +149,7 @@ function getImageUrl(cert: ContentfulCertificate): string {
                focus-ring shadow-lg hover:shadow-xl"
         data-cursor-hover
       >
-        <span class="font-medium">View All Certificates</span>
+        <span class="font-medium">{t('certificates.viewAll' as any)}</span>
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>

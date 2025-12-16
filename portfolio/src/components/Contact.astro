@@ -1,14 +1,16 @@
+---
 import { profile as defaultProfile } from "../data/profile";
 import { socialLinks as defaultSocials } from "../data/socials";
-import { getProfile, isContentfulConfigured } from '../utils/contentful';
-import { getLangFromUrl } from '../i18n/utils';
+import { getProfile, isContentfulConfigured } from "../utils/contentful";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const t = useTranslations(lang);
+const locale = lang === "id" ? "id-ID" : "en-US";
 
 let profileData = {
   email: defaultProfile.email,
-  location: defaultProfile.location
+  location: defaultProfile.location,
 };
 
 let socialLinks = defaultSocials;
@@ -19,7 +21,7 @@ try {
     if (contentfulProfile) {
       profileData = {
         email: contentfulProfile.fields.email || defaultProfile.email,
-        location: contentfulProfile.fields.location || defaultProfile.location
+        location: contentfulProfile.fields.location || defaultProfile.location,
       };
 
       if (contentfulProfile.fields.socialLinks) {
@@ -27,25 +29,25 @@ try {
         // Map available keys to socialLinks structure
         const mappedSocials = [];
         const platformMap: Record<string, string> = {
-          'threads': 'Threads',
-          'linkedin': 'LinkedIn',
-          'instagram': 'Instagram',
-          'github': 'GitHub',
-          'email': 'Email',
-          'twitter': 'Twitter'
+          threads: "Threads",
+          linkedin: "LinkedIn",
+          instagram: "Instagram",
+          github: "GitHub",
+          email: "Email",
+          twitter: "Twitter",
         };
 
         for (const [key, url] of Object.entries(links)) {
-           if (platformMap[key]) {
-             mappedSocials.push({
-               platform: platformMap[key],
-               url: url as string,
-               icon: key,
-               username: '' // username not strictly needed for UI as designed
-             });
-           }
+          if (platformMap[key]) {
+            mappedSocials.push({
+              platform: platformMap[key],
+              url: url as string,
+              icon: key,
+              username: "", // username not strictly needed for UI as designed
+            });
+          }
         }
-        
+
         if (mappedSocials.length > 0) {
           socialLinks = mappedSocials;
         }
@@ -53,7 +55,7 @@ try {
     }
   }
 } catch (error) {
-  console.warn('Error fetching profile in Contact:', error);
+  console.warn("Error fetching profile in Contact:", error);
 }
 ---
 
@@ -61,12 +63,12 @@ try {
   <div class="max-w-7xl mx-auto px-6">
     <!-- Section Header -->
     <div class="text-center mb-16">
-      <p class="text-accent font-mono text-sm mb-4">// Get in Touch</p>
+      <p class="text-accent font-mono text-sm mb-4">// {t("contact.title")}</p>
       <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
-        Let's <span class="gradient-text">Connect</span>
+        {t("contact.subtitle")}
       </h2>
       <p class="text-muted max-w-2xl mx-auto">
-        Have a project in mind or just want to chat? Feel free to reach out!
+        {t("contact.description")}
       </p>
     </div>
 
@@ -204,13 +206,13 @@ try {
             </svg>
           </div>
           <div>
-            <h3 class="font-semibold mb-1">Email</h3>
+            <h3 class="font-semibold mb-1">{t("contact.email")}</h3>
             <a
-              href={`mailto:${profile.email}`}
+              href={`mailto:${profileData.email}`}
               class="text-muted hover:text-primary transition-colors focus-ring"
               data-cursor-hover
             >
-              {profile.email}
+              {profileData.email}
             </a>
           </div>
         </div>
@@ -240,8 +242,10 @@ try {
             </svg>
           </div>
           <div>
-            <h3 class="font-semibold mb-1">Location</h3>
-            <p class="text-muted">{profile.location}</p>
+            <h3 class="font-semibold mb-1">
+              {lang === "id" ? "Lokasi" : "Location"}
+            </h3>
+            <p class="text-muted">{profileData.location}</p>
           </div>
         </div>
 

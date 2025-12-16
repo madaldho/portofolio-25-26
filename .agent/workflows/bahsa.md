@@ -6,9 +6,6 @@ description: Workflow standar pengembangan dengan pelaporan detail dan MCP
 
 Workflow ini memastikan standar kualitas tinggi, penggunaan Bahasa Indonesia, dan pemanfaatan MCP.
 
-1. **Analisis Request**
-   - Pahami tujuan user.
-   - Identifikasi file yang relevan.
 
 // turbo
 2. **Cek MCP Tools**

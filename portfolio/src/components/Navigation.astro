@@ -295,7 +295,7 @@ const navLinks: NavLink[] = [
 
     // Smooth scroll for nav links
     function handleNavClick(e: Event) {
-      const target = e.target as HTMLAnchorElement;
+      const target = e.currentTarget as HTMLAnchorElement;
       const href = target.getAttribute("href");
       const currentPath = window.location.pathname;
 
