@@ -20,7 +20,7 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto',
     assets: '_astro',
-    assetsPrefix: process.env.NODE_ENV === 'production' ? 'https://muhamadaliridho.me' : undefined,
+    // assetsPrefix removed to ensure Vercel previews work correctly
   },
   
   // Vite configuration for performance
