@@ -119,6 +119,7 @@ export const ui = {
     'section.certificates.label': 'Achievements',
     'section.projects.label': 'My Work',
     'section.projects.desc': 'A collection of projects across different technology domains',
+    'section.techStack': 'Tech Stack',
   },
   id: {
     // Navigation
@@ -244,5 +245,6 @@ export const ui = {
     'section.certificates.label': 'Pencapaian',
     'section.projects.label': 'Karya Saya',
     'section.projects.desc': 'Koleksi proyek di berbagai domain teknologi',
+    'section.techStack': 'Stack Teknologi',
   },
 } as const;

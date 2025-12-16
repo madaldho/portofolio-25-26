@@ -1,24 +1,46 @@
 ---
 import { techInterests } from '../data/interests';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Duplicate interests to create seamless loop
 const duplicatedInterests = [...techInterests, ...techInterests];
+
+const keyMapping: Record<string, string> = {
+  'web-dev': 'skills.webDev',
+  'design-creative': 'skills.design',
+  'digital-marketing': 'skills.marketing',
+  'tools': 'skills.tools'
+};
+
+const title = t('section.techStack');
+const parts = title.split(' ');
+const firstPart = parts[0];
+const secondPart = parts.slice(1).join(' ');
 ---
 
 <section id="interests" class="section-padding relative bg-dark-surface overflow-hidden">
   <div class="max-w-7xl mx-auto px-6">
     <!-- Section Header -->
     <div class="text-center mb-12">
-      <p class="text-secondary font-mono text-sm mb-4">// Technical Expertise</p>
+      <p class="text-secondary font-mono text-sm mb-4">// {t('about.skills')}</p>
       <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
-        Tech <span class="gradient-text-accent">Stack</span>
+        {firstPart} <span class="gradient-text-accent">{secondPart}</span>
       </h2>
     </div>
 
     <!-- Marquee Container -->
     <div class="marquee-container relative w-full overflow-hidden mask-gradient py-8">
       <div class="marquee-content flex gap-8 animate-scroll hover:pause">
-        {duplicatedInterests.map((interest) => (
+        {duplicatedInterests.map((interest) => {
+          const transKey = keyMapping[interest.id];
+          // Use type assertion to avoid TS errors with dynamic keys in this context
+          const name = transKey ? t(`${transKey}.name` as any) : interest.name;
+          const desc = transKey ? t(`${transKey}.desc` as any) : interest.description;
+          
+          return (
           <div
             class="shrink-0 w-72 card-elevated p-6 group cursor-default"
             style={`--interest-color: ${interest.color}`}
@@ -39,10 +61,10 @@ const duplicatedInterests = [...techInterests, ...techInterests];
 
             <!-- Content -->
             <h3 class="text-lg font-semibold mb-2 group-hover:text-white transition-colors" style={`color: ${interest.color}`}>
-              {interest.name}
+              {name}
             </h3>
             <p class="text-muted text-sm line-clamp-2">
-              {interest.description}
+              {desc}
             </p>
 
             <!-- Learning Tags -->
@@ -59,7 +81,8 @@ const duplicatedInterests = [...techInterests, ...techInterests];
               </div>
             )}
           </div>
-        ))}
+        );
+        })}
       </div>
     </div>
   </div>
