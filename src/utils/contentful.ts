@@ -368,6 +368,33 @@ export async function getSimpleBlogPosts(preview = false, locale?: string): Prom
   }
 }
 
+export async function getSimpleBlogPost(slug: string, preview = false, locale?: string): Promise<ContentfulSimpleBlog | null> {
+  try {
+    const client = preview ? previewClient : contentfulClient;
+    if (!client) {
+      throw new Error('Contentful client not available');
+    }
+
+    const entries = locale 
+      ? await client.getEntries({
+          content_type: 'simpleBlog',
+          'fields.slug': slug,
+          limit: 1,
+          locale: locale,
+        })
+      : await client.getEntries({
+          content_type: 'simpleBlog',
+          'fields.slug': slug,
+          limit: 1,
+        });
+
+    return (entries.items[0] as unknown as ContentfulSimpleBlog) || null;
+  } catch (error) {
+    console.error(`Error fetching simple blog post "${slug}" from Contentful:`, error);
+    return null;
+  }
+}
+
 // API Functions for Certificates
 export async function getCertificates(preview = false, locale?: string): Promise<ContentfulCertificate[]> {
   try {

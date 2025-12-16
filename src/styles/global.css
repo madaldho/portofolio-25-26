@@ -170,6 +170,14 @@ body.light .text-white {
   color: #1F2937 !important;
 }
 
+body.light .text-white\/90 {
+  color: rgba(31, 41, 55, 0.9) !important;
+}
+
+body.light .text-white\/80 {
+  color: rgba(31, 41, 55, 0.8) !important;
+}
+
 body.light .text-white\/70 {
   color: rgba(31, 41, 55, 0.7) !important;
 }

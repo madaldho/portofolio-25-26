@@ -1,11 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL || 'https://muhamadaliridho.me',
-  output: 'static',
+  adapter: vercel(),
   
   // Internationalization configuration
   i18n: {
