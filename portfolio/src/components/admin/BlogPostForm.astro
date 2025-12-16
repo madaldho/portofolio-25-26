@@ -1,0 +1,527 @@
+---
+// Blog Post Creation/Edit Form Component
+---
+
+<div
+  id="blog-post-modal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-modal overlay-active"
+>
+  <div
+    class="bg-dark-surface rounded-2xl border border-dark-border max-w-4xl w-full max-h-[90vh] overflow-hidden"
+  >
+    <!-- Modal Header -->
+    <div
+      class="flex items-center justify-between p-6 border-b border-dark-border"
+    >
+      <h2
+        id="blog-modal-title"
+        class="text-2xl font-display font-bold text-white"
+      >
+        Create Blog Post
+      </h2>
+      <button
+        id="close-blog-modal"
+        class="w-8 h-8 rounded-lg hover:bg-dark-border transition-colors flex items-center justify-center"
+      >
+        <svg
+          class="w-5 h-5 text-white/60"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+      <form id="blog-post-form" class="space-y-6">
+        <!-- Title -->
+        <div>
+          <label
+            for="blog-title"
+            class="block text-sm font-medium text-white mb-2"
+          >
+            Title *
+          </label>
+          <input
+            type="text"
+            id="blog-title"
+            name="title"
+            required
+            class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                   text-white placeholder-white/40 focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-colors"
+            placeholder="Enter blog post title..."
+          />
+        </div>
+
+        <!-- Slug -->
+        <div>
+          <label
+            for="blog-slug"
+            class="block text-sm font-medium text-white mb-2"
+          >
+            Slug *
+          </label>
+          <input
+            type="text"
+            id="blog-slug"
+            name="slug"
+            required
+            class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                   text-white placeholder-white/40 focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-colors"
+            placeholder="blog-post-slug"
+          />
+          <p class="text-xs text-white/60 mt-1">
+            URL-friendly version of the title
+          </p>
+        </div>
+
+        <!-- Excerpt -->
+        <div>
+          <label
+            for="blog-excerpt"
+            class="block text-sm font-medium text-white mb-2"
+          >
+            Excerpt *
+          </label>
+          <textarea
+            id="blog-excerpt"
+            name="excerpt"
+            required
+            rows="3"
+            class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                   text-white placeholder-white/40 focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-colors resize-vertical"
+            placeholder="Brief description of the blog post..."></textarea>
+        </div>
+
+        <!-- Content -->
+        <div>
+          <label class="block text-sm font-medium text-white mb-2">
+            Content *
+          </label>
+          <div id="blog-rich-text-editor">
+            <!-- Rich Text Editor will be inserted here -->
+          </div>
+          <input type="hidden" id="blog-content" name="content" required />
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <label
+            for="blog-tags"
+            class="block text-sm font-medium text-white mb-2"
+          >
+            Tags
+          </label>
+          <input
+            type="text"
+            id="blog-tags"
+            name="tags"
+            class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                   text-white placeholder-white/40 focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-colors"
+            placeholder="tag1, tag2, tag3"
+          />
+          <p class="text-xs text-white/60 mt-1">Separate tags with commas</p>
+        </div>
+
+        <!-- Publish Date -->
+        <div>
+          <label
+            for="blog-publish-date"
+            class="block text-sm font-medium text-white mb-2"
+          >
+            Publish Date *
+          </label>
+          <input
+            type="datetime-local"
+            id="blog-publish-date"
+            name="publishDate"
+            required
+            class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                   text-white focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-colors"
+          />
+        </div>
+
+        <!-- Error Messages -->
+        <div
+          id="blog-form-errors"
+          class="hidden bg-red-500/10 border border-red-500/20 rounded-lg p-4"
+        >
+          <div class="flex items-start gap-3">
+            <svg
+              class="w-5 h-5 text-red-400 mt-0.5 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <h4 class="text-red-400 font-medium mb-1">
+                Please fix the following errors:
+              </h4>
+              <ul id="blog-error-list" class="text-red-300 text-sm space-y-1">
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success Message -->
+        <div
+          id="blog-form-success"
+          class="hidden bg-green-500/10 border border-green-500/20 rounded-lg p-4"
+        >
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-5 h-5 text-green-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"></path>
+            </svg>
+            <p class="text-green-400">Blog post saved successfully!</p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div
+      class="flex items-center justify-between p-6 border-t border-dark-border"
+    >
+      <button
+        type="button"
+        id="cancel-blog-btn"
+        class="px-6 py-2 text-white/70 hover:text-white transition-colors"
+      >
+        Cancel
+      </button>
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          id="save-draft-blog-btn"
+          class="px-6 py-2 bg-dark-border hover:bg-dark-border/80 text-white rounded-lg
+                 transition-colors"
+        >
+          Save Draft
+        </button>
+        <button
+          type="submit"
+          form="blog-post-form"
+          id="publish-blog-btn"
+          class="px-6 py-2 bg-primary hover:bg-primary-light text-white rounded-lg
+                 transition-colors flex items-center gap-2"
+        >
+          <span>Publish</span>
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    cmsManager,
+    CMSManager,
+    type BlogPostData,
+  } from "../../utils/cmsManager";
+
+  const modal = document.getElementById("blog-post-modal");
+  const form = document.getElementById("blog-post-form") as HTMLFormElement;
+  const closeBtn = document.getElementById("close-blog-modal");
+  const cancelBtn = document.getElementById("cancel-blog-btn");
+  const saveDraftBtn = document.getElementById("save-draft-blog-btn");
+  const publishBtn = document.getElementById("publish-blog-btn");
+
+  const titleInput = document.getElementById("blog-title") as HTMLInputElement;
+  const slugInput = document.getElementById("blog-slug") as HTMLInputElement;
+  const publishDateInput = document.getElementById(
+    "blog-publish-date"
+  ) as HTMLInputElement;
+
+  const errorContainer = document.getElementById("blog-form-errors");
+  const errorList = document.getElementById("blog-error-list");
+  const successContainer = document.getElementById("blog-form-success");
+
+  let isEditing = false;
+  let editingId: string | null = null;
+  let richTextEditor: any = null;
+
+  // Initialize Rich Text Editor
+  function initRichTextEditor() {
+    const editorContainer = document.getElementById("blog-rich-text-editor");
+    if (editorContainer && !richTextEditor) {
+      // Import and initialize rich text editor
+      import("./RichTextEditor.astro").then(() => {
+        // Rich text editor will be available globally
+        richTextEditor = (window as any).richTextEditor;
+
+        // Listen for auto-save events
+        document.addEventListener("richTextAutoSave", (e: any) => {
+          const hiddenInput = document.getElementById(
+            "blog-content"
+          ) as HTMLInputElement;
+          if (hiddenInput) {
+            hiddenInput.value = e.detail.html;
+          }
+        });
+      });
+    }
+  }
+
+  // Auto-generate slug from title
+  titleInput?.addEventListener("input", () => {
+    if (!isEditing && slugInput) {
+      slugInput.value = CMSManager.generateSlug(titleInput.value);
+    }
+  });
+
+  // Set default publish date
+  if (publishDateInput) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    publishDateInput.value = now.toISOString().slice(0, 16);
+  }
+
+  // Open modal
+  function openBlogModal(editData?: any) {
+    if (modal) {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+
+      if (editData) {
+        isEditing = true;
+        editingId = editData.id;
+        populateForm(editData);
+        document.getElementById("blog-modal-title")!.textContent =
+          "Edit Blog Post";
+      } else {
+        isEditing = false;
+        editingId = null;
+        form?.reset();
+        document.getElementById("blog-modal-title")!.textContent =
+          "Create Blog Post";
+
+        // Reset publish date
+        if (publishDateInput) {
+          const now = new Date();
+          now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+          publishDateInput.value = now.toISOString().slice(0, 16);
+        }
+      }
+
+      hideMessages();
+      titleInput?.focus();
+    }
+  }
+
+  // Close modal
+  function closeBlogModal() {
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+      form?.reset();
+      hideMessages();
+    }
+  }
+
+  // Populate form for editing
+  function populateForm(data: any) {
+    if (titleInput) titleInput.value = data.fields.title["en-US"] || "";
+    if (slugInput) slugInput.value = data.fields.slug["en-US"] || "";
+
+    const excerptInput = document.getElementById(
+      "blog-excerpt"
+    ) as HTMLTextAreaElement;
+    if (excerptInput) excerptInput.value = data.fields.excerpt["en-US"] || "";
+
+    const contentInput = document.getElementById(
+      "blog-content"
+    ) as HTMLTextAreaElement;
+    if (contentInput) contentInput.value = data.fields.content["en-US"] || "";
+
+    const tagsInput = document.getElementById("blog-tags") as HTMLInputElement;
+    if (tagsInput && data.fields.tags) {
+      tagsInput.value = data.fields.tags["en-US"].join(", ");
+    }
+
+    if (publishDateInput && data.fields.publishDate) {
+      const date = new Date(data.fields.publishDate["en-US"]);
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+      publishDateInput.value = date.toISOString().slice(0, 16);
+    }
+  }
+
+  // Show/hide messages
+  function showError(errors: string[]) {
+    if (errorContainer && errorList) {
+      errorList.innerHTML = errors
+        .map((error) => `<li>• ${error}</li>`)
+        .join("");
+      errorContainer.classList.remove("hidden");
+    }
+    if (successContainer) {
+      successContainer.classList.add("hidden");
+    }
+  }
+
+  function showSuccess() {
+    if (successContainer) {
+      successContainer.classList.remove("hidden");
+    }
+    if (errorContainer) {
+      errorContainer.classList.add("hidden");
+    }
+  }
+
+  function hideMessages() {
+    if (errorContainer) errorContainer.classList.add("hidden");
+    if (successContainer) successContainer.classList.add("hidden");
+  }
+
+  // Form submission
+  async function handleSubmit(status: "draft" | "published") {
+    const formData = new FormData(form);
+    const tags =
+      (formData.get("tags") as string)
+        ?.split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean) || [];
+
+    const blogData: BlogPostData = {
+      title: formData.get("title") as string,
+      slug: formData.get("slug") as string,
+      excerpt: formData.get("excerpt") as string,
+      content: formData.get("content") as string,
+      tags,
+      publishDate: formData.get("publishDate") as string,
+      status,
+    };
+
+    // Validate
+    const errors = CMSManager.validateBlogPost(blogData);
+    if (errors.length > 0) {
+      showError(errors);
+      return;
+    }
+
+    try {
+      let result;
+      if (isEditing && editingId) {
+        result = await cmsManager.updateContent(editingId, blogData);
+      } else {
+        result = await cmsManager.createBlogPost(blogData);
+      }
+
+      if (result) {
+        if (status === "published") {
+          await cmsManager.publishContent(result.id);
+        }
+
+        showSuccess();
+
+        // Close modal after delay
+        setTimeout(() => {
+          closeBlogModal();
+          // Refresh dashboard data
+          window.dispatchEvent(new CustomEvent("refreshDashboard"));
+        }, 1500);
+      } else {
+        showError(["Failed to save blog post. Please try again."]);
+      }
+    } catch (error) {
+      console.error("Error saving blog post:", error);
+      showError(["An unexpected error occurred. Please try again."]);
+    }
+  }
+
+  // Event listeners
+  closeBtn?.addEventListener("click", closeBlogModal);
+  cancelBtn?.addEventListener("click", closeBlogModal);
+
+  saveDraftBtn?.addEventListener("click", () => handleSubmit("draft"));
+
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleSubmit("published");
+  });
+
+  // Close modal on outside click
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeBlogModal();
+    }
+  });
+
+  // Expose functions globally
+  (window as any).openBlogModal = openBlogModal;
+  (window as any).closeBlogModal = closeBlogModal;
+</script>
+
+<style>
+  :global(body.light) #blog-post-modal .bg-dark-surface {
+    background-color: var(--color-light-surface);
+  }
+
+  :global(body.light) #blog-post-modal .border-dark-border {
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) #blog-post-modal .bg-dark-bg {
+    background-color: var(--color-light-bg);
+  }
+
+  :global(body.light) #blog-post-modal .bg-dark-border {
+    background-color: var(--color-light-border);
+  }
+
+  :global(body.light) #blog-post-modal .text-white {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) #blog-post-modal .text-white\/70 {
+    color: rgba(10, 10, 10, 0.7);
+  }
+
+  :global(body.light) #blog-post-modal .text-white\/60 {
+    color: rgba(10, 10, 10, 0.6);
+  }
+
+  :global(body.light) #blog-post-modal .text-white\/40 {
+    color: rgba(10, 10, 10, 0.4);
+  }
+</style>

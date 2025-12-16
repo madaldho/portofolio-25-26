@@ -1,0 +1,760 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogPostForm from "../../components/admin/BlogPostForm.astro";
+import ProjectForm from "../../components/admin/ProjectForm.astro";
+---
+
+<BaseLayout
+  title="Admin Dashboard - Muhamad Ali Ridho"
+  description="Content management dashboard"
+>
+  <div id="auth-check" class="min-h-screen bg-dark-bg pt-20">
+    <!-- Loading state -->
+    <div id="loading" class="min-h-screen flex items-center justify-center">
+      <div class="text-center">
+        <div
+          class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"
+        >
+        </div>
+        <p class="text-white/60">Checking authentication...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dashboard" class="hidden">
+      <!-- Admin Header -->
+      <div class="bg-dark-surface border-b border-dark-border">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-4 mb-2">
+                <h1 class="text-3xl font-display font-bold gradient-text">
+                  Admin Dashboard
+                </h1>
+                <div
+                  class="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full"
+                >
+                  <span class="text-primary text-sm font-medium"
+                    >✓ Contentful Connected</span
+                  >
+                </div>
+              </div>
+              <p class="text-white/60">
+                Manage your portfolio content with Contentful CMS integration
+              </p>
+            </div>
+            <div class="flex items-center gap-4">
+              <a
+                href="/"
+                class="px-4 py-2 bg-dark-border hover:bg-dark-border/80 text-white rounded-lg
+                       transition-colors duration-300 flex items-center gap-2"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Site
+              </a>
+              <button
+                id="logout-btn"
+                class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg
+                       transition-colors duration-300 flex items-center gap-2"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+          <div
+            class="bg-dark-surface rounded-xl p-6 border border-dark-border hover:border-primary/30 transition-colors"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <p class="text-white/60 text-sm">Blog Posts</p>
+                <p class="text-2xl font-bold text-white" id="blog-count">-</p>
+              </div>
+              <div
+                class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-primary text-xl">📝</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-primary">
+              <div class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse">
+              </div>
+              <span>Synced with Contentful</span>
+            </div>
+          </div>
+
+          <div
+            class="bg-dark-surface rounded-xl p-6 border border-dark-border hover:border-secondary/30 transition-colors"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <p class="text-white/60 text-sm">Projects</p>
+                <p class="text-2xl font-bold text-white" id="project-count">
+                  -
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-secondary text-xl">🚀</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-secondary">
+              <div class="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse">
+              </div>
+              <span>Synced with Contentful</span>
+            </div>
+          </div>
+
+          <div
+            class="bg-dark-surface rounded-xl p-6 border border-dark-border hover:border-accent/30 transition-colors"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <p class="text-white/60 text-sm">Published</p>
+                <p class="text-2xl font-bold text-white" id="published-count">
+                  -
+                </p>
+              </div>
+              <div
+                class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-accent text-xl">✅</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-accent">
+              <div class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse">
+              </div>
+              <span>Live Status</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-dark-surface rounded-xl p-6 border border-dark-border">
+            <h3 class="text-xl font-semibold text-white mb-4">
+              Blog Management
+            </h3>
+            <p class="text-white/60 mb-4">
+              Create and manage blog posts via Contentful
+            </p>
+            <div class="space-y-3">
+              <a
+                href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=simpleBlog"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full bg-primary hover:bg-primary-light text-white py-3 px-4
+                       rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Create Blog Post
+              </a>
+              <button
+                id="manage-blog-btn"
+                class="w-full bg-dark-border hover:bg-dark-border/80 text-white py-3 px-4
+                       rounded-lg transition-colors duration-300"
+              >
+                View Blog Posts
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-dark-surface rounded-xl p-6 border border-dark-border">
+            <h3 class="text-xl font-semibold text-white mb-4">
+              Project Management
+            </h3>
+            <p class="text-white/60 mb-4">
+              Create and manage portfolio projects via Contentful
+            </p>
+            <div class="space-y-3">
+              <a
+                href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=simpleProject"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full bg-secondary hover:bg-secondary-dark text-white py-3 px-4
+                       rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Create Project
+              </a>
+              <button
+                id="manage-project-btn"
+                class="w-full bg-dark-border hover:bg-dark-border/80 text-white py-3 px-4
+                       rounded-lg transition-colors duration-300"
+              >
+                View Projects
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-dark-surface rounded-xl p-6 border border-dark-border">
+            <h3 class="text-xl font-semibold text-white mb-4">
+              Certificate Management
+            </h3>
+            <p class="text-white/60 mb-4">
+              Add and manage certificates via Contentful
+            </p>
+            <div class="space-y-3">
+              <a
+                href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=certificate"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full bg-accent hover:bg-accent/80 text-white py-3 px-4
+                       rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Certificate
+              </a>
+              <a
+                href="/certificates"
+                class="w-full bg-dark-border hover:bg-dark-border/80 text-white py-3 px-4
+                       rounded-lg transition-colors duration-300 block text-center"
+              >
+                View Certificates
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links to Contentful -->
+        <div
+          class="bg-linear-to-r from-primary/10 to-secondary/10 rounded-xl p-6 border border-primary/20 mb-8"
+        >
+          <div class="flex items-center gap-4 mb-4">
+            <div
+              class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center"
+            >
+              <svg
+                class="w-6 h-6 text-primary"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">Contentful CMS</h3>
+              <p class="text-white/60 text-sm">
+                Manage all content directly in Contentful dashboard
+              </p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="https://app.contentful.com/spaces/hbrrn0bf99r5"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm flex items-center gap-2"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                ></path>
+              </svg>
+              Open Contentful Dashboard
+            </a>
+            <a
+              href="https://app.contentful.com/spaces/hbrrn0bf99r5/content_types"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm flex items-center gap-2"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+              </svg>
+              Content Types
+            </a>
+            <a
+              href="https://app.contentful.com/spaces/hbrrn0bf99r5/assets"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm flex items-center gap-2"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              Media Assets
+            </a>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="bg-dark-surface rounded-xl p-6 border border-dark-border">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-white">Recent Activity</h3>
+            <button
+              id="refresh-btn"
+              class="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg
+                     transition-colors duration-300 flex items-center gap-2 text-sm"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                ></path>
+              </svg>
+              Sync with Contentful
+            </button>
+          </div>
+          <div id="recent-activity" class="space-y-3">
+            <div class="flex items-center justify-center py-8">
+              <div
+                class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"
+              >
+              </div>
+              <p class="text-white/60 ml-3">Loading from Contentful...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- CMS Forms -->
+  <BlogPostForm />
+  <ProjectForm />
+</BaseLayout>
+
+<script>
+  import { checkAuth, logout } from "../../utils/auth";
+  import { cmsManager } from "../../utils/cmsManager";
+
+  const loading = document.getElementById("loading");
+  const dashboard = document.getElementById("dashboard");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  // Check authentication
+  setTimeout(() => {
+    if (checkAuth()) {
+      loading?.classList.add("hidden");
+      dashboard?.classList.remove("hidden");
+      loadDashboardData();
+    } else {
+      window.location.href = "/admin-aldho";
+    }
+  }, 1000);
+
+  // Logout functionality
+  logoutBtn?.addEventListener("click", () => {
+    logout();
+    window.location.href = "/admin-aldho";
+  });
+
+  // Load dashboard data
+  async function loadDashboardData() {
+    try {
+      // Show loading state
+      const blogCountEl = document.getElementById("blog-count");
+      const projectCountEl = document.getElementById("project-count");
+      const publishedCountEl = document.getElementById("published-count");
+
+      if (blogCountEl)
+        blogCountEl.innerHTML =
+          '<div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>';
+      if (projectCountEl)
+        projectCountEl.innerHTML =
+          '<div class="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin"></div>';
+      if (publishedCountEl)
+        publishedCountEl.innerHTML =
+          '<div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>';
+
+      const stats = await cmsManager.getContentStats();
+      const recentActivity = await cmsManager.getRecentActivity();
+
+      // Update stats with animation
+      if (blogCountEl) {
+        blogCountEl.textContent = stats.blogPosts.toString();
+        blogCountEl.classList.add("animate-pulse");
+        setTimeout(() => blogCountEl.classList.remove("animate-pulse"), 500);
+      }
+      if (projectCountEl) {
+        projectCountEl.textContent = stats.projects.toString();
+        projectCountEl.classList.add("animate-pulse");
+        setTimeout(() => projectCountEl.classList.remove("animate-pulse"), 500);
+      }
+      if (publishedCountEl) {
+        publishedCountEl.textContent = stats.published.toString();
+        publishedCountEl.classList.add("animate-pulse");
+        setTimeout(
+          () => publishedCountEl.classList.remove("animate-pulse"),
+          500
+        );
+      }
+
+      // Update recent activity
+      const recentActivityContainer =
+        document.getElementById("recent-activity");
+      if (recentActivityContainer) {
+        if (recentActivity.length === 0) {
+          recentActivityContainer.innerHTML = `
+            <div class="text-white/60 text-center py-8">
+              <p>No recent activity</p>
+              <p class="text-sm mt-2">Create your first blog post or project to get started</p>
+            </div>
+          `;
+        } else {
+          recentActivityContainer.innerHTML = `
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="text-sm font-medium text-white/80">Latest from Contentful</h4>
+              <div class="flex items-center gap-2 text-xs text-primary">
+                <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span>Live Data</span>
+              </div>
+            </div>
+            ${recentActivity
+              .map((item) => {
+                const title = item.fields.title?.["en-US"] || "Untitled";
+                const type =
+                  item.contentType === "simpleBlog" ? "Blog Post" : "Project";
+                const date = new Date(item.updatedAt).toLocaleDateString();
+                const status =
+                  item.status === "published" ? "Published" : "Draft";
+                const statusColor =
+                  item.status === "published"
+                    ? "text-green-400"
+                    : "text-yellow-400";
+
+                return `
+                <div class="flex items-center justify-between p-3 bg-dark-bg rounded-lg border border-dark-border hover:border-primary/30 transition-colors">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <span class="text-primary text-sm">${type === "Blog Post" ? "📝" : "🚀"}</span>
+                    </div>
+                    <div>
+                      <p class="text-white font-medium">${title}</p>
+                      <p class="text-white/60 text-sm">${type} • ${date}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-1 rounded-full bg-white/5 ${statusColor}">
+                      ${status}
+                    </span>
+                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+              `;
+              })
+              .join("")}
+          `;
+        }
+      }
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    }
+  }
+
+  // Button handlers
+  document.getElementById("manage-blog-btn")?.addEventListener("click", () => {
+    showContentList("blog");
+  });
+
+  document
+    .getElementById("manage-project-btn")
+    ?.addEventListener("click", () => {
+      showContentList("project");
+    });
+
+  // Refresh button handler
+  document
+    .getElementById("refresh-btn")
+    ?.addEventListener("click", async () => {
+      const refreshBtn = document.getElementById("refresh-btn");
+      if (refreshBtn) {
+        refreshBtn.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Syncing...
+      `;
+        (refreshBtn as HTMLButtonElement).disabled = true;
+      }
+
+      await loadDashboardData();
+
+      if (refreshBtn) {
+        refreshBtn.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Sync with Contentful
+      `;
+        (refreshBtn as HTMLButtonElement).disabled = false;
+      }
+    });
+
+  // Content management functions
+  async function showContentList(type: "blog" | "project") {
+    try {
+      const content =
+        type === "blog"
+          ? await cmsManager.getAllBlogPosts()
+          : await cmsManager.getAllProjects();
+
+      if (content.length === 0) {
+        alert(`No ${type}s found. Create your first ${type} to get started!`);
+        return;
+      }
+
+      // Create a simple list modal with Contentful links
+      const contentTypeId = type === "blog" ? "simpleBlog" : "simpleProject";
+      const listHtml = content
+        .map((item) => {
+          const title = item.fields.title?.["en-US"] || "Untitled";
+          const status =
+            item.status === "published" ? "✅ Published" : "📝 Draft";
+          const editUrl = `https://app.contentful.com/spaces/hbrrn0bf99r5/entries/${item.id}`;
+          return `<li class="py-3 border-b border-dark-border last:border-b-0">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-white font-medium">${title}</span>
+              <span class="text-xs text-white/60 ml-2">${status}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <a href="${editUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded text-sm flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Edit in Contentful
+              </a>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
+
+      const modalHtml = `
+        <div id="content-list-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-modal overlay-active">
+          <div class="bg-dark-surface rounded-2xl border border-dark-border max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b border-dark-border">
+              <h2 class="text-xl font-display font-bold text-white">${type === "blog" ? "Blog Posts" : "Projects"} (${content.length})</h2>
+              <button onclick="closeContentList()" class="w-8 h-8 rounded-lg hover:bg-dark-border transition-colors flex items-center justify-center">
+                <svg class="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[60vh]">
+              ${content.length > 0 ? `<ul class="space-y-0">${listHtml}</ul>` : '<p class="text-white/60 text-center py-8">No content found. Create your first entry in Contentful!</p>'}
+            </div>
+            <div class="p-4 border-t border-dark-border bg-dark-bg/50">
+              <a href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=${contentTypeId}" target="_blank" rel="noopener noreferrer" class="w-full bg-primary hover:bg-primary-light text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Manage All in Contentful
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML("beforeend", modalHtml);
+      document.body.style.overflow = "hidden";
+    } catch (error) {
+      console.error("Error showing content list:", error);
+      alert("Error loading content. Please try again.");
+    }
+  }
+
+  // Global functions for content management
+  (window as any).closeContentList = function () {
+    const modal = document.getElementById("content-list-modal");
+    if (modal) {
+      modal.remove();
+      document.body.style.overflow = "";
+    }
+  };
+
+  // Placeholder for backward compatibility
+  (window as any).deleteContent = async function (id: string) {
+    // Redirect to Contentful for deletion
+    window.open(
+      `https://app.contentful.com/spaces/hbrrn0bf99r5/entries/${id}`,
+      "_blank"
+    );
+  };
+
+  // Placeholder - not used anymore but kept for compatibility
+  (window as any).editContent = async function (id: string, type: string) {
+    window.open(
+      `https://app.contentful.com/spaces/hbrrn0bf99r5/entries/${id}`,
+      "_blank"
+    );
+  };
+
+  // Listen for dashboard refresh events
+  window.addEventListener("refreshDashboard", loadDashboardData);
+
+  // Show success notification
+  function showSuccessNotification(message: string) {
+    const notification = document.createElement("div");
+    notification.className =
+      "fixed top-24 right-6 bg-primary text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300";
+    notification.innerHTML = `
+      <div class="flex items-center gap-3">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>${message}</span>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.classList.remove("translate-x-full");
+    }, 100);
+
+    // Animate out and remove
+    setTimeout(() => {
+      notification.classList.add("translate-x-full");
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
+
+  // Listen for content creation success
+  window.addEventListener("contentCreated", (event: any) => {
+    const { type, title } = event.detail;
+    showSuccessNotification(
+      `${type} "${title}" created and synced with Contentful!`
+    );
+    loadDashboardData();
+  });
+</script>
+
+<style>
+  :global(body.light) .bg-dark-bg {
+    background-color: var(--color-light-bg);
+  }
+
+  :global(body.light) .bg-dark-surface {
+    background-color: var(--color-light-surface);
+  }
+
+  :global(body.light) .border-dark-border {
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) .bg-dark-border {
+    background-color: var(--color-light-border);
+  }
+
+  :global(body.light) h1,
+  :global(body.light) h3,
+  :global(body.light) p {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .text-white {
+    color: var(--color-dark-bg) !important;
+  }
+
+  :global(body.light) .text-white\/60 {
+    color: rgba(10, 10, 10, 0.6) !important;
+  }
+</style>

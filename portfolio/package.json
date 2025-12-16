@@ -1,0 +1,37 @@
+{
+  "name": "portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/optimize-build.js",
+    "build:basic": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "setup:images": "node scripts/setup-images.js",
+    "test": "vitest",
+    "build:analyze": "astro build --analyze",
+    "lighthouse": "lighthouse http://localhost:4321 --output html --output-path ./lighthouse-report.html",
+    "perf:audit": "npm run build && npm run preview & sleep 5 && npm run lighthouse && kill %1",
+    "seo:validate": "node scripts/validate-seo.js",
+    "optimize:build": "node scripts/optimize-build.js",
+    "deploy:vercel": "npm run build && vercel --prod"
+  },
+  "dependencies": {
+    "@contentful/rich-text-html-renderer": "^17.1.6",
+    "@contentful/rich-text-types": "^17.2.5",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.5",
+    "contentful": "^11.10.1",
+    "marked": "^17.0.1",
+    "tailwindcss": "^4.1.18",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.2",
+    "fast-check": "^4.4.0",
+    "jsdom": "^25.0.1",
+    "lighthouse": "^12.2.1",
+    "vitest": "^4.0.15"
+  }
+}

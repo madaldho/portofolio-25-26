@@ -1,0 +1,111 @@
+---
+import "../styles/global.css";
+import "../styles/animations.css";
+import CustomCursor from "../components/CustomCursor.astro";
+import Navigation from "../components/Navigation.astro";
+import SEO from "../components/SEO.astro";
+import {
+  getLangFromUrl,
+  useTranslations,
+  getLocalizedMetadata,
+} from "../i18n/utils";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article" | "profile";
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+  author?: string;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  structuredData?: any[];
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const localizedMeta = getLocalizedMetadata(lang);
+
+const {
+  title = localizedMeta.title,
+  description = localizedMeta.description,
+  image = "/og-image.png",
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  tags,
+  author = "Muhamad Ali Ridho",
+  canonicalUrl,
+  noindex = false,
+  structuredData = [],
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Component -->
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      author={author}
+      canonicalUrl={canonicalUrl}
+      noindex={noindex}
+      structuredData={structuredData}
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Clash Display from CDN -->
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Theme Script (prevent flash) -->
+    <script is:inline>
+      const theme =
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark");
+      document.documentElement.classList.toggle("light", theme === "light");
+      document.body?.classList.toggle("light", theme === "light");
+    </script>
+
+    <!-- Performance Monitoring -->
+    <script>
+      import("../scripts/performance-monitor.ts");
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Navigation -->
+    <Navigation />
+
+    <slot />
+
+    <!-- Custom Cursor -->
+    <CustomCursor />
+  </body>
+</html>

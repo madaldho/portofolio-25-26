@@ -1,0 +1,218 @@
+---
+import { getCertificates, isContentfulConfigured, type ContentfulCertificate } from '../utils/contentful';
+import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const translatePath = useTranslatedPath(lang);
+
+let certificates: ContentfulCertificate[] = [];
+let isUsingContentful = false;
+
+try {
+  if (isContentfulConfigured()) {
+    const allCertificates = await getCertificates(false, locale);
+    // Get 3 most recent certificates
+    certificates = allCertificates.slice(0, 3);
+    if (certificates.length > 0) {
+      isUsingContentful = true;
+    }
+  }
+} catch (error) {
+  console.warn('Error fetching certificates for homepage:', error);
+}
+
+// Category colors
+const categoryColors: Record<string, string> = {
+  programming: '#FF3D00',
+  cloud: '#6366F1', 
+  design: '#EC4899',
+  marketing: '#10B981',
+  other: '#F59E0B',
+};
+
+// Helper to get image URL
+function getImageUrl(cert: ContentfulCertificate): string {
+  if (cert.fields.certificateImage?.fields?.file?.url) {
+    const url = cert.fields.certificateImage.fields.file.url;
+    return url.startsWith('//') ? `https:${url}` : url;
+  }
+  if (cert.fields.imageUrl) {
+    return cert.fields.imageUrl;
+  }
+  return 'https://images.unsplash.com/photo-1496469888073-80de7e952517?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80';
+}
+---
+
+<section id="certificates" class="section-padding relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <p class="text-accent font-mono text-sm mb-4">// Achievements</p>
+      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+        My <span class="gradient-text">Certificates</span>
+      </h2>
+      <p class="text-muted max-w-2xl mx-auto">
+        Professional certifications and achievements that showcase my expertise
+      </p>
+    </div>
+
+    <!-- Certificates Grid -->
+    {certificates.length > 0 ? (
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {certificates.map((cert) => (
+          <article class="card-elevated group" data-cursor-hover>
+            <!-- Certificate Image -->
+            <div class="relative aspect-4/3 overflow-hidden cursor-pointer" 
+                 onclick={cert.fields.credentialUrl ? `window.open('${cert.fields.credentialUrl}', '_blank')` : `openCertModal('${getImageUrl(cert)}', '${cert.fields.title}')`}>
+              <img
+                src={getImageUrl(cert)}
+                alt={cert.fields.title}
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
+              
+              <!-- Category Badge -->
+              {cert.fields.category && (
+                <div
+                  class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
+                  style={`background: ${categoryColors[cert.fields.category] || categoryColors.other}`}
+                >
+                  {cert.fields.category.toUpperCase()}
+                </div>
+              )}
+
+              <!-- View indicator -->
+              <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-dark-bg/50">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                  {cert.fields.credentialUrl ? (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  ) : (
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+              <!-- Issuer & Date -->
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-primary text-sm font-medium">{cert.fields.issuer}</span>
+                <time class="text-muted text-xs font-mono">
+                  {new Date(cert.fields.issueDate).toLocaleDateString(locale, {
+                    year: 'numeric',
+                    month: 'short'
+                  })}
+                </time>
+              </div>
+
+              <!-- Title -->
+              <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                {cert.fields.title}
+              </h3>
+
+              <!-- Description -->
+              {cert.fields.description && (
+                <p class="text-muted text-sm line-clamp-2">
+                  {cert.fields.description}
+                </p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16 mb-12">
+        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+          <svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-semibold mb-2">No Certificates Yet</h3>
+        <p class="text-muted">Professional certifications will appear here once added.</p>
+      </div>
+    )}
+
+    <!-- View More Button -->
+    <div class="text-center">
+      <a 
+        href={translatePath('/certificates')}
+        class="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-light 
+               text-white rounded-xl transition-all duration-300 hover:scale-105 
+               focus-ring shadow-lg hover:shadow-xl"
+        data-cursor-hover
+      >
+        <span class="font-medium">View All Certificates</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+    {isUsingContentful && (
+      <div class="flex justify-center mt-6">
+
+      </div>
+    )}
+  </div>
+
+  <!-- Certificate Modal -->
+  <div id="cert-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-modal hidden items-center justify-center p-4">
+    <button onclick="closeCertModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img id="cert-modal-image" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-lg" />
+  </div>
+</section>
+
+<script is:inline>
+  function openCertModal(imageUrl, title) {
+    const modal = document.getElementById('cert-modal');
+    const modalImage = document.getElementById('cert-modal-image');
+    if (modal && modalImage) {
+      modalImage.src = imageUrl;
+      modalImage.alt = title;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeCertModal() {
+    const modal = document.getElementById('cert-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCertModal();
+  });
+
+  // Close on backdrop click
+  document.getElementById('cert-modal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeCertModal();
+  });
+</script>
+
+<style>
+  :global(body.light) #certificates {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) #certificates h2,
+  :global(body.light) #certificates h3 {
+    color: var(--color-dark-bg);
+  }
+</style>

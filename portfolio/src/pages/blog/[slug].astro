@@ -1,0 +1,522 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  getSimpleBlogPosts,
+  getBlogPosts,
+  isContentfulConfigured,
+} from "../../utils/contentful";
+import { renderRichText } from "../../utils/richText";
+import RichText from "../../components/RichText.astro";
+
+export async function getStaticPaths() {
+  let blogPosts: any[] = [];
+
+  try {
+    if (isContentfulConfigured()) {
+      // Try to get rich text blog posts first (blogPost content type)
+      const richTextPosts = await getBlogPosts(false, "en-US");
+      if (richTextPosts.length > 0) {
+        blogPosts = richTextPosts.map((post) => {
+          // Get image: prefer uploaded asset, then default
+          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+          if (post.fields.featuredImage?.fields?.file?.url) {
+            imageUrl = post.fields.featuredImage.fields.file.url.startsWith(
+              "//"
+            )
+              ? `https:${post.fields.featuredImage.fields.file.url}`
+              : post.fields.featuredImage.fields.file.url;
+          }
+
+          // Store the raw content for client-side rendering
+          const slugValue =
+            typeof post.fields.slug === "string"
+              ? post.fields.slug
+              : post.fields.slug?.["en-US"] ||
+                Object.values(post.fields.slug || {})[0] ||
+                "";
+          return {
+            params: { slug: slugValue },
+            props: {
+              post: {
+                id: post.sys.id,
+                slug: slugValue,
+                data: {
+                  title: post.fields.title,
+                  excerpt: post.fields.excerpt,
+                  content: post.fields.content, // Keep raw rich text content
+                  tags: Array.isArray(post.fields.tags) ? post.fields.tags : [],
+                  publishDate: post.fields.publishDate,
+                  publishedAt: post.fields.publishDate,
+                  featuredImage: imageUrl,
+                  readingTime:
+                    post.fields.readingTime ||
+                    Math.ceil(
+                      (renderRichText(post.fields.content)
+                        .replace(/<[^>]*>/g, "")
+                        .split(" ").length || 100) / 200
+                    ),
+                },
+              },
+              isUsingContentful: true,
+              isRichText: true,
+            },
+          };
+        });
+      } else {
+        // Fallback to simple blog posts if no rich text posts
+        const contentfulPosts = await getSimpleBlogPosts(false, "en-US");
+        blogPosts = contentfulPosts.map((post) => {
+          // Get image: prefer uploaded asset, then imageUrl field, then default
+          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+          if (post.fields.featuredImage?.fields?.file?.url) {
+            imageUrl = post.fields.featuredImage.fields.file.url.startsWith(
+              "//"
+            )
+              ? `https:${post.fields.featuredImage.fields.file.url}`
+              : post.fields.featuredImage.fields.file.url;
+          } else if (post.fields.imageUrl) {
+            imageUrl = post.fields.imageUrl;
+          }
+
+          const slugValue2 =
+            typeof post.fields.slug === "string"
+              ? post.fields.slug
+              : post.fields.slug?.["en-US"] ||
+                Object.values(post.fields.slug || {})[0] ||
+                "";
+          return {
+            params: { slug: slugValue2 },
+            props: {
+              post: {
+                id: post.sys.id,
+                slug: slugValue2,
+                data: {
+                  title: post.fields.title,
+                  excerpt: post.fields.excerpt,
+                  content: post.fields.content,
+                  tags: Array.isArray(post.fields.tags) ? post.fields.tags : [],
+                  publishDate: post.fields.publishDate,
+                  publishedAt: post.fields.publishDate,
+                  featuredImage: imageUrl,
+                  readingTime: Math.ceil(
+                    (typeof post.fields.content === "string"
+                      ? post.fields.content.split(" ").length
+                      : 100) / 200
+                  ),
+                },
+              },
+              isUsingContentful: true,
+              isRichText: false,
+            },
+          };
+        });
+      }
+    }
+  } catch (error) {
+    console.warn("Error fetching from Contentful:", error);
+  }
+
+  // Fallback data if no Contentful posts
+  if (blogPosts.length === 0) {
+    blogPosts = [
+      {
+        params: { slug: "getting-started-with-astro" },
+        props: {
+          post: {
+            id: "fallback-1",
+            slug: "getting-started-with-astro",
+            data: {
+              title: "Getting Started with Astro",
+              excerpt:
+                "Learn how to build fast, modern websites with Astro framework",
+              content: `Astro is a revolutionary web framework that brings a fresh approach to building modern websites. Unlike traditional frameworks that ship JavaScript by default, Astro follows a 'ship less JavaScript' philosophy, resulting in faster loading times and better performance.
+
+## Key Features of Astro
+
+- **Zero JavaScript by default**: Astro generates static HTML with no JavaScript unless you explicitly opt-in
+- **Component islands architecture**: Add interactivity only where needed
+- **Support for multiple UI frameworks**: Use React, Vue, Svelte, and more in the same project
+- **Built-in optimizations**: Automatic image optimization, CSS bundling, and more
+- **Excellent developer experience**: Fast dev server, TypeScript support, and great tooling
+
+## Getting Started
+
+To create a new Astro project, run:
+
+\`\`\`bash
+npm create astro@latest
+\`\`\`
+
+This will guide you through the setup process and create a new Astro project with your preferred configuration.
+
+## Building Your First Component
+
+Astro components use a familiar syntax that combines HTML, CSS, and JavaScript:
+
+\`\`\`astro
+---
+// Component script (runs at build time)
+const greeting = "Hello, World!";
+---
+
+<div class="greeting">
+  <h1>{greeting}</h1>
+  <p>Welcome to Astro!</p>
+</div>
+
+<style>
+  .greeting {
+    text-align: center;
+    padding: 2rem;
+  }
+</style>
+\`\`\`
+
+## Conclusion
+
+Astro is perfect for content-focused websites that need great performance. Its unique approach to JavaScript delivery makes it an excellent choice for blogs, marketing sites, and portfolios.`,
+              tags: ["astro", "web-development", "javascript", "performance"],
+              publishDate: "2024-12-15",
+              publishedAt: "2024-12-15",
+              featuredImage:
+                "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80",
+              readingTime: 5,
+            },
+          },
+          isUsingContentful: false,
+        },
+      },
+    ];
+  }
+
+  return blogPosts;
+}
+
+const { post, isUsingContentful, isRichText } = Astro.props;
+
+// Format content for display (convert markdown-like syntax to HTML)
+function formatContent(content: any): string {
+  // Handle different content types from Contentful
+  let textContent: string;
+
+  if (typeof content === "string") {
+    textContent = content;
+  } else if (content && typeof content === "object") {
+    // Handle localized content object
+    if (content["en-US"]) {
+      textContent = content["en-US"];
+    } else if (content["id-ID"]) {
+      textContent = content["id-ID"];
+    } else {
+      // Try to get the first available value
+      const values = Object.values(content);
+      textContent =
+        (values.find((val) => typeof val === "string") as string) || "";
+    }
+  } else {
+    textContent = "";
+  }
+
+  if (!textContent || typeof textContent !== "string") {
+    return "";
+  }
+
+  return textContent
+    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/`(.+?)`/g, "<code>$1</code>")
+    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/^(.+)$/gm, "<p>$1</p>")
+    .replace(/<p><h/g, "<h")
+    .replace(/<\/h([1-6])><\/p>/g, "</h$1>")
+    .replace(/<p><ul>/g, "<ul>")
+    .replace(/<\/ul><\/p>/g, "</ul>")
+    .replace(/<p><pre>/g, "<pre>")
+    .replace(/<\/pre><\/p>/g, "</pre>");
+}
+---
+
+<BaseLayout
+  title={`${post.data.title} - Muhamad Ali Ridho`}
+  description={post.data.excerpt}
+  type="article"
+  publishedTime={post.data.publishedAt}
+  tags={post.data.tags}
+>
+  <main class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="relative blog-hero">
+      <!-- Featured Image -->
+      <div class="relative h-96 overflow-hidden">
+        <img
+          src={post.data.featuredImage}
+          alt={post.data.title}
+          class="w-full h-full object-cover"
+        />
+        <div
+          class="absolute inset-0 bg-linear-to-t from-dark-bg via-dark-bg/50 to-transparent"
+        >
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="absolute inset-0 flex items-end">
+        <div class="max-w-4xl mx-auto px-6 pb-12 w-full">
+          <!-- Breadcrumb -->
+          <nav class="mb-4">
+            <a
+              href="/blog"
+              class="text-primary hover:text-primary-light transition-colors text-sm"
+            >
+              ← Back to Blog
+            </a>
+          </nav>
+
+          <!-- Meta Info -->
+          <div class="flex items-center gap-4 mb-4 text-sm text-muted">
+            <time class="font-mono">
+              {
+                new Date(post.data.publishDate).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              }
+            </time>
+            <span>•</span>
+            <span>{post.data.readingTime} min read</span>
+            {
+              isUsingContentful && (
+                <>
+                  <span>•</span>
+                </>
+              )
+            }
+          </div>
+
+          <!-- Title -->
+          <h1
+            class="text-display text-3xl md:text-4xl lg:text-5xl mb-4 text-white"
+          >
+            {post.data.title}
+          </h1>
+
+          <!-- Excerpt -->
+          <p class="text-lg text-white/80 max-w-2xl">
+            {post.data.excerpt}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Article Content -->
+    <article class="section-padding">
+      <div class="max-w-4xl mx-auto px-6">
+        <!-- Tags -->
+        {
+          post.data.tags &&
+            Array.isArray(post.data.tags) &&
+            post.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-8">
+                {post.data.tags.map((tag: string) => (
+                  <span class="px-3 py-1 text-sm rounded-full bg-primary/10 text-primary border border-primary/20">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )
+        }
+
+        <!-- Content -->
+        <div class="max-w-none">
+          {
+            isRichText ? (
+              <RichText content={post.data.content} className="blog-content" />
+            ) : (
+              <div
+                class="rich-text-content"
+                set:html={formatContent(post.data.content)}
+              />
+            )
+          }
+        </div>
+
+        <!-- Share Section -->
+        <div class="mt-12 pt-8 border-t border-dark-border">
+          <h3 class="text-lg font-semibold mb-4">Share this article</h3>
+          <div class="flex gap-4">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(`https://muhamadaliridho.me/blog/${post.slug}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-2 px-4 py-2 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded-lg transition-colors"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
+                ></path>
+              </svg>
+              Twitter
+            </a>
+            <a
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://muhamadaliridho.me/blog/${post.slug}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-2 px-4 py-2 bg-[#0077B5] hover:bg-[#006396] text-white rounded-lg transition-colors"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                ></path>
+              </svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-12 pt-8 border-t border-dark-border">
+          <a
+            href="/blog"
+            class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Blog
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Rich text content styling - inherits from richText.ts utility */
+  .rich-text-content {
+    line-height: 1.7;
+  }
+
+  /* Override any default prose styles that might conflict */
+  .rich-text-content h1,
+  .rich-text-content h2,
+  .rich-text-content h3,
+  .rich-text-content h4,
+  .rich-text-content h5,
+  .rich-text-content h6 {
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .rich-text-content p {
+    line-height: 1.7;
+  }
+
+  .rich-text-content ul,
+  .rich-text-content ol {
+    padding-left: 1.5rem;
+  }
+
+  .rich-text-content li {
+    margin: 0.5rem 0;
+  }
+
+  /* Ensure proper spacing for embedded assets */
+  .rich-text-content figure {
+    margin: 2rem 0;
+  }
+
+  .rich-text-content img {
+    border-radius: 0.5rem;
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Code block enhancements */
+  .rich-text-content pre {
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .rich-text-content code {
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  }
+
+  /* Table responsive styling */
+  .rich-text-content table {
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .rich-text-content table {
+      display: table;
+      white-space: normal;
+    }
+  }
+
+  /* Blockquote styling */
+  .rich-text-content blockquote {
+    position: relative;
+  }
+
+  .rich-text-content blockquote::before {
+    content: '"';
+    position: absolute;
+    left: -0.5rem;
+    top: -0.5rem;
+    font-size: 3rem;
+    color: var(--color-primary);
+    opacity: 0.3;
+  }
+
+  /* Link styling */
+  .rich-text-content a {
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+    text-decoration-thickness: 1px;
+  }
+
+  .rich-text-content a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Keep hero section same as dark mode for better contrast on image */
+  :global(body.light) .blog-hero .text-white {
+    color: white !important;
+  }
+
+  :global(body.light) .blog-hero .text-white\/80 {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  :global(body.light) .blog-hero .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  :global(body.light) .blog-hero .text-primary {
+    color: var(--color-primary) !important;
+  }
+
+  /* Light mode overrides for blockquote */
+  :global(body.light) .rich-text-content blockquote::before {
+    color: var(--color-primary);
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getSimpleBlogPosts } from "../../../utils/contentful";
+import {
+  formatDate,
+  getLangFromUrl,
+  useTranslations,
+} from "../../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Get blog posts from Contentful with Indonesian locale
+const posts = await getSimpleBlogPosts(false, "id-ID");
+const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
+---
+
+<BaseLayout title={t("blog.title")} description={t("blog.subtitle")}>
+  <main class="min-h-screen pt-24 pb-16">
+    <div class="max-w-4xl mx-auto px-6">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1
+          class="text-4xl md:text-5xl lg:text-6xl font-display font-bold gradient-text mb-6"
+        >
+          {t("blog.title")}
+        </h1>
+        <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
+          {t("blog.subtitle")}
+        </p>
+      </div>
+
+      <!-- Blog Posts Grid -->
+      {
+        publishedPosts.length > 0 ? (
+          <div class="grid gap-8 md:gap-12">
+            {publishedPosts.map((post) => (
+              <article class="group">
+                <a
+                  href={`/id/blog/${post.fields.slug}`}
+                  class="block p-6 md:p-8 rounded-2xl bg-dark-surface/50 border border-dark-border hover:border-primary/50 transition-all duration-300 hover:bg-dark-surface/70 focus-ring"
+                >
+                  <div class="flex flex-col md:flex-row md:items-start gap-6">
+                    {post.fields.featuredImage && (
+                      <div class="md:w-48 md:shrink-0">
+                        <img
+                          src={post.fields.featuredImage.fields.file.url}
+                          alt={post.fields.title}
+                          class="w-full h-48 md:h-32 object-cover rounded-lg"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <div class="flex-1">
+                      <div class="flex items-center gap-4 mb-3 text-sm text-white/50">
+                        <time datetime={post.fields.publishDate}>
+                          {formatDate(new Date(post.fields.publishDate), lang)}
+                        </time>
+                      </div>
+
+                      <h2 class="text-xl md:text-2xl font-bold text-white group-hover:text-primary transition-colors duration-300 mb-3">
+                        {post.fields.title}
+                      </h2>
+
+                      {post.fields.excerpt && (
+                        <p class="text-white/70 mb-4 line-clamp-3">
+                          {post.fields.excerpt}
+                        </p>
+                      )}
+
+                      {post.fields.tags && post.fields.tags.length > 0 && (
+                        <div class="flex flex-wrap gap-2">
+                          {post.fields.tags.map((tag) => (
+                            <span class="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-16">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-dark-surface/50 flex items-center justify-center">
+              <svg
+                class="w-12 h-12 text-white/30"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-white/80 mb-4">
+              Belum Ada Postingan
+            </h2>
+            <p class="text-white/60 max-w-md mx-auto">
+              Postingan blog akan segera hadir. Pantau terus untuk mendapatkan
+              konten menarik tentang teknologi dan pengembangan.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Light mode adjustments */
+  :global(body.light) main {
+    background-color: var(--color-light-bg);
+  }
+
+  :global(body.light) article a {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) article a:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: var(--color-primary);
+  }
+
+  :global(body.light) h1,
+  :global(body.light) h2 {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) p,
+  :global(body.light) time,
+  :global(body.light) span {
+    color: rgba(10, 10, 10, 0.7);
+  }
+
+  :global(body.light) .text-white\/50,
+  :global(body.light) .text-white\/60,
+  :global(body.light) .text-white\/70 {
+    color: rgba(10, 10, 10, 0.6);
+  }
+</style>

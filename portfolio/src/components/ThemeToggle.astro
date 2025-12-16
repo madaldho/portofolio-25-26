@@ -1,0 +1,140 @@
+---
+// Theme Toggle Component
+// Handles dark/light mode switching with smooth transitions
+---
+
+<button
+  id="theme-toggle"
+  class="relative w-12 h-12 rounded-full flex items-center justify-center
+         bg-dark-surface hover:bg-dark-surface-2 
+         transition-all duration-300 ease-out-expo
+         interactive border border-dark-border hover:border-primary
+         group focus-ring"
+  aria-label="Toggle theme"
+  title="Toggle dark/light mode"
+  data-cursor-hover
+>
+  <!-- Sun Icon (shown in dark mode) -->
+  <svg
+    id="sun-icon"
+    class="w-5 h-5 text-accent transition-all duration-300 absolute
+           group-hover:rotate-90 group-hover:text-primary"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    />
+  </svg>
+  
+  <!-- Moon Icon (shown in light mode) -->
+  <svg
+    id="moon-icon"
+    class="w-5 h-5 text-dark-bg transition-all duration-300 absolute hidden
+           group-hover:-rotate-12"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    />
+  </svg>
+</button>
+
+<script>
+  // Theme utilities
+  const THEME_KEY = 'theme';
+  type Theme = 'light' | 'dark';
+
+  function getSystemTheme(): Theme {
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function getStoredTheme(): Theme | null {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'light' || stored === 'dark') {
+      return stored;
+    }
+    return null;
+  }
+
+  function getCurrentTheme(): Theme {
+    return getStoredTheme() || getSystemTheme();
+  }
+
+  function setTheme(theme: Theme): void {
+    localStorage.setItem(THEME_KEY, theme);
+    
+    // Apply theme to document
+    document.documentElement.classList.toggle('light', theme === 'light');
+    document.body.classList.toggle('light', theme === 'light');
+    
+    // Update icons
+    updateIcons(theme);
+  }
+
+  function toggleTheme(): Theme {
+    const current = getCurrentTheme();
+    const next: Theme = current === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    return next;
+  }
+
+  function updateIcons(theme: Theme): void {
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    
+    if (sunIcon && moonIcon) {
+      if (theme === 'dark') {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+    }
+  }
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const theme = getCurrentTheme();
+    setTheme(theme);
+    
+    // Add click handler
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        toggleTheme();
+      });
+    }
+  });
+
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only update if no stored preference
+    if (!getStoredTheme()) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+</script>
+
+<style>
+  /* Light mode styles for the button */
+  :global(body.light) #theme-toggle {
+    background-color: var(--color-light-surface);
+    border-color: var(--color-light-border);
+  }
+  
+  :global(body.light) #theme-toggle:hover {
+    background-color: var(--color-light-bg);
+    border-color: var(--color-primary);
+  }
+</style>

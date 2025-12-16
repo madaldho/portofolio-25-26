@@ -1,0 +1,247 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCertificates, isContentfulConfigured, type ContentfulCertificate } from '../../../utils/contentful';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+let certificates: ContentfulCertificate[] = [];
+let isUsingContentful = false;
+
+try {
+  if (isContentfulConfigured()) {
+    certificates = await getCertificates(false, 'id-ID');
+    if (certificates.length > 0) {
+      isUsingContentful = true;
+    }
+  }
+} catch (error) {
+  console.warn('Error fetching certificates:', error);
+}
+
+// Category colors
+const categoryColors: Record<string, string> = {
+  programming: '#FF3D00',
+  cloud: '#6366F1',
+  design: '#EC4899',
+  marketing: '#10B981',
+  other: '#F59E0B',
+  // Localized keys mapping if needed, or fallback
+  pemrograman: '#FF3D00',
+  wan: '#6366F1',
+  desain: '#EC4899',
+  pemasaran: '#10B981',
+  lainnya: '#F59E0B'
+};
+
+// Helper to get image URL
+function getImageUrl(cert: ContentfulCertificate): string {
+  if (cert.fields.certificateImage?.fields?.file?.url) {
+    const url = cert.fields.certificateImage.fields.file.url;
+    return url.startsWith('//') ? `https:${url}` : url;
+  }
+  if (cert.fields.imageUrl) {
+    return cert.fields.imageUrl;
+  }
+  return 'https://images.unsplash.com/photo-1496469888073-80de7e952517?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80';
+}
+---
+
+<BaseLayout 
+  title={`${t('nav.certificates')} - Muhamad Ali Ridho`}
+  description="Sertifikasi profesional dan pencapaian"
+>
+  <main class="min-h-screen pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <p class="text-primary font-mono text-sm mb-4">// Pencapaian</p>
+        <h1 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+          <span class="gradient-text">Sertifikat</span> Saya
+        </h1>
+        <p class="text-white/60 max-w-2xl mx-auto">
+          Sertifikasi profesional dan pencapaian dari berbagai platform
+        </p>
+
+      </div>
+
+      <!-- Certificates Grid -->
+      {certificates.length > 0 ? (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {certificates.map((cert) => (
+            <article class="card-elevated group" data-cursor-hover>
+              <!-- Certificate Image -->
+              <div class="relative aspect-4/3 overflow-hidden cursor-pointer" 
+                   onclick={cert.fields.credentialUrl ? `window.open('${cert.fields.credentialUrl}', '_blank')` : `openImageModal('${getImageUrl(cert)}', '${cert.fields.title}')`}>
+                <img
+                  src={getImageUrl(cert)}
+                  alt={cert.fields.title}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
+                
+                <!-- Category Badge -->
+                {cert.fields.category && (
+                  <div
+                    class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
+                    style={`background: ${categoryColors[cert.fields.category.toLowerCase()] || categoryColors.other}`}
+                  >
+                    {cert.fields.category.toUpperCase()}
+                  </div>
+                )}
+
+                <!-- View indicator -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-dark-bg/50">
+                  <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                    {cert.fields.credentialUrl ? (
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    ) : (
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="p-6">
+                <!-- Issuer & Date -->
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-primary text-sm font-medium">{cert.fields.issuer}</span>
+                  <time class="text-white/50 text-xs font-mono">
+                    {new Date(cert.fields.issueDate).toLocaleDateString('id-ID', {
+                      year: 'numeric',
+                      month: 'short'
+                    })}
+                  </time>
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors text-white">
+                  {cert.fields.title}
+                </h3>
+
+                <!-- Description -->
+                {cert.fields.description && (
+                  <p class="text-white/60 text-sm line-clamp-2">
+                    {cert.fields.description}
+                  </p>
+                )}
+
+                <!-- Action Button -->
+                {cert.fields.credentialUrl && (
+                  <a
+                    href={cert.fields.credentialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 mt-4 text-primary hover:text-primary-light transition-colors text-sm font-medium"
+                  >
+                    Lihat Kredensial
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-semibold mb-2 text-white">Belum Ada Sertifikat</h2>
+          <p class="text-white/60">Sertifikat akan muncul di sini setelah ditambahkan.</p>
+        </div>
+      )}
+
+      <!-- Back to Home -->
+      <div class="text-center mt-12">
+        <a 
+          href="/id"
+          class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Kembali ke Beranda
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-modal hidden items-center justify-center p-4">
+    <button onclick="closeImageModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img id="modal-image" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-lg" />
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  function openImageModal(imageUrl, title) {
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    if (modal && modalImage) {
+      modalImage.src = imageUrl;
+      modalImage.alt = title;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById('image-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeImageModal();
+  });
+
+  // Close on backdrop click
+  document.getElementById('image-modal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeImageModal();
+  });
+</script>
+
+<style>
+  :global(body.light) main {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) h1,
+  :global(body.light) h2,
+  :global(body.light) h3 {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .text-white\/60 {
+    color: rgba(10, 10, 10, 0.6);
+  }
+  
+  :global(body.light) .text-white\/50 {
+    color: rgba(10, 10, 10, 0.5);
+  }
+
+  :global(body.light) .text-white {
+    color: var(--color-dark-bg);
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Admin Login - Muhamad Ali Ridho" description="Admin access for content management">
+  <div class="min-h-screen flex items-center justify-center bg-dark-bg">
+    <div class="max-w-md w-full mx-4">
+      <div class="bg-dark-surface rounded-2xl p-8 border border-dark-border">
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-display font-bold gradient-text mb-2">Admin Access</h1>
+          <p class="text-white/60">Enter password to manage content</p>
+        </div>
+
+        <form id="login-form" class="space-y-6">
+          <div>
+            <label for="password" class="block text-sm font-medium text-white/80 mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg
+                     text-white placeholder-white/40 focus:border-primary focus:outline-none
+                     transition-colors"
+              placeholder="Enter admin password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-primary hover:bg-primary-light text-white font-medium py-3 px-4
+                   rounded-lg transition-colors duration-300"
+          >
+            Login
+          </button>
+        </form>
+
+        <div id="error-message" class="mt-4 text-red-400 text-sm text-center hidden">
+          Invalid password. Please try again.
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { authenticate } from '../../utils/auth';
+
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
+
+  // Check if already authenticated
+  if (typeof window !== 'undefined' && sessionStorage.getItem('admin-auth') === 'true') {
+    window.location.href = '/admin-aldho/dashboard';
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const password = passwordInput.value;
+    
+    if (authenticate(password)) {
+      window.location.href = '/admin-aldho/dashboard';
+    } else {
+      errorMessage.classList.remove('hidden');
+      passwordInput.value = '';
+      passwordInput.focus();
+      
+      // Hide error after 3 seconds
+      setTimeout(() => {
+        errorMessage.classList.add('hidden');
+      }, 3000);
+    }
+  });
+</script>
+
+<style>
+  :global(body.light) .bg-dark-bg {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) .bg-dark-surface {
+    background-color: var(--color-light-surface);
+  }
+  
+  :global(body.light) .border-dark-border {
+    border-color: var(--color-light-border);
+  }
+  
+  :global(body.light) input {
+    background-color: var(--color-light-bg);
+    border-color: var(--color-light-border);
+    color: var(--color-dark-bg);
+  }
+  
+  :global(body.light) input::placeholder {
+    color: rgba(10, 10, 10, 0.4);
+  }
+  
+  :global(body.light) h1,
+  :global(body.light) p,
+  :global(body.light) label {
+    color: var(--color-dark-bg);
+  }
+</style>

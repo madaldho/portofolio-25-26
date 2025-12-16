@@ -1,0 +1,1176 @@
+---
+// Modern Rich Text Editor Component - WordPress-like experience
+---
+
+<div id="rich-text-editor" class="rich-text-editor">
+  <!-- Toolbar -->
+  <div
+    class="editor-toolbar bg-dark-surface border border-dark-border rounded-t-lg p-3 flex items-center gap-2 flex-wrap"
+  >
+    <!-- Text Formatting -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="bold"
+        title="Bold (Ctrl+B)"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="italic"
+        title="Italic (Ctrl+I)"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 4h-9m4 16H5m4-8h6m-6 0l4-8"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="underline"
+        title="Underline (Ctrl+U)"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 19l7-7 3 3-7 7-3-3z"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M18 13l-1.5-7.5L2 2l3.5 14.5L18 13z"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="strikeThrough"
+        title="Strikethrough"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 12h12M6 12l6-6m6 6l-6 6"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Headings -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <select class="toolbar-select" data-command="formatBlock" title="Heading">
+        <option value="">Normal</option>
+        <option value="h1">Heading 1</option>
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+        <option value="h4">Heading 4</option>
+        <option value="h5">Heading 5</option>
+        <option value="h6">Heading 6</option>
+      </select>
+    </div>
+
+    <!-- Lists -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertUnorderedList"
+        title="Bullet List"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertOrderedList"
+        title="Numbered List"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 4h18M3 12h18M3 20h18"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="outdent"
+        title="Decrease Indent"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="indent"
+        title="Increase Indent"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Alignment -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="justifyLeft"
+        title="Align Left"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 6h18M3 12h12M3 18h9"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="justifyCenter"
+        title="Align Center"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 6h18M7 12h10M9 18h6"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="justifyRight"
+        title="Align Right"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 6h18M9 12h12M12 18h9"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Links & Media -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="createLink"
+        title="Insert Link"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+          ></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="unlink"
+        title="Remove Link"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"
+          ></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertImage"
+        title="Insert Image"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Code & Special -->
+    <div
+      class="toolbar-group flex items-center gap-1 border-r border-dark-border pr-3"
+    >
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertCode"
+        title="Code Block"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        data-command="insertHorizontalRule"
+        title="Horizontal Line"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 12H4"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- View Options -->
+    <div class="toolbar-group flex items-center gap-1">
+      <button
+        type="button"
+        class="toolbar-btn"
+        id="toggle-source"
+        title="Toggle HTML Source"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"
+          ></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn"
+        id="toggle-preview"
+        title="Preview"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Editor Content -->
+  <div class="editor-container relative">
+    <!-- WYSIWYG Editor -->
+    <div
+      id="editor-content"
+      class="editor-content bg-dark-bg border-x border-dark-border min-h-[400px] p-4 text-white
+             focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-y-auto max-h-[600px]"
+      contenteditable="true"
+      data-placeholder="Start writing your content..."
+    >
+    </div>
+
+    <!-- HTML Source View -->
+    <textarea
+      id="editor-source"
+      class="editor-source hidden bg-dark-bg border-x border-dark-border min-h-[400px] p-4 text-white
+             font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none
+             max-h-[600px] overflow-y-auto"
+      placeholder="HTML source code..."></textarea>
+
+    <!-- Preview -->
+    <div
+      id="editor-preview"
+      class="editor-preview hidden bg-dark-bg border-x border-dark-border min-h-[400px] p-4 text-white
+             prose prose-invert max-w-none overflow-y-auto max-h-[600px]"
+    >
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div
+    class="editor-status bg-dark-surface border border-dark-border rounded-b-lg p-2 flex items-center justify-between text-xs text-white/60"
+  >
+    <div class="flex items-center gap-4">
+      <span id="word-count">0 words</span>
+      <span id="char-count">0 characters</span>
+      <span id="editor-mode">Visual</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-primary">●</span>
+      <span>Auto-save enabled</span>
+    </div>
+  </div>
+</div>
+
+<!-- Link Modal -->
+<div
+  id="link-modal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-modal"
+>
+  <div
+    class="bg-dark-surface rounded-xl border border-dark-border max-w-md w-full p-6"
+  >
+    <h3 class="text-lg font-semibold text-white mb-4">Insert Link</h3>
+    <div class="space-y-4">
+      <div>
+        <label
+          for="link-text"
+          class="block text-sm font-medium text-white/80 mb-2">Link Text</label
+        >
+        <input
+          type="text"
+          id="link-text"
+          class="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-lg text-white
+                 focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          placeholder="Link text"
+        />
+      </div>
+      <div>
+        <label
+          for="link-url"
+          class="block text-sm font-medium text-white/80 mb-2">URL</label
+        >
+        <input
+          type="url"
+          id="link-url"
+          class="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-lg text-white
+                 focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          placeholder="https://example.com"
+        />
+      </div>
+      <div class="flex items-center gap-3">
+        <input
+          type="checkbox"
+          id="link-new-tab"
+          class="w-4 h-4 text-primary bg-dark-bg border-dark-border rounded"
+        />
+        <label for="link-new-tab" class="text-sm text-white/80"
+          >Open in new tab</label
+        >
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button
+        type="button"
+        id="cancel-link"
+        class="px-4 py-2 text-white/70 hover:text-white transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        id="insert-link"
+        class="px-4 py-2 bg-primary hover:bg-primary-light text-white rounded-lg transition-colors"
+      >
+        Insert Link
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div
+  id="image-modal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-modal"
+>
+  <div
+    class="bg-dark-surface rounded-xl border border-dark-border max-w-md w-full p-6"
+  >
+    <h3 class="text-lg font-semibold text-white mb-4">Insert Image</h3>
+    <div class="space-y-4">
+      <div>
+        <label
+          for="image-url"
+          class="block text-sm font-medium text-white/80 mb-2">Image URL</label
+        >
+        <input
+          type="url"
+          id="image-url"
+          class="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-lg text-white
+                 focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+      <div>
+        <label
+          for="image-alt"
+          class="block text-sm font-medium text-white/80 mb-2">Alt Text</label
+        >
+        <input
+          type="text"
+          id="image-alt"
+          class="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-lg text-white
+                 focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          placeholder="Describe the image"
+        />
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-white/60 mb-2">Or upload from your device</p>
+        <input type="file" id="image-upload" accept="image/*" class="hidden" />
+        <button
+          type="button"
+          id="upload-image-btn"
+          class="px-4 py-2 bg-dark-border hover:bg-dark-border/80 text-white rounded-lg transition-colors"
+        >
+          Choose File
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button
+        type="button"
+        id="cancel-image"
+        class="px-4 py-2 text-white/70 hover:text-white transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        id="insert-image"
+        class="px-4 py-2 bg-primary hover:bg-primary-light text-white rounded-lg transition-colors"
+      >
+        Insert Image
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rich-text-editor {
+    font-family: var(--font-body);
+  }
+
+  .toolbar-btn {
+    @apply w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-dark-border transition-colors;
+  }
+
+  .toolbar-btn.active {
+    @apply bg-primary text-white;
+  }
+
+  .toolbar-select {
+    @apply px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-white text-sm
+           focus:border-primary focus:ring-1 focus:ring-primary transition-colors;
+  }
+
+  .editor-content {
+    line-height: 1.6;
+  }
+
+  .editor-content:empty::before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+
+  .editor-content h1 {
+    @apply text-3xl font-bold mb-4 mt-6 first:mt-0;
+  }
+  .editor-content h2 {
+    @apply text-2xl font-bold mb-3 mt-5 first:mt-0;
+  }
+  .editor-content h3 {
+    @apply text-xl font-bold mb-3 mt-4 first:mt-0;
+  }
+  .editor-content h4 {
+    @apply text-lg font-bold mb-2 mt-4 first:mt-0;
+  }
+  .editor-content h5 {
+    @apply text-base font-bold mb-2 mt-3 first:mt-0;
+  }
+  .editor-content h6 {
+    @apply text-sm font-bold mb-2 mt-3 first:mt-0;
+  }
+
+  .editor-content p {
+    @apply mb-4 last:mb-0;
+  }
+  .editor-content ul,
+  .editor-content ol {
+    @apply mb-4 pl-6;
+  }
+  .editor-content li {
+    @apply mb-1;
+  }
+  .editor-content blockquote {
+    @apply border-l-4 border-primary pl-4 italic mb-4;
+  }
+  .editor-content code {
+    @apply bg-dark-surface px-2 py-1 rounded text-sm font-mono;
+  }
+  .editor-content pre {
+    @apply bg-dark-surface p-4 rounded-lg mb-4 overflow-x-auto;
+  }
+  .editor-content pre code {
+    @apply bg-transparent p-0;
+  }
+  .editor-content hr {
+    @apply border-dark-border my-6;
+  }
+  .editor-content a {
+    @apply text-primary hover:text-primary-light underline;
+  }
+  .editor-content img {
+    @apply max-w-full h-auto rounded-lg mb-4;
+  }
+
+  .editor-content strong {
+    @apply font-bold;
+  }
+  .editor-content em {
+    @apply italic;
+  }
+  .editor-content u {
+    @apply underline;
+  }
+  .editor-content s {
+    @apply line-through;
+  }
+
+  /* Light theme */
+  :global(body.light) .rich-text-editor .bg-dark-surface {
+    background-color: var(--color-light-surface);
+  }
+
+  :global(body.light) .rich-text-editor .bg-dark-bg {
+    background-color: var(--color-light-bg);
+  }
+
+  :global(body.light) .rich-text-editor .border-dark-border {
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) .rich-text-editor .text-white {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .rich-text-editor .text-white\/70 {
+    color: rgba(10, 10, 10, 0.7);
+  }
+
+  :global(body.light) .rich-text-editor .text-white\/60 {
+    color: rgba(10, 10, 10, 0.6);
+  }
+
+  :global(body.light) .rich-text-editor .text-white\/40 {
+    color: rgba(10, 10, 10, 0.4);
+  }
+</style>
+
+<script>
+  class RichTextEditor {
+    private editor: HTMLElement;
+    private sourceEditor: HTMLTextAreaElement;
+    private preview: HTMLElement;
+    private toolbar: HTMLElement;
+    private currentMode: "visual" | "source" | "preview" = "visual";
+    private autoSaveTimer: number | null = null;
+    private linkModal: HTMLElement;
+    private imageModal: HTMLElement;
+
+    constructor() {
+      this.editor = document.getElementById("editor-content") as HTMLElement;
+      this.sourceEditor = document.getElementById(
+        "editor-source"
+      ) as HTMLTextAreaElement;
+      this.preview = document.getElementById("editor-preview") as HTMLElement;
+      this.toolbar = document.querySelector(".editor-toolbar") as HTMLElement;
+      this.linkModal = document.getElementById("link-modal") as HTMLElement;
+      this.imageModal = document.getElementById("image-modal") as HTMLElement;
+
+      this.init();
+    }
+
+    private init() {
+      this.setupToolbar();
+      this.setupEditor();
+      this.setupModals();
+      this.setupKeyboardShortcuts();
+      this.updateWordCount();
+    }
+
+    private setupToolbar() {
+      // Toolbar button handlers
+      this.toolbar.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        const button = target.closest(".toolbar-btn") as HTMLButtonElement;
+
+        if (button) {
+          e.preventDefault();
+          const command = button.dataset.command;
+          if (command) {
+            this.executeCommand(command);
+          }
+        }
+      });
+
+      // Format select handler
+      const formatSelect = this.toolbar.querySelector(
+        '[data-command="formatBlock"]'
+      ) as HTMLSelectElement;
+      formatSelect?.addEventListener("change", (e) => {
+        const target = e.target as HTMLSelectElement;
+        if (target.value) {
+          this.executeCommand("formatBlock", `<${target.value}>`);
+        } else {
+          this.executeCommand("formatBlock", "<div>");
+        }
+        target.value = "";
+      });
+
+      // View toggle handlers
+      document
+        .getElementById("toggle-source")
+        ?.addEventListener("click", () => {
+          this.toggleMode("source");
+        });
+
+      document
+        .getElementById("toggle-preview")
+        ?.addEventListener("click", () => {
+          this.toggleMode("preview");
+        });
+    }
+
+    private setupEditor() {
+      // Content change handler
+      this.editor.addEventListener("input", () => {
+        this.updateWordCount();
+        this.updateToolbarState();
+        this.scheduleAutoSave();
+      });
+
+      // Selection change handler
+      document.addEventListener("selectionchange", () => {
+        this.updateToolbarState();
+      });
+
+      // Paste handler
+      this.editor.addEventListener("paste", (e) => {
+        e.preventDefault();
+        const text = e.clipboardData?.getData("text/plain") || "";
+        this.insertText(text);
+      });
+
+      // Source editor sync
+      this.sourceEditor.addEventListener("input", () => {
+        this.editor.innerHTML = this.sourceEditor.value;
+        this.updateWordCount();
+      });
+    }
+
+    private setupModals() {
+      // Link modal
+      document.getElementById("cancel-link")?.addEventListener("click", () => {
+        this.closeLinkModal();
+      });
+
+      document.getElementById("insert-link")?.addEventListener("click", () => {
+        this.insertLinkFromModal();
+      });
+
+      // Image modal
+      document.getElementById("cancel-image")?.addEventListener("click", () => {
+        this.closeImageModal();
+      });
+
+      document.getElementById("insert-image")?.addEventListener("click", () => {
+        this.insertImageFromModal();
+      });
+
+      document
+        .getElementById("upload-image-btn")
+        ?.addEventListener("click", () => {
+          document.getElementById("image-upload")?.click();
+        });
+
+      document
+        .getElementById("image-upload")
+        ?.addEventListener("change", (e) => {
+          const target = e.target as HTMLInputElement;
+          const file = target.files?.[0];
+          if (file) {
+            this.handleImageUpload(file);
+          }
+        });
+
+      // Close modals on outside click
+      [this.linkModal, this.imageModal].forEach((modal) => {
+        modal?.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            this.closeLinkModal();
+            this.closeImageModal();
+          }
+        });
+      });
+    }
+
+    private setupKeyboardShortcuts() {
+      this.editor.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key.toLowerCase()) {
+            case "b":
+              e.preventDefault();
+              this.executeCommand("bold");
+              break;
+            case "i":
+              e.preventDefault();
+              this.executeCommand("italic");
+              break;
+            case "u":
+              e.preventDefault();
+              this.executeCommand("underline");
+              break;
+            case "k":
+              e.preventDefault();
+              this.showLinkModal();
+              break;
+          }
+        }
+      });
+    }
+
+    private executeCommand(command: string, value?: string) {
+      this.editor.focus();
+
+      switch (command) {
+        case "createLink":
+          this.showLinkModal();
+          break;
+        case "insertImage":
+          this.showImageModal();
+          break;
+        case "insertCode":
+          this.insertCodeBlock();
+          break;
+        default:
+          document.execCommand(command, false, value);
+          break;
+      }
+
+      this.updateToolbarState();
+      this.updateWordCount();
+    }
+
+    private insertText(text: string) {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(text));
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+
+    private insertCodeBlock() {
+      const code = prompt("Enter code:");
+      if (code) {
+        const pre = document.createElement("pre");
+        const codeEl = document.createElement("code");
+        codeEl.textContent = code;
+        pre.appendChild(codeEl);
+
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(pre);
+          range.collapse(false);
+        }
+      }
+    }
+
+    private showLinkModal() {
+      const selection = window.getSelection();
+      const selectedText = selection?.toString() || "";
+
+      const linkText = document.getElementById("link-text") as HTMLInputElement;
+      const linkUrl = document.getElementById("link-url") as HTMLInputElement;
+
+      if (linkText) linkText.value = selectedText;
+      if (linkUrl) linkUrl.value = "";
+
+      this.linkModal.classList.remove("hidden");
+      this.linkModal.classList.add("flex");
+      linkUrl?.focus();
+    }
+
+    private closeLinkModal() {
+      this.linkModal.classList.add("hidden");
+      this.linkModal.classList.remove("flex");
+    }
+
+    private insertLinkFromModal() {
+      const linkText = (
+        document.getElementById("link-text") as HTMLInputElement
+      ).value;
+      const linkUrl = (document.getElementById("link-url") as HTMLInputElement)
+        .value;
+      const newTab = (
+        document.getElementById("link-new-tab") as HTMLInputElement
+      ).checked;
+
+      if (linkUrl) {
+        const link = document.createElement("a");
+        link.href = linkUrl;
+        link.textContent = linkText || linkUrl;
+        if (newTab) link.target = "_blank";
+
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(link);
+          range.collapse(false);
+        }
+      }
+
+      this.closeLinkModal();
+    }
+
+    private showImageModal() {
+      this.imageModal.classList.remove("hidden");
+      this.imageModal.classList.add("flex");
+      (document.getElementById("image-url") as HTMLInputElement)?.focus();
+    }
+
+    private closeImageModal() {
+      this.imageModal.classList.add("hidden");
+      this.imageModal.classList.remove("flex");
+    }
+
+    private insertImageFromModal() {
+      const imageUrl = (
+        document.getElementById("image-url") as HTMLInputElement
+      ).value;
+      const imageAlt = (
+        document.getElementById("image-alt") as HTMLInputElement
+      ).value;
+
+      if (imageUrl) {
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = imageAlt || "";
+        img.style.maxWidth = "100%";
+
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(img);
+          range.collapse(false);
+        }
+      }
+
+      this.closeImageModal();
+    }
+
+    private handleImageUpload(file: File) {
+      // Create a preview URL for the uploaded image
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        (document.getElementById("image-url") as HTMLInputElement).value =
+          imageUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    private toggleMode(mode: "visual" | "source" | "preview") {
+      // Hide all views
+      this.editor.classList.add("hidden");
+      this.sourceEditor.classList.add("hidden");
+      this.preview.classList.add("hidden");
+
+      // Update content based on current mode
+      if (this.currentMode === "visual") {
+        this.sourceEditor.value = this.editor.innerHTML;
+      } else if (this.currentMode === "source") {
+        this.editor.innerHTML = this.sourceEditor.value;
+      }
+
+      // Show selected view
+      switch (mode) {
+        case "visual":
+          this.editor.classList.remove("hidden");
+          break;
+        case "source":
+          this.sourceEditor.classList.remove("hidden");
+          break;
+        case "preview":
+          this.preview.innerHTML = this.editor.innerHTML;
+          this.preview.classList.remove("hidden");
+          break;
+      }
+
+      this.currentMode = mode;
+      this.updateModeDisplay();
+    }
+
+    private updateModeDisplay() {
+      const modeDisplay = document.getElementById("editor-mode");
+      if (modeDisplay) {
+        const modes = {
+          visual: "Visual",
+          source: "HTML",
+          preview: "Preview",
+        };
+        modeDisplay.textContent = modes[this.currentMode];
+      }
+    }
+
+    private updateToolbarState() {
+      if (this.currentMode !== "visual") return;
+
+      const buttons = this.toolbar.querySelectorAll(
+        ".toolbar-btn[data-command]"
+      );
+      buttons.forEach((button) => {
+        const command = (button as HTMLElement).dataset.command;
+        if (
+          command &&
+          ["bold", "italic", "underline", "strikeThrough"].includes(command)
+        ) {
+          if (document.queryCommandState(command)) {
+            button.classList.add("active");
+          } else {
+            button.classList.remove("active");
+          }
+        }
+      });
+    }
+
+    private updateWordCount() {
+      const text = this.editor.textContent || "";
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const chars = text.length;
+
+      const wordCount = document.getElementById("word-count");
+      const charCount = document.getElementById("char-count");
+
+      if (wordCount) wordCount.textContent = `${words} words`;
+      if (charCount) charCount.textContent = `${chars} characters`;
+    }
+
+    private scheduleAutoSave() {
+      if (this.autoSaveTimer) {
+        clearTimeout(this.autoSaveTimer);
+      }
+
+      this.autoSaveTimer = window.setTimeout(() => {
+        this.autoSave();
+      }, 2000);
+    }
+
+    private autoSave() {
+      // Auto-save logic here
+      console.log("Auto-saving content...");
+
+      // Dispatch custom event for parent components
+      const event = new CustomEvent("richTextAutoSave", {
+        detail: {
+          content: this.getContent(),
+          html: this.getHTML(),
+        },
+      });
+      document.dispatchEvent(event);
+    }
+
+    // Public API
+    public getContent(): string {
+      return this.editor.textContent || "";
+    }
+
+    public getHTML(): string {
+      return this.editor.innerHTML;
+    }
+
+    public setContent(html: string) {
+      this.editor.innerHTML = html;
+      this.sourceEditor.value = html;
+      this.updateWordCount();
+    }
+
+    public clear() {
+      this.editor.innerHTML = "";
+      this.sourceEditor.value = "";
+      this.updateWordCount();
+    }
+
+    public focus() {
+      this.editor.focus();
+    }
+  }
+
+  // Initialize editor when DOM is loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    const richTextEditor = new RichTextEditor();
+
+    // Expose to global scope for external access
+    (window as any).richTextEditor = richTextEditor;
+  });
+</script>

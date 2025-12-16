@@ -1,0 +1,165 @@
+---
+import type { Document } from "@contentful/rich-text-types";
+import { renderRichText } from "../utils/richText";
+
+export interface Props {
+  content: Document;
+  className?: string;
+}
+
+const { content, className = "" } = Astro.props;
+
+// Render the rich text content to HTML (default to dark mode for SSR)
+const htmlContent = renderRichText(content, false);
+---
+
+<div
+  class={`rich-text-content ${className}`}
+  data-rich-text-content={JSON.stringify(content)}
+  set:html={htmlContent}
+/>
+
+<script>
+  // Client-side theme detection and re-rendering
+  function updateRichTextForTheme() {
+    const richTextElements = document.querySelectorAll(
+      "[data-rich-text-content]"
+    );
+    const isLightMode = document.body.classList.contains("light");
+
+    richTextElements.forEach((element) => {
+      const contentData = element.getAttribute("data-rich-text-content");
+      if (contentData) {
+        try {
+          const content = JSON.parse(contentData);
+          // Import renderRichText dynamically
+          import("../utils/richText.js").then(({ renderRichText }) => {
+            const newHtml = renderRichText(content, isLightMode);
+            element.innerHTML = newHtml;
+          });
+        } catch (error) {
+          console.warn("Failed to re-render rich text for theme:", error);
+        }
+      }
+    });
+  }
+
+  // Update on initial load
+  document.addEventListener("DOMContentLoaded", updateRichTextForTheme);
+
+  // Update when theme changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (
+        mutation.type === "attributes" &&
+        mutation.attributeName === "class"
+      ) {
+        updateRichTextForTheme();
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+</script>
+
+<style>
+  .rich-text-content {
+    /* Ensure proper spacing and typography */
+    line-height: 1.7;
+  }
+
+  /* Code block styling */
+  .rich-text-content pre {
+    background-color: var(--color-dark-surface);
+    border: 1px solid var(--color-dark-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+  }
+
+  .rich-text-content pre code {
+    background: transparent;
+    padding: 0;
+    color: white;
+  }
+
+  /* Table styling */
+  .rich-text-content table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--color-dark-border);
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  .rich-text-content th,
+  .rich-text-content td {
+    border: 1px solid var(--color-dark-border);
+    padding: 1rem;
+    text-align: left;
+  }
+
+  .rich-text-content th {
+    background-color: var(--color-dark-surface);
+    font-weight: 600;
+    color: white;
+  }
+
+  .rich-text-content td {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Light mode overrides */
+  :global(body.light) .rich-text-content pre {
+    background-color: var(--color-light-surface);
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) .rich-text-content pre code {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .rich-text-content table {
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) .rich-text-content th,
+  :global(body.light) .rich-text-content td {
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) .rich-text-content th {
+    background-color: var(--color-light-surface);
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .rich-text-content td {
+    color: rgba(31, 41, 55, 0.8);
+  }
+
+  /* Responsive images */
+  .rich-text-content img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Focus styles for accessibility */
+  .rich-text-content a:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-primary),
+      0 0 0 4px var(--color-dark-bg);
+  }
+
+  :global(body.light) .rich-text-content a:focus {
+    box-shadow:
+      0 0 0 2px var(--color-primary),
+      0 0 0 4px var(--color-light-bg);
+  }
+</style>

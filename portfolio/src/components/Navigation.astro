@@ -1,0 +1,478 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+import LanguagePicker from "./LanguagePicker.astro";
+import {
+  getLangFromUrl,
+  useTranslations,
+  useTranslatedPath,
+} from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: t("nav.home"), href: translatePath("/") },
+  { label: t("nav.about"), href: translatePath("/#about") },
+  { label: t("nav.projects"), href: translatePath("/#projects") },
+  { label: t("nav.blog"), href: translatePath("/blog") },
+  { label: t("nav.certificates"), href: translatePath("/#certificates") },
+  { label: t("nav.contact"), href: translatePath("/#contact") },
+];
+---
+
+<header
+  id="navbar"
+  class="fixed top-0 left-0 right-0 transition-all duration-500 z-navigation"
+>
+  <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a
+      href="/"
+      class="text-2xl font-display font-bold gradient-text interactive-subtle focus-ring"
+      data-cursor-hover
+    >
+      MAR
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center gap-6">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="nav-link text-sm font-medium text-white/70 hover:text-white 
+                 transition-colors duration-300 link-underline focus-ring"
+            data-section={link.href.replace("#", "")}
+            data-cursor-hover
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <div class="flex items-center gap-3">
+        <LanguagePicker />
+        <ThemeToggle />
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5
+             rounded-lg hover:bg-dark-surface transition-colors focus-ring"
+      aria-label="Toggle menu"
+    >
+      <span
+        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300"
+      ></span>
+      <span
+        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300"
+      ></span>
+      <span
+        class="hamburger-line w-4 h-0.5 bg-white transition-all duration-300 self-end mr-2"
+      ></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden fixed inset-0 bg-dark-bg/98 backdrop-blur-2xl
+           transform translate-x-full transition-transform duration-500 ease-out-expo
+           z-overlay flex flex-col pt-[72px]"
+  >
+    <!-- Gradient overlay for premium look -->
+    <div
+      class="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-secondary/5 pointer-events-none"
+    >
+    </div>
+
+    <div
+      class="relative flex flex-col items-center justify-start py-8 min-h-full gap-4 px-6 overflow-y-auto"
+    >
+      <!-- Close button indicator -->
+      <div class="w-12 h-1 bg-white/20 rounded-full mb-6 shrink-0"></div>
+
+      {
+        navLinks.map((link, index) => (
+          <a
+            href={link.href}
+            class="mobile-nav-link group text-xl md:text-2xl font-display font-bold text-white/80 
+                 hover:text-white transition-all duration-300
+                 opacity-0 translate-y-4 py-4 px-6 rounded-xl hover:bg-white/10
+                 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white/10
+                 w-full max-w-sm text-center border border-transparent hover:border-white/10
+                 active:scale-95 shrink-0"
+            data-section={link.href.replace("#", "")}
+            style={`animation-delay: ${index * 0.05}s`}
+          >
+            <span class="relative">
+              {link.label}
+              <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+            </span>
+          </a>
+        ))
+      }
+
+      <!-- Divider -->
+      <div class="w-full max-w-sm h-px bg-white/10 my-4 shrink-0"></div>
+
+      <!-- Language and Theme controls -->
+      <div
+        class="flex items-center justify-center gap-6 opacity-0 translate-y-4 transition-all duration-300 w-full max-w-sm shrink-0"
+      >
+        <div class="flex flex-col items-center gap-2">
+          <span class="text-xs text-white/50 uppercase tracking-wider"
+            >Language</span
+          >
+          <LanguagePicker />
+        </div>
+        <div class="w-px h-12 bg-white/10"></div>
+        <div class="flex flex-col items-center gap-2">
+          <span class="text-xs text-white/50 uppercase tracking-wider"
+            >Theme</span
+          >
+          <ThemeToggle />
+        </div>
+      </div>
+
+      <!-- Social hint -->
+      <p class="text-white/30 text-sm mt-8 pb-8 shrink-0">
+        Made with ❤️ by MAR
+      </p>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Wait for DOM to be fully loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    // Navbar scroll effect
+    const navbar = document.getElementById("navbar");
+
+    function handleScroll() {
+      const currentScroll = window.scrollY;
+
+      if (navbar) {
+        // Add background blur when scrolled
+        if (currentScroll > 50) {
+          navbar.classList.add(
+            "bg-dark-bg/80",
+            "backdrop-blur-xl",
+            "border-b",
+            "border-dark-border"
+          );
+        } else {
+          navbar.classList.remove(
+            "bg-dark-bg/80",
+            "backdrop-blur-xl",
+            "border-b",
+            "border-dark-border"
+          );
+        }
+      }
+    }
+
+    // Active section detection
+    function updateActiveSection() {
+      const sections = document.querySelectorAll("section[id]");
+      const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
+
+      let currentSection = "";
+      const scrollPosition = window.scrollY + 100;
+
+      sections.forEach((section) => {
+        const sectionTop = (section as HTMLElement).offsetTop;
+        const sectionHeight = (section as HTMLElement).offsetHeight;
+
+        if (
+          scrollPosition >= sectionTop &&
+          scrollPosition < sectionTop + sectionHeight
+        ) {
+          currentSection = section.id;
+        }
+      });
+
+      navLinks.forEach((link) => {
+        const linkSection = link.getAttribute("data-section");
+        if (linkSection === currentSection) {
+          link.classList.add("text-white", "active");
+          link.classList.remove("text-white/70");
+        } else {
+          link.classList.remove("text-white", "active");
+          link.classList.add("text-white/70");
+        }
+      });
+    }
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const hamburgerLines = document.querySelectorAll(".hamburger-line");
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+    let isMenuOpen = false;
+
+    function toggleMobileMenu() {
+      console.log("Toggle mobile menu called, current state:", isMenuOpen);
+      isMenuOpen = !isMenuOpen;
+
+      if (mobileMenu) {
+        if (isMenuOpen) {
+          // Show menu
+          mobileMenu.classList.remove("translate-x-full");
+          mobileMenu.classList.add("translate-x-0");
+          document.body.classList.add("menu-open");
+
+          // Animate links with delay
+          setTimeout(() => {
+            mobileNavLinks.forEach((link, index) => {
+              setTimeout(() => {
+                link.classList.remove("opacity-0", "translate-y-4");
+                link.classList.add("opacity-100", "translate-y-0");
+              }, index * 100);
+            });
+          }, 100);
+        } else {
+          // Hide menu
+          mobileMenu.classList.add("translate-x-full");
+          mobileMenu.classList.remove("translate-x-0");
+          document.body.classList.remove("menu-open");
+
+          // Reset links immediately
+          mobileNavLinks.forEach((link) => {
+            link.classList.add("opacity-0", "translate-y-4");
+            link.classList.remove("opacity-100", "translate-y-0");
+          });
+        }
+      }
+
+      // Animate hamburger
+      if (hamburgerLines.length >= 3) {
+        if (isMenuOpen) {
+          hamburgerLines[0].classList.add("rotate-45", "translate-y-2");
+          hamburgerLines[1].classList.add("opacity-0");
+          hamburgerLines[2].classList.add(
+            "-rotate-45",
+            "-translate-y-2",
+            "w-6"
+          );
+        } else {
+          hamburgerLines[0].classList.remove("rotate-45", "translate-y-2");
+          hamburgerLines[1].classList.remove("opacity-0");
+          hamburgerLines[2].classList.remove(
+            "-rotate-45",
+            "-translate-y-2",
+            "w-6"
+          );
+        }
+      }
+    }
+
+    // Close menu when clicking outside
+    function handleOutsideClick(e: Event) {
+      if (
+        isMenuOpen &&
+        mobileMenu &&
+        !mobileMenu.contains(e.target as Node) &&
+        !mobileMenuBtn?.contains(e.target as Node)
+      ) {
+        toggleMobileMenu();
+      }
+    }
+
+    // Close menu on escape key
+    function handleEscapeKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    }
+
+    // Smooth scroll for nav links
+    function handleNavClick(e: Event) {
+      const target = e.target as HTMLAnchorElement;
+      const href = target.getAttribute("href");
+      const currentPath = window.location.pathname;
+
+      // Handle links with hash (like /#about)
+      if (href?.includes("#")) {
+        const [path, hash] = href.split("#");
+        const targetPath = path || "/";
+
+        // If we're on the same page, scroll to section
+        if (
+          currentPath === targetPath ||
+          (currentPath === "/" && targetPath === "/")
+        ) {
+          e.preventDefault();
+          const element = document.getElementById(hash);
+
+          if (element) {
+            const offsetTop = element.offsetTop - 80;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: "smooth",
+            });
+
+            // Close mobile menu if open
+            if (isMenuOpen) {
+              toggleMobileMenu();
+            }
+          }
+        } else {
+          // Different page - let browser navigate, close menu first
+          if (isMenuOpen) {
+            toggleMobileMenu();
+          }
+        }
+      } else if (href === "/") {
+        // Home link - if already on home, scroll to top
+        if (currentPath === "/") {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          if (isMenuOpen) {
+            toggleMobileMenu();
+          }
+        } else {
+          // Navigate to home
+          if (isMenuOpen) {
+            toggleMobileMenu();
+          }
+        }
+      } else if (href && !href.startsWith("http")) {
+        // For internal page links like /blog, close menu first
+        if (isMenuOpen) {
+          toggleMobileMenu();
+        }
+      }
+    }
+
+    // Event listeners
+    window.addEventListener("scroll", () => {
+      handleScroll();
+      updateActiveSection();
+    });
+
+    // Mobile menu button click
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Mobile menu button clicked");
+        toggleMobileMenu();
+      });
+    }
+
+    // Outside click and escape key
+    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener("keydown", handleEscapeKey);
+
+    // Navigation links
+    document.querySelectorAll(".nav-link, .mobile-nav-link").forEach((link) => {
+      link.addEventListener("click", handleNavClick);
+    });
+
+    // Initial calls
+    handleScroll();
+    updateActiveSection();
+
+    console.log("Navigation script initialized");
+  });
+</script>
+
+<style>
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  :global(body.light) .nav-link {
+    color: rgba(10, 10, 10, 0.7);
+  }
+
+  :global(body.light) .nav-link:hover,
+  :global(body.light) .nav-link.active {
+    color: rgb(10, 10, 10);
+  }
+
+  :global(body.light) #navbar.bg-dark-bg\/80 {
+    background-color: rgba(245, 245, 240, 0.8);
+    border-color: var(--color-light-border);
+  }
+
+  :global(body.light) #mobile-menu {
+    background-color: rgba(255, 255, 255, 0.98);
+  }
+
+  :global(body.light) .hamburger-line {
+    background-color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .mobile-nav-link {
+    color: rgba(10, 10, 10, 0.8);
+    border-color: transparent;
+  }
+
+  :global(body.light) .mobile-nav-link:hover {
+    color: rgb(10, 10, 10);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(body.light) #mobile-menu .bg-white\/20,
+  :global(body.light) #mobile-menu .bg-white\/10 {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(body.light) #mobile-menu .text-white\/50,
+  :global(body.light) #mobile-menu .text-white\/30 {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  /* Mobile menu improvements */
+  #mobile-menu {
+    will-change: transform;
+  }
+
+  .mobile-nav-link {
+    will-change: opacity, transform;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      color 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .hamburger-line {
+    will-change: transform, opacity;
+  }
+
+  /* Prevent body scroll when menu is open */
+  :global(body.menu-open) {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+  }
+
+  /* Touch improvements for mobile */
+  @media (max-width: 768px) {
+    #mobile-menu-btn {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .mobile-nav-link {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>

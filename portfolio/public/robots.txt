@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://muhamadaliridho.me/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin-aldho/
+
+# Allow all other content
+Allow: /blog/
+Allow: /projects/
+Allow: /about/
+Allow: /contact/
+
+# Crawl delay
+Crawl-delay: 1

@@ -1,0 +1,226 @@
+---
+import { Image } from "astro:assets";
+import ImageOptimizer, { type ImageOptions } from "../utils/imageOptimization";
+
+interface Props extends ImageOptions {
+  src: string;
+  class?: string;
+  lazy?: boolean;
+  responsive?: boolean;
+  placeholder?: boolean;
+  priority?: boolean;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  quality = 80,
+  format = "webp",
+  loading = "lazy",
+  sizes,
+  class: className = "",
+  lazy = true,
+  responsive = true,
+  placeholder = true,
+  priority = false,
+} = Astro.props;
+
+// Generate responsive sizes if not provided
+const responsiveSizes =
+  sizes || (responsive ? ImageOptimizer.generateSizesAttribute() : undefined);
+
+// Generate srcset for responsive images
+const srcset = responsive
+  ? ImageOptimizer.generateResponsiveSizes(src, {}, format)
+  : undefined;
+
+// Generate picture sources for modern formats
+const pictureSources = ImageOptimizer.generatePictureSources(src, {
+  width,
+  height,
+  quality,
+  sizes: responsiveSizes,
+});
+
+// Generate blur placeholder
+const blurPlaceholder = placeholder
+  ? ImageOptimizer.generateBlurPlaceholder(src)
+  : undefined;
+
+// Optimize Contentful images
+const optimizedSrc = src.includes("ctfassets.net")
+  ? ImageOptimizer.optimizeContentfulImage(src, {
+      width,
+      height,
+      quality,
+      format,
+    })
+  : src;
+
+// Determine if image should be lazy loaded
+const shouldLazyLoad = lazy && !priority;
+const loadingStrategy = priority ? "eager" : shouldLazyLoad ? "lazy" : loading;
+
+// CSS classes for styling
+const imageClasses = [
+  className,
+  shouldLazyLoad ? "lazy" : "",
+  placeholder ? "blur-placeholder" : "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  responsive && pictureSources.length > 0 ? (
+    <picture class={`responsive-picture ${className}`}>
+      {pictureSources.map((source) => (
+        <source
+          srcset={source.srcset}
+          type={source.type}
+          sizes={source.sizes}
+        />
+      ))}
+      <Image
+        src={optimizedSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        quality={quality}
+        format={format}
+        loading={loadingStrategy}
+        class={imageClasses}
+        data-src={shouldLazyLoad ? optimizedSrc : undefined}
+        style={
+          blurPlaceholder
+            ? `background-image: url(${blurPlaceholder}); background-size: cover; background-position: center;`
+            : undefined
+        }
+      />
+    </picture>
+  ) : (
+    <Image
+      src={optimizedSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      quality={quality}
+      format={format}
+      loading={loadingStrategy}
+      sizes={responsiveSizes}
+      class={imageClasses}
+      data-src={shouldLazyLoad ? optimizedSrc : undefined}
+      style={
+        blurPlaceholder
+          ? `background-image: url(${blurPlaceholder}); background-size: cover; background-position: center;`
+          : undefined
+      }
+    />
+  )
+}
+
+<style>
+  .lazy {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .lazy.loaded {
+    opacity: 1;
+  }
+
+  .blur-placeholder {
+    background-color: #f3f4f6;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .responsive-picture {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .responsive-picture img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Aspect ratio containers */
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-photo {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Loading states */
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+</style>
+
+<script>
+  // Enhanced lazy loading with fade-in effect
+  document.addEventListener("DOMContentLoaded", () => {
+    const lazyImages = document.querySelectorAll("img.lazy");
+
+    if ("IntersectionObserver" in window) {
+      const imageObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const img = entry.target as HTMLImageElement;
+              const src = img.dataset.src || img.src;
+
+              // Create a new image to preload
+              const newImg = new Image();
+              newImg.onload = () => {
+                img.src = src;
+                img.classList.add("loaded");
+                img.classList.remove("lazy");
+              };
+              newImg.src = src;
+
+              observer.unobserve(img);
+            }
+          });
+        },
+        {
+          rootMargin: "50px 0px",
+          threshold: 0.01,
+        }
+      );
+
+      lazyImages.forEach((img) => imageObserver.observe(img));
+    } else {
+      // Fallback for browsers without IntersectionObserver
+      lazyImages.forEach((img) => {
+        const imgElement = img as HTMLImageElement;
+        const src = imgElement.dataset.src || imgElement.src;
+        imgElement.src = src;
+        imgElement.classList.remove("lazy");
+      });
+    }
+  });
+</script>

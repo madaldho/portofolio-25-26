@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSimpleBlogPosts, getBlogPosts, isContentfulConfigured } from '../../utils/contentful';
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+
+// Try to get blog posts from Contentful
+let blogPosts: any[] = [];
+let isUsingContentful = false;
+
+try {
+  if (isContentfulConfigured()) {
+    // Try rich text posts first (blogPost content type)
+    const richTextPosts = await getBlogPosts(false, 'en-US');
+    if (richTextPosts.length > 0) {
+      blogPosts = richTextPosts.map(post => {
+        // Get image: prefer uploaded asset, then default
+        let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+        if (post.fields.featuredImage?.fields?.file?.url) {
+          imageUrl = post.fields.featuredImage.fields.file.url.startsWith('//')
+            ? `https:${post.fields.featuredImage.fields.file.url}`
+            : post.fields.featuredImage.fields.file.url;
+        }
+        
+        return {
+          id: post.sys.id,
+          slug: post.fields.slug,
+          data: {
+            title: post.fields.title,
+            excerpt: post.fields.excerpt,
+            content: documentToHtmlString(post.fields.content),
+            tags: post.fields.tags || [],
+            publishDate: post.fields.publishDate,
+            publishedAt: post.fields.publishDate,
+            featuredImage: imageUrl,
+            readingTime: post.fields.readingTime || Math.ceil(
+              (documentToHtmlString(post.fields.content).replace(/<[^>]*>/g, '').split(' ').length || 100) / 200
+            )
+          }
+        };
+      });
+      isUsingContentful = true;
+    } else {
+      // Fallback to simple blog posts
+      const contentfulPosts = await getSimpleBlogPosts(false, 'en-US');
+      if (contentfulPosts.length > 0) {
+        // Transform Contentful blog posts to match expected structure
+        blogPosts = contentfulPosts.map(post => {
+          // Get image: prefer uploaded asset, then imageUrl field, then default
+          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+          if (post.fields.featuredImage?.fields?.file?.url) {
+            imageUrl = post.fields.featuredImage.fields.file.url.startsWith('//')
+              ? `https:${post.fields.featuredImage.fields.file.url}`
+              : post.fields.featuredImage.fields.file.url;
+          } else if (post.fields.imageUrl) {
+            imageUrl = post.fields.imageUrl;
+          }
+          
+          return {
+            id: post.sys.id,
+            slug: post.fields.slug,
+            data: {
+              title: post.fields.title,
+              excerpt: post.fields.excerpt,
+              content: post.fields.content,
+              tags: post.fields.tags || [],
+              publishDate: post.fields.publishDate,
+              publishedAt: post.fields.publishDate,
+              featuredImage: imageUrl,
+              readingTime: Math.ceil((typeof post.fields.content === 'string' ? post.fields.content.split(' ').length : 100) / 200)
+            }
+          };
+        });
+        isUsingContentful = true;
+      }
+    }
+  }
+} catch (error) {
+  console.warn('Error fetching from Contentful:', error);
+}
+
+// Fallback data if no Contentful posts
+if (blogPosts.length === 0) {
+  blogPosts = [
+    {
+      id: 'fallback-1',
+      slug: 'getting-started-with-astro',
+      data: {
+        title: 'Getting Started with Astro',
+        excerpt: 'Learn how to build fast, modern websites with Astro framework',
+        content: 'Astro is a modern web framework...',
+        tags: ['astro', 'web-development'],
+        publishDate: '2024-12-15',
+        publishedAt: '2024-12-15',
+        featuredImage: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+        readingTime: 5
+      }
+    }
+  ];
+}
+
+const sortedPosts = blogPosts.sort((a, b) => 
+  new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
+);
+---
+
+<BaseLayout 
+  title="Blog - Muhamad Ali Ridho" 
+  description="Tech insights, tutorials, and learning journey from Muhamad Ali Ridho. Explore articles about web development, IoT, AI/ML, and more."
+>
+  <main class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="section-padding bg-linear-to-br from-dark-bg via-dark-surface to-dark-bg">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="text-primary font-mono text-sm mb-4">// Tech Blog</p>
+        <h1 class="text-display text-4xl md:text-5xl lg:text-6xl mb-6">
+          Learning <span class="gradient-text">Journey</span>
+        </h1>
+        <p class="text-muted text-lg max-w-2xl mx-auto mb-8">
+          Sharing insights, tutorials, and discoveries from my exploration of technology.
+          From web development to IoT and AI/ML projects.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="section-padding">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sortedPosts.map((post) => (
+            <article class="card-elevated group" data-cursor-hover>
+              <!-- Featured Image -->
+              <div class="relative aspect-video overflow-hidden">
+                <img
+                  src={post.data.featuredImage}
+                  alt={post.data.title}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
+                
+                <!-- Reading Time -->
+                <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/80 backdrop-blur-sm rounded-full text-xs text-white">
+                  {post.data.readingTime} min read
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="p-6">
+                <!-- Date -->
+                <time class="text-primary text-sm font-mono">
+                  {new Date(post.data.publishDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+
+                <!-- Title -->
+                <h2 class="text-xl font-semibold mt-2 mb-3 group-hover:text-primary transition-colors">
+                  <a href={`/blog/${post.slug}`} class="hover:underline">
+                    {post.data.title}
+                  </a>
+                </h2>
+
+                <!-- Excerpt -->
+                <p class="text-muted text-sm mb-4 line-clamp-3">
+                  {post.data.excerpt}
+                </p>
+
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {Array.isArray(post.data.tags) && post.data.tags.slice(0, 3).map((tag: string) => (
+                    <span class="px-2 py-1 text-xs rounded-md bg-white/5 text-subtle">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+
+                <!-- Read More -->
+                <a 
+                  href={`/blog/${post.slug}`}
+                  class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
+                >
+                  Read More
+                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <!-- Empty State -->
+        {sortedPosts.length === 0 && (
+          <div class="text-center py-16">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
+              <svg class="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">No Blog Posts Yet</h3>
+            <p class="text-muted">Check back soon for new content!</p>
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  :global(body.light) main {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) .bg-gradient-to-br {
+    background: linear-gradient(to bottom right, var(--color-light-bg), var(--color-light-surface), var(--color-light-bg));
+  }
+  
+  :global(body.light) h1,
+  :global(body.light) h2,
+  :global(body.light) h3 {
+    color: var(--color-dark-bg);
+  }
+</style>

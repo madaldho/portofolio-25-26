@@ -1,0 +1,105 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navigation from "../components/Navigation.astro";
+---
+
+<BaseLayout
+  title="Page Not Found - Muhamad Ali Ridho"
+  description="The page you're looking for doesn't exist. Explore Muhamad Ali Ridho's portfolio and discover amazing tech projects."
+>
+  <main class="min-h-screen flex items-center justify-center px-4">
+    <div class="text-center max-w-2xl mx-auto">
+      <!-- 404 Animation -->
+      <div class="mb-8">
+        <h1
+          class="text-9xl font-bold text-transparent bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text animate-pulse"
+        >
+          404
+        </h1>
+      </div>
+
+      <!-- Error Message -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          Oops! Page Not Found
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+          The page you're looking for seems to have wandered off into the
+          digital void. But don't worry, there's plenty more to explore!
+        </p>
+      </div>
+
+      <!-- Navigation Options -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <a
+          href="/"
+          class="group bg-linear-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
+        >
+          <span class="flex items-center justify-center gap-2">
+            <svg
+              class="w-5 h-5 transition-transform group-hover:-translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              ></path>
+            </svg>
+            Go Home
+          </span>
+        </a>
+
+        <a
+          href="/blog"
+          class="group border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400"
+        >
+          <span class="flex items-center justify-center gap-2">
+            <svg
+              class="w-5 h-5 transition-transform group-hover:rotate-12"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
+            Read Blog
+          </span>
+        </a>
+      </div>
+
+      <!-- Search Suggestion -->
+      <div class="text-sm text-gray-500 dark:text-gray-400">
+        <p>
+          Looking for something specific? Try searching from the homepage or
+          check out my latest projects.
+        </p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Custom 404 animations */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+</style>

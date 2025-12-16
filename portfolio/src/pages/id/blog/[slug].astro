@@ -1,0 +1,360 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import RichText from "../../../components/RichText.astro";
+import {
+  getSimpleBlogPosts,
+  getBlogPosts,
+  isContentfulConfigured,
+} from "../../../utils/contentful";
+import {
+  formatDate,
+  getLangFromUrl,
+  useTranslations,
+} from "../../../i18n/utils";
+
+// Helper function to get field value from localized or string field
+function getFieldValue(field: any, locale: string = "id-ID"): string {
+  if (typeof field === "string") {
+    return field;
+  } else if (field && typeof field === "object") {
+    return field[locale] || field["en-US"] || Object.values(field)[0] || "";
+  }
+  return "";
+}
+
+// ... existing imports
+
+export async function getStaticPaths() {
+  let posts: any[] = [];
+
+  if (isContentfulConfigured()) {
+    // Try rich text posts first
+    const richTextPosts = await getBlogPosts(false, "id-ID");
+    if (richTextPosts.length > 0) {
+      posts = richTextPosts;
+    } else {
+      // Fallback
+      posts = await getSimpleBlogPosts(false, "id-ID");
+    }
+  } else {
+    // Fallback if not configured
+    posts = await getSimpleBlogPosts(false, "id-ID");
+  }
+
+  const publishedPosts = posts.filter(
+    (post) => post.fields && post.fields.title
+  );
+
+  return publishedPosts.map((post) => {
+    const slugValue =
+      typeof post.fields.slug === "string"
+        ? post.fields.slug
+        : post.fields.slug?.["id-ID"] ||
+          post.fields.slug?.["en-US"] ||
+          Object.values(post.fields.slug || {})[0] ||
+          "";
+
+    return {
+      params: { slug: slugValue },
+      props: { post },
+    };
+  });
+}
+
+const { slug } = Astro.params;
+const { post } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Use the post from static paths
+const currentPost = post;
+
+if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
+  return Astro.redirect("/id/blog");
+}
+---
+
+<BaseLayout
+  title={getFieldValue(currentPost.fields.title, "id-ID")}
+  description={getFieldValue(currentPost.fields.excerpt, "id-ID") ||
+    `${t("blog.publishedOn")} ${formatDate(new Date(currentPost.fields.publishDate), lang)}`}
+  image={currentPost.fields.featuredImage?.fields?.file?.url ||
+    currentPost.fields.imageUrl}
+>
+  <main class="min-h-screen pt-24 pb-16">
+    <article class="max-w-4xl mx-auto px-6">
+      <!-- Back to Blog -->
+      <div class="mb-8">
+        <a
+          href="/id/blog"
+          class="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-300 focus-ring rounded-lg px-3 py-2"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Kembali ke Blog
+        </a>
+      </div>
+
+      <!-- Article Header -->
+      <header class="mb-12">
+        {
+          (currentPost.fields.featuredImage?.fields?.file?.url ||
+            currentPost.fields.imageUrl) && (
+            <div class="mb-8">
+              <img
+                src={
+                  currentPost.fields.featuredImage?.fields?.file?.url ||
+                  currentPost.fields.imageUrl
+                }
+                alt={getFieldValue(currentPost.fields.title, "id-ID")}
+                class="w-full h-64 md:h-80 object-cover rounded-2xl"
+                loading="eager"
+              />
+            </div>
+          )
+        }
+
+        <div class="flex items-center gap-4 mb-6 text-sm text-white/50">
+          <time datetime={currentPost.fields.publishDate}>
+            {formatDate(new Date(currentPost.fields.publishDate), lang)}
+          </time>
+          <span>•</span>
+          <span>
+            {
+              Math.ceil(
+                (getFieldValue(currentPost.fields.content, "id-ID").split(" ")
+                  .length || 100) / 200
+              )
+            }
+            {t("blog.readTime")}
+          </span>
+        </div>
+
+        <h1
+          class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-6"
+        >
+          {getFieldValue(currentPost.fields.title, "id-ID")}
+        </h1>
+
+        {
+          getFieldValue(currentPost.fields.excerpt, "id-ID") && (
+            <p class="text-lg md:text-xl text-white/70 leading-relaxed mb-8">
+              {getFieldValue(currentPost.fields.excerpt, "id-ID")}
+            </p>
+          )
+        }
+
+        {
+          Array.isArray(currentPost.fields.tags) &&
+            currentPost.fields.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-8">
+                {currentPost.fields.tags.map((tag: string) => (
+                  <span class="px-3 py-1 text-sm font-medium bg-primary/10 text-primary rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )
+        }
+      </header>
+
+      <!-- Article Content -->
+      <div class="prose prose-invert prose-lg max-w-none">
+        {
+          getFieldValue(currentPost.fields.content, "id-ID") && (
+            <div class="whitespace-pre-wrap">
+              {getFieldValue(currentPost.fields.content, "id-ID")}
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Article Footer -->
+      <footer class="mt-16 pt-8 border-t border-dark-border">
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+        >
+          <!-- Share Buttons -->
+          <div class="flex items-center gap-4">
+            <span class="text-white/60 font-medium">Bagikan:</span>
+            <div class="flex items-center gap-3">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(getFieldValue(currentPost.fields.title, "id-ID"))}&url=${encodeURIComponent(Astro.url.toString())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-lg bg-dark-surface/50 hover:bg-dark-surface transition-colors duration-300 focus-ring"
+                aria-label="Bagikan di Twitter"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
+                  ></path>
+                </svg>
+              </a>
+
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(Astro.url.toString())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-lg bg-dark-surface/50 hover:bg-dark-surface transition-colors duration-300 focus-ring"
+                aria-label="Bagikan di LinkedIn"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Back to Blog -->
+          <a href="/id/blog" class="btn-secondary focus-ring">
+            Lihat Postingan Lainnya
+          </a>
+        </div>
+      </footer>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Custom prose styles for better readability */
+  .prose {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: white;
+    font-weight: 700;
+  }
+
+  .prose h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .prose h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+  }
+
+  .prose a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.3s ease;
+  }
+
+  .prose a:hover {
+    text-decoration-color: var(--color-primary);
+  }
+
+  .prose ul,
+  .prose ol {
+    margin: 1.25rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin: 0.5rem 0;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid var(--color-primary);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .prose code {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .prose pre {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .prose pre code {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  /* Light mode adjustments */
+  :global(body.light) main {
+    background-color: var(--color-light-bg);
+  }
+
+  :global(body.light) .prose {
+    color: rgba(10, 10, 10, 0.8);
+  }
+
+  :global(body.light) .prose h1,
+  :global(body.light) .prose h2,
+  :global(body.light) .prose h3,
+  :global(body.light) .prose h4,
+  :global(body.light) .prose h5,
+  :global(body.light) .prose h6 {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .prose blockquote {
+    color: rgba(10, 10, 10, 0.7);
+  }
+
+  :global(body.light) .prose code {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(body.light) .prose pre {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  :global(body.light) h1,
+  :global(body.light) .text-white {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) .text-white\/50,
+  :global(body.light) .text-white\/60,
+  :global(body.light) .text-white\/70 {
+    color: rgba(10, 10, 10, 0.6);
+  }
+
+  :global(body.light) footer {
+    border-color: var(--color-light-border);
+  }
+</style>

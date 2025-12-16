@@ -1,0 +1,261 @@
+---
+import { profile as defaultProfile } from '../data/profile';
+import { techInterests } from '../data/interests'; // Import techInterests
+import { journeyMilestones } from '../data/journey';
+import { getProfile, isContentfulConfigured } from '../utils/contentful';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const locale = lang === 'id' ? 'id-ID' : 'en-US';
+
+let profileData = {
+  name: defaultProfile.name,
+  role: defaultProfile.title,
+  bio: defaultProfile.bio,
+  avatar: defaultProfile.photo,
+  location: defaultProfile.location,
+  resume: undefined as string | undefined
+};
+
+try {
+  if (isContentfulConfigured()) {
+    // Fetch profile with locale
+    const contentfulProfile = await getProfile(false, locale);
+    if (contentfulProfile) {
+      profileData = {
+        name: contentfulProfile.fields.name,
+        role: contentfulProfile.fields.title,
+        bio: contentfulProfile.fields.bio,
+        avatar: contentfulProfile.fields.avatar?.fields?.file?.url 
+          ? (contentfulProfile.fields.avatar.fields.file.url.startsWith('//') 
+              ? `https:${contentfulProfile.fields.avatar.fields.file.url}` 
+              : contentfulProfile.fields.avatar.fields.file.url)
+          : defaultProfile.photo,
+        location: contentfulProfile.fields.location || defaultProfile.location,
+        resume: contentfulProfile.fields.resume?.fields?.file?.url
+          ? (contentfulProfile.fields.resume.fields.file.url.startsWith('//')
+              ? `https:${contentfulProfile.fields.resume.fields.file.url}`
+              : contentfulProfile.fields.resume.fields.file.url)
+          : undefined
+      };
+    }
+  }
+} catch (error) {
+  console.warn('Error fetching profile:', error);
+}
+---
+
+<section id="about" class="section-padding relative overflow-x-clip">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <p class="text-primary font-mono text-sm mb-4">// About Me</p>
+      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+        Get to Know <span class="gradient-text">Me</span>
+      </h2>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-12 items-start">
+      <!-- Left: Photo (4 columns) -->
+      <div class="lg:col-span-4 space-y-8 lg:sticky lg:top-24">
+        <!-- Photo with creative frame -->
+        <div class="relative group">
+          <div class="absolute -inset-4 bg-linear-to-r from-primary to-secondary rounded-2xl opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+          <div class="relative aspect-3/4 w-full mx-auto overflow-hidden rounded-2xl border-2 border-dark-border">
+            <div class="absolute inset-0 bg-linear-to-br from-primary/20 to-secondary/20"></div>
+            <img
+              src={profileData.avatar}
+              alt={profileData.name}
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <!-- Overlay pattern -->
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Bio & Tech Stack (8 columns) -->
+      <div class="lg:col-span-8 space-y-12">
+        <!-- Bio Section -->
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h3 class="text-3xl font-bold text-white">{profileData.name}</h3>
+            <p class="text-xl text-primary font-medium">{profileData.role}</p>
+          </div>
+          
+          <div class="prose prose-invert max-w-none">
+            <p class="text-lg text-muted leading-relaxed whitespace-pre-line">
+              {profileData.bio}
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6 pt-4 border-t border-dark-border">
+            <div class="flex items-center gap-2 text-subtle">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>{profileData.location}</span>
+            </div>
+            
+            {profileData.resume && (
+              <a 
+                href={profileData.resume} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 font-medium group"
+              >
+                <span>Download CV</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform group-hover:translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+
+        <!-- Tech Stack Marquee Section -->
+        <div class="space-y-6">
+          <h4 class="text-xl font-semibold text-white flex items-center gap-2">
+            <span class="text-primary">#</span> Tech Stack
+          </h4>
+          
+          <div class="marquee-container relative w-full overflow-hidden mask-gradient py-4 px-4 bg-dark-surface/50 rounded-2xl border border-dark-border">
+            <div class="marquee-content flex gap-4 animate-scroll hover:pause">
+              {[...techInterests, ...techInterests].map((interest) => (
+                <div
+                  class="shrink-0 w-64 card-elevated p-5 group cursor-default"
+                  style={`--interest-color: ${interest.color}`}
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                      style={`background: ${interest.color}15; color: ${interest.color}`}
+                    >
+                      {interest.icon === 'globe' ? (
+                        /* Globe/Code Icon */
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                      ) : interest.icon === 'palette' ? (
+                        /* Palette/Design Icon */
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                      ) : interest.icon === 'trending' ? (
+                        /* Chart/Marketing Icon */
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                      ) : interest.icon === 'tools' ? (
+                        /* Tools/Wrench Icon */
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 00-1 1v1a2 2 0 100 4 2 2 0 002 0v-1a1 1 0 00-1-1h-1a1 1 0 00-1 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                        </svg>
+                      ) : (
+                        /* Default Star Icon */
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-6.857-2.286L6 21l3.214-5.714L4 12l5.714-3.214z" />
+                        </svg>
+                      )}
+                    </div>
+                    <h5 class="text-base font-semibold group-hover:text-white transition-colors" style={`color: ${interest.color}`}>
+                      {interest.name}
+                    </h5>
+                  </div>
+                  
+                  {interest.currentlyLearning && (
+                    <div class="flex flex-wrap gap-2">
+                      {interest.currentlyLearning.map((item) => (
+                        <span
+                          class="px-2 py-0.5 text-[10px] rounded hover:scale-105 transition-transform"
+                          style={`background: ${interest.color}10; color: ${interest.color}`}
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey Timeline -->
+    <div class="mt-24">
+      <h3 class="text-heading text-2xl text-center mb-12">My Journey</h3>
+      
+      <div class="relative">
+        <!-- Timeline line -->
+        <div class="absolute left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-primary via-secondary to-accent hidden md:block"></div>
+        
+        <div class="space-y-8 md:space-y-0">
+          {journeyMilestones.map((milestone, index) => (
+            <div class={`relative md:flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+              <!-- Content -->
+              <div class={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
+                <div class={`p-6 card-elevated group
+                  ${milestone.highlight ? 'border-primary/50' : ''} 
+                  hover:border-primary/30`}>
+                  <span class="text-primary font-mono text-sm">{milestone.year}</span>
+                  <h4 class="text-xl font-semibold mt-2 mb-2 group-hover:text-primary transition-colors">
+                    {milestone.title}
+                  </h4>
+                  <p class="text-muted text-sm">{milestone.description}</p>
+                </div>
+              </div>
+              
+              <!-- Timeline dot -->
+              <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-dark-bg border-2 border-primary items-center justify-center">
+                {milestone.highlight && <div class="w-2 h-2 rounded-full bg-primary"></div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(body.light) #about {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) #about h2,
+  :global(body.light) #about h3,
+  :global(body.light) #about h4 {
+    color: var(--color-dark-bg);
+  }
+  
+  :global(body.light) #about p {
+    color: rgba(10, 10, 10, 0.7);
+  }
+  
+  :global(body.light) #about .bg-dark-surface {
+    background-color: var(--color-light-surface);
+    border-color: var(--color-light-border);
+  }
+
+  .mask-gradient {
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-scroll {
+    animation: scroll 40s linear infinite;
+    width: max-content;
+  }
+
+  .marquee-content:hover {
+    animation-play-state: paused;
+  }
+</style>

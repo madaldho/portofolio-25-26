@@ -1,0 +1,56 @@
+{
+  "mcpServers": {
+    "contentful": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@contentful/mcp-server"
+      ],
+      "env": {
+        "SPACE_ID": "hbrrn0bf99r5",
+        "CONTENTFUL_MANAGEMENT_ACCESS_TOKEN": "YOUR_TOKEN",
+        "ENVIRONMENT_ID": "master",
+        "CONTENTFUL_HOST": "api.contentful.com"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "get_initial_context",
+        "list_spaces",
+        "list_content_types",
+        "get_space",
+        "create_content_type",
+        "publish_content_type",
+        "upload_asset",
+        "publish_asset",
+        "create_entry",
+        "create_ai_action",
+        "update_content_type",
+        "publish_entry",
+        "search_entries",
+        "get_content_type",
+        "get_content_type",
+        "list_assets",
+        "update_entry",
+        "update_entry",
+        "update_entry",
+        "update_entry",
+        "update_entry",
+        "list_locales",
+        "create_locale"
+      ]
+    },
+    "astro-docs": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.docs.astro.build/mcp"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": [
+        "search_astro_docs"
+      ]
+    }
+  }
+}

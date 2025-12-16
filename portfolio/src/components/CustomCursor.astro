@@ -1,0 +1,177 @@
+---
+// Custom Cursor Component
+// Creates a liquid/blob cursor effect with glow
+---
+
+<div
+  id="cursor-container"
+  class="fixed inset-0 pointer-events-none hidden lg:block"
+  style="z-index: 99999; mix-blend-mode: exclusion;"
+>
+  <!-- Main cursor dot -->
+  <div
+    id="cursor-dot"
+    class="fixed w-3 h-3 bg-white rounded-full pointer-events-none opacity-0
+           transition-opacity duration-300"
+    style="transform: translate(-50%, -50%); z-index: 100001;"
+  >
+  </div>
+
+  <!-- Cursor ring/follower -->
+  <div
+    id="cursor-ring"
+    class="fixed w-8 h-8 border border-white/80 rounded-full pointer-events-none opacity-0
+           transition-all duration-100 ease-out"
+    style="transform: translate(-50%, -50%); z-index: 100000;"
+  >
+  </div>
+
+  <!-- Cursor glow -->
+  <div
+    id="cursor-glow"
+    class="fixed w-40 h-40 bg-white/5 rounded-full pointer-events-none blur-2xl opacity-0
+           transition-all duration-300 ease-out"
+    style="transform: translate(-50%, -50%); z-index: 99999;"
+  >
+  </div>
+</div>
+
+<script>
+  const cursorDot = document.getElementById("cursor-dot");
+  const cursorRing = document.getElementById("cursor-ring");
+  const cursorGlow = document.getElementById("cursor-glow");
+
+  let mouseX = -100;
+  let mouseY = -100;
+  let dotX = -100;
+  let dotY = -100;
+  let ringX = -100;
+  let ringY = -100;
+  let glowX = -100;
+  let glowY = -100;
+  let cursorVisible = false;
+
+  const dotSpeed = 1;
+  const ringSpeed = 0.2;
+  const glowSpeed = 0.1;
+
+  document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!cursorVisible) {
+      cursorVisible = true;
+      if (cursorDot) cursorDot.style.opacity = "1";
+      if (cursorRing) cursorRing.style.opacity = "1";
+      if (cursorGlow) cursorGlow.style.opacity = "1";
+      dotX = mouseX;
+      dotY = mouseY;
+      ringX = mouseX;
+      ringY = mouseY;
+      glowX = mouseX;
+      glowY = mouseY;
+    }
+  });
+
+  function animateCursor() {
+    dotX += (mouseX - dotX) * dotSpeed;
+    dotY += (mouseY - dotY) * dotSpeed;
+    ringX += (mouseX - ringX) * ringSpeed;
+    ringY += (mouseY - ringY) * ringSpeed;
+    glowX += (mouseX - glowX) * glowSpeed;
+    glowY += (mouseY - glowY) * glowSpeed;
+
+    if (cursorDot) {
+      cursorDot.style.left = `${dotX}px`;
+      cursorDot.style.top = `${dotY}px`;
+    }
+    if (cursorRing) {
+      cursorRing.style.left = `${ringX}px`;
+      cursorRing.style.top = `${ringY}px`;
+    }
+    if (cursorGlow) {
+      cursorGlow.style.left = `${glowX}px`;
+      cursorGlow.style.top = `${glowY}px`;
+    }
+    requestAnimationFrame(animateCursor);
+  }
+
+  animateCursor();
+
+  const interactiveSelectors =
+    "a, button, input, textarea, [data-cursor-hover], .interactive";
+
+  function updateInteractiveElements() {
+    const interactiveElements = document.querySelectorAll(interactiveSelectors);
+    interactiveElements.forEach((el) => {
+      if (el.hasAttribute("data-cursor-bound")) return;
+      el.setAttribute("data-cursor-bound", "true");
+
+      el.addEventListener("mouseenter", () => {
+        if (cursorDot) cursorDot.classList.add("scale-0");
+        if (cursorRing) {
+          cursorRing.classList.add(
+            "scale-[2.5]",
+            "bg-white/10",
+            "border-transparent"
+          );
+          cursorRing.classList.remove("border-white/80");
+        }
+      });
+
+      el.addEventListener("mouseleave", () => {
+        if (cursorDot) cursorDot.classList.remove("scale-0");
+        if (cursorRing) {
+          cursorRing.classList.remove(
+            "scale-[2.5]",
+            "bg-white/10",
+            "border-transparent"
+          );
+          cursorRing.classList.add("border-white/80");
+        }
+      });
+    });
+  }
+
+  updateInteractiveElements();
+
+  const mutationObserver = new MutationObserver(() => {
+    updateInteractiveElements();
+  });
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+  document.addEventListener("mouseleave", () => {
+    cursorVisible = false;
+    if (cursorDot) cursorDot.style.opacity = "0";
+    if (cursorRing) cursorRing.style.opacity = "0";
+    if (cursorGlow) cursorGlow.style.opacity = "0";
+  });
+
+  document.addEventListener("mouseenter", () => {
+    cursorVisible = true;
+    if (cursorDot) cursorDot.style.opacity = "1";
+    if (cursorRing) cursorRing.style.opacity = "1";
+    if (cursorGlow) cursorGlow.style.opacity = "1";
+  });
+
+  // Click effect
+  document.addEventListener("mousedown", () => {
+    if (cursorRing) cursorRing.classList.add("scale-75");
+  });
+  document.addEventListener("mouseup", () => {
+    if (cursorRing) cursorRing.classList.remove("scale-75");
+  });
+</script>
+
+<style>
+  @media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+    :global(body),
+    :global(a),
+    :global(button),
+    :global(input),
+    :global(textarea),
+    :global([data-cursor-hover]) {
+      cursor: none !important;
+    }
+  }
+</style>

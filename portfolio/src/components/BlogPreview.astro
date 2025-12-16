@@ -1,0 +1,223 @@
+---
+import { getSimpleBlogPosts, getBlogPosts, isContentfulConfigured, fallbackBlogPosts } from '../utils/contentful';
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const translatePath = useTranslatedPath(lang);
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  data: {
+    title: string;
+    excerpt: string;
+    tags: string[];
+    publishDate: string;
+    readingTime: number;
+    featuredImage: string;
+  };
+}
+
+// Try to get blog posts from Contentful
+let blogPosts: BlogPost[] = [];
+let isUsingContentful = false;
+
+try {
+  if (isContentfulConfigured()) {
+    // Try rich text posts first (blogPost content type)
+    const richTextPosts = await getBlogPosts(false, locale);
+    if (richTextPosts.length > 0) {
+      blogPosts = richTextPosts.map(post => {
+        // Get image: prefer uploaded asset, then default
+        let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+        if (post.fields.featuredImage?.fields?.file?.url) {
+          imageUrl = post.fields.featuredImage.fields.file.url.startsWith('//')
+            ? `https:${post.fields.featuredImage.fields.file.url}`
+            : post.fields.featuredImage.fields.file.url;
+        }
+        
+        return {
+          id: post.sys.id,
+          slug: post.fields.slug,
+          data: {
+            title: post.fields.title,
+            excerpt: post.fields.excerpt,
+            tags: post.fields.tags || [],
+            publishDate: post.fields.publishDate,
+            readingTime: post.fields.readingTime || Math.ceil(
+              (documentToHtmlString(post.fields.content).replace(/<[^>]*>/g, '').split(' ').length || 100) / 200
+            ),
+            featuredImage: imageUrl
+          }
+        };
+      });
+      isUsingContentful = true;
+    } else {
+      // Fallback to simple blog posts
+      const contentfulPosts = await getSimpleBlogPosts(false, locale);
+      if (contentfulPosts.length > 0) {
+        blogPosts = contentfulPosts.map(post => {
+          // Get image: prefer uploaded asset, then imageUrl field, then default
+          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+          if (post.fields.featuredImage?.fields?.file?.url) {
+            imageUrl = post.fields.featuredImage.fields.file.url.startsWith('//')
+              ? `https:${post.fields.featuredImage.fields.file.url}`
+              : post.fields.featuredImage.fields.file.url;
+          } else if (post.fields.imageUrl) {
+            imageUrl = post.fields.imageUrl;
+          }
+          
+          return {
+            id: post.sys.id,
+            slug: post.fields.slug,
+            data: {
+              title: post.fields.title,
+              excerpt: post.fields.excerpt,
+              tags: post.fields.tags || [],
+              publishDate: post.fields.publishDate,
+              readingTime: Math.ceil((typeof post.fields.content === 'string' ? post.fields.content.split(' ').length : 100) / 200),
+              featuredImage: imageUrl
+            }
+          };
+        });
+        isUsingContentful = true;
+      }
+    }
+  }
+} catch (error) {
+  console.warn('Error fetching blog posts from Contentful:', error);
+}
+
+// Fallback data if no Contentful posts
+if (blogPosts.length === 0) {
+  blogPosts = fallbackBlogPosts.map(post => ({
+    id: post.sys.id,
+    slug: post.fields.slug,
+    data: {
+      title: post.fields.title,
+      excerpt: post.fields.excerpt,
+      tags: post.fields.tags || [],
+      publishDate: post.fields.publishDate,
+      readingTime: Math.ceil((typeof post.fields.content === 'string' ? post.fields.content.split(' ').length : 100) / 200),
+      featuredImage: `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`
+    }
+  }));
+}
+
+// Sort by date and take latest 3
+const latestPosts = blogPosts
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
+  .slice(0, 3);
+---
+
+<section id="blog" class="section-padding relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <p class="text-primary font-mono text-sm mb-4">// Latest Posts</p>
+      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+        From My <span class="gradient-text">Blog</span>
+      </h2>
+      <p class="text-muted max-w-2xl mx-auto">
+        Sharing insights, tutorials, and discoveries from my tech journey
+      </p>
+
+    </div>
+
+    <!-- Blog Posts Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      {latestPosts.map((post) => (
+        <article class="card-elevated group" data-cursor-hover>
+          <!-- Featured Image -->
+          <div class="relative aspect-video overflow-hidden">
+            <img
+              src={post.data.featuredImage}
+              alt={post.data.title}
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
+            
+            <!-- Reading Time -->
+            <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/80 backdrop-blur-sm rounded-full text-xs text-white">
+              {post.data.readingTime} min read
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="p-6">
+            <!-- Date -->
+            <time class="text-primary text-sm font-mono">
+              {new Date(post.data.publishDate).toLocaleDateString(locale, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+
+            <!-- Title -->
+            <h3 class="text-xl font-semibold mt-2 mb-3 group-hover:text-primary transition-colors">
+              <a href={translatePath(`/blog/${post.slug}`)} class="hover:underline">
+                {post.data.title}
+              </a>
+            </h3>
+
+            <!-- Excerpt -->
+            <p class="text-muted text-sm mb-4 line-clamp-2">
+              {post.data.excerpt}
+            </p>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              {post.data.tags.slice(0, 3).map((tag: string) => (
+                <span class="px-2 py-1 text-xs rounded-md bg-white/5 text-subtle">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+
+            <!-- Read More -->
+            <a 
+              href={translatePath(`/blog/${post.slug}`)}
+              class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
+            >
+              Read More
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- View All Button -->
+    <div class="text-center">
+      <a 
+        href={translatePath('/blog')}
+        class="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary-light
+               text-white font-medium rounded-full transition-all duration-300
+               hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-1"
+        data-cursor-hover
+      >
+        View All Posts
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(body.light) #blog {
+    background-color: var(--color-light-surface);
+  }
+  
+  :global(body.light) #blog h2,
+  :global(body.light) #blog h3 {
+    color: var(--color-dark-bg);
+  }
+</style>
