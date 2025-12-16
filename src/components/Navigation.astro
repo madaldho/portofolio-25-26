@@ -125,6 +125,7 @@ const navLinks: NavLink[] = [
 
       <!-- Language and Theme controls -->
       <div
+        id="mobile-controls"
         class="flex items-center justify-center gap-6 opacity-0 translate-y-4 transition-all duration-300 w-full max-w-sm shrink-0"
       >
         <div class="flex flex-col items-center gap-2">
@@ -216,6 +217,7 @@ const navLinks: NavLink[] = [
     const mobileMenu = document.getElementById("mobile-menu");
     const hamburgerLines = document.querySelectorAll(".hamburger-line");
     const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+    const mobileControls = document.getElementById("mobile-controls");
     let isMenuOpen = false;
 
     function toggleMobileMenu() {
@@ -237,6 +239,14 @@ const navLinks: NavLink[] = [
                 link.classList.add("opacity-100", "translate-y-0");
               }, index * 100);
             });
+
+            // Animate controls
+            if (mobileControls) {
+              setTimeout(() => {
+                mobileControls.classList.remove("opacity-0", "translate-y-4");
+                mobileControls.classList.add("opacity-100", "translate-y-0");
+              }, mobileNavLinks.length * 100);
+            }
           }, 100);
         } else {
           // Hide menu
@@ -249,6 +259,12 @@ const navLinks: NavLink[] = [
             link.classList.add("opacity-0", "translate-y-4");
             link.classList.remove("opacity-100", "translate-y-0");
           });
+
+          // Reset controls
+          if (mobileControls) {
+            mobileControls.classList.add("opacity-0", "translate-y-4");
+            mobileControls.classList.remove("opacity-100", "translate-y-0");
+          }
         }
       }
 
@@ -299,16 +315,28 @@ const navLinks: NavLink[] = [
       const href = target.getAttribute("href");
       const currentPath = window.location.pathname;
 
+      // Always close mobile menu if it's open (failsafe)
+      if (target.classList.contains("mobile-nav-link") && isMenuOpen) {
+        toggleMobileMenu();
+      }
+
       // Handle links with hash (like /#about)
       if (href?.includes("#")) {
         const [path, hash] = href.split("#");
-        const targetPath = path || "/";
+        // Normalize paths (ensure they start with /)
+        const normalizedCurrentPath =
+          currentPath.endsWith("/") && currentPath.length > 1
+            ? currentPath.slice(0, -1)
+            : currentPath;
+        const normalizedTargetPath = path || "/";
 
-        // If we're on the same page, scroll to section
-        if (
-          currentPath === targetPath ||
-          (currentPath === "/" && targetPath === "/")
-        ) {
+        // Logic to determine if we are on the "same page" context
+        const isSamePage =
+          normalizedCurrentPath === normalizedTargetPath ||
+          (normalizedCurrentPath === "" && normalizedTargetPath === "/") ||
+          (normalizedCurrentPath === "/" && normalizedTargetPath === "");
+
+        if (isSamePage) {
           e.preventDefault();
           const element = document.getElementById(hash);
 
@@ -318,36 +346,16 @@ const navLinks: NavLink[] = [
               top: offsetTop,
               behavior: "smooth",
             });
-
-            // Close mobile menu if open
-            if (isMenuOpen) {
-              toggleMobileMenu();
-            }
-          }
-        } else {
-          // Different page - let browser navigate, close menu first
-          if (isMenuOpen) {
-            toggleMobileMenu();
+            // Update URL hash without scroll jump
+            history.pushState(null, "", `#${hash}`);
           }
         }
+        // Else: let browser navigate normally
       } else if (href === "/") {
-        // Home link - if already on home, scroll to top
+        // Home link
         if (currentPath === "/") {
           e.preventDefault();
           window.scrollTo({ top: 0, behavior: "smooth" });
-          if (isMenuOpen) {
-            toggleMobileMenu();
-          }
-        } else {
-          // Navigate to home
-          if (isMenuOpen) {
-            toggleMobileMenu();
-          }
-        }
-      } else if (href && !href.startsWith("http")) {
-        // For internal page links like /blog, close menu first
-        if (isMenuOpen) {
-          toggleMobileMenu();
         }
       }
     }
