@@ -452,3 +452,13 @@ body.light .success-state {
   z-index: var(--z-tooltip);
   position: absolute;
 }
+/* Infinite Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-100% / 3)); }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
