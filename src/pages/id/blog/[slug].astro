@@ -132,10 +132,17 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
           <span>•</span>
           <span>
             {
-              Math.ceil(
-                (getFieldValue(currentPost.fields.content, "id-ID").split(" ")
-                  .length || 100) / 200
-              )
+              (() => {
+                const content = currentPost.fields.content;
+                // Check if content is a string (simpleBlog) or object (blogPost Rich Text)
+                if (typeof content === "string") {
+                  return Math.ceil((content.split(/\s+/).length || 100) / 200);
+                } else if (content && typeof content === "object") {
+                  // Rich Text - use readingTime field or default to 5 min
+                  return currentPost.fields.readingTime || 5;
+                }
+                return 5; // Default fallback
+              })()
             }
             {t("blog.readTime")}
           </span>

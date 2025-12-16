@@ -5,7 +5,7 @@ import {
   getBlogPost,
   isContentfulConfigured,
 } from "../../utils/contentful";
-import { renderRichText } from "../../utils/richText";
+import { renderRichText, calculateReadingTime } from "../../utils/richText";
 import RichText from "../../components/RichText.astro";
 
 export const prerender = false;
@@ -51,11 +51,7 @@ try {
           featuredImage: imageUrl,
           readingTime:
             richTextPost.fields.readingTime ||
-            Math.ceil(
-              (renderRichText(richTextPost.fields.content)
-                .replace(/<[^>]*>/g, "")
-                .split(" ").length || 100) / 200
-            ),
+            calculateReadingTime(richTextPost.fields.content),
         },
       };
       isUsingContentful = true;
@@ -77,6 +73,11 @@ try {
           imageUrl = simplePost.fields.imageUrl;
         }
 
+        const contentString =
+          typeof simplePost.fields.content === "string"
+            ? simplePost.fields.content
+            : "";
+
         post = {
           id: simplePost.sys.id,
           slug: slug,
@@ -91,9 +92,7 @@ try {
             publishedAt: simplePost.fields.publishDate,
             featuredImage: imageUrl,
             readingTime: Math.ceil(
-              (typeof simplePost.fields.content === "string"
-                ? simplePost.fields.content.split(" ").length
-                : 100) / 200
+              (contentString.split(/\s+/).length || 100) / 200
             ),
           },
         };
