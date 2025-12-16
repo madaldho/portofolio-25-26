@@ -32,7 +32,7 @@ export const GET: APIRoute = async () => {
       <link>${link}</link>
       <guid isPermaLink="true">${link}</guid>
       <pubDate>${pubDate}</pubDate>
-      <author>hello@muhamadaliridho.me (Muhamad Ali Ridho)</author>
+      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
       <category>Technology</category>
     </item>`;
     }).join('\n');
@@ -46,8 +46,8 @@ export const GET: APIRoute = async () => {
     <description><![CDATA[${siteDescription}]]></description>
     <link>${siteUrl}</link>
     <language>en-us</language>
-    <managingEditor>hello@muhamadaliridho.me (Muhamad Ali Ridho)</managingEditor>
-    <webMaster>hello@muhamadaliridho.me (Muhamad Ali Ridho)</webMaster>
+    <managingEditor>aldhoproject@gmail.com (Muhamad Ali Ridho)</managingEditor>
+    <webMaster>aldhoproject@gmail.com (Muhamad Ali Ridho)</webMaster>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
     <image>

@@ -17,21 +17,25 @@ A modern, performance-focused portfolio website built with Astro 5.x, showcasing
 ## 🛠️ Tech Stack
 
 ### Core Framework
+
 - **Astro 5.x** - Static site generator with component islands
 - **TypeScript** - Type-safe development
 - **Node.js** - ES modules support
 
 ### Styling & UI
+
 - **Tailwind CSS 4.x** - Utility-first CSS framework
 - **Custom CSS** - Global styles and animations
 - **Responsive Design** - Mobile-first breakpoints
 
 ### Content Management
+
 - **Contentful** - Headless CMS for dynamic content
 - **Astro Content Collections** - Type-safe content with Zod schemas
 - **Rich Text Rendering** - Contentful rich text support
 
 ### Performance & SEO
+
 - **Image Optimization** - Astro's built-in image service with WebP/AVIF support
 - **Bundle Optimization** - Code splitting and minification
 - **Core Web Vitals Monitoring** - Performance tracking and analytics
@@ -40,6 +44,7 @@ A modern, performance-focused portfolio website built with Astro 5.x, showcasing
 - **RSS Feed** - Blog content syndication
 
 ### Development Tools
+
 - **Vitest** - Unit testing framework
 - **Zod** - Runtime type validation
 - **Fast-check** - Property-based testing
@@ -49,28 +54,33 @@ A modern, performance-focused portfolio website built with Astro 5.x, showcasing
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn package manager
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd portfolio
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 ```
 
 4. Add your Contentful credentials to `.env.local`:
+
 ```env
 CONTENTFUL_SPACE_ID=your_space_id
 CONTENTFUL_ACCESS_TOKEN=your_access_token
@@ -81,6 +91,7 @@ SITE_URL=http://localhost:4321
 ```
 
 5. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -90,6 +101,7 @@ Visit `http://localhost:4321` to see your site.
 ## 📝 Available Scripts
 
 ### Development
+
 - `npm run dev` - Start development server
 - `npm run build` - Optimized production build with validation
 - `npm run build:basic` - Basic Astro build without optimizations
@@ -97,12 +109,14 @@ Visit `http://localhost:4321` to see your site.
 - `npm run test` - Run unit tests
 
 ### Performance & SEO
+
 - `npm run seo:validate` - Validate SEO elements and structure
 - `npm run lighthouse` - Run Lighthouse performance audit
 - `npm run perf:audit` - Complete performance audit pipeline
 - `npm run optimize:build` - Run optimized build with analysis
 
 ### Setup & Maintenance
+
 - `npm run setup:images` - Download placeholder images from Unsplash
 - `npm run deploy:vercel` - Build and deploy to Vercel
 
@@ -141,15 +155,19 @@ portfolio/
 ## 🎨 Content Types
 
 ### Projects
+
 Technical projects with categories:
+
 - Web Development
-- Mobile Development  
+- Mobile Development
 - IoT Projects
 - AI/ML Projects
 - Other
 
 ### Blog Posts
+
 Dynamic blog content managed through Contentful with:
+
 - Rich text content
 - Featured images
 - Tags and categories
@@ -157,6 +175,7 @@ Dynamic blog content managed through Contentful with:
 - Auto-rebuild on publish
 
 ### Skills & Experience
+
 - Technical expertise levels
 - Professional journey timeline
 - Technology interests
@@ -167,12 +186,14 @@ Dynamic blog content managed through Contentful with:
 This site is optimized for deployment on Vercel with automatic rebuilds:
 
 ### Vercel Setup
+
 1. Connect your repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Configure Contentful webhooks for auto-deployment
 4. Deploy automatically on push to main branch
 
 ### Environment Variables for Production
+
 ```env
 CONTENTFUL_SPACE_ID=your_space_id
 CONTENTFUL_ACCESS_TOKEN=your_access_token
@@ -185,7 +206,9 @@ SITE_DESCRIPTION=Portfolio of Muhamad Ali Ridho, a Tech Enthusiast exploring AI,
 ```
 
 ### Contentful Webhook Configuration
+
 Set up webhooks in Contentful to trigger rebuilds:
+
 - **URL**: `https://your-domain.com/api/webhook/contentful`
 - **Events**: Entry publish, unpublish, delete
 - **Secret**: Use `CONTENTFUL_WEBHOOK_SECRET` for verification
@@ -193,7 +216,9 @@ Set up webhooks in Contentful to trigger rebuilds:
 ## 🔧 Configuration
 
 ### Astro Configuration
+
 The `astro.config.mjs` file includes optimizations for:
+
 - Static site generation
 - Image optimization with Sharp
 - CSS minification and code splitting
@@ -202,7 +227,9 @@ The `astro.config.mjs` file includes optimizations for:
 - Vercel-specific optimizations
 
 ### Vercel Configuration
+
 The `vercel.json` file includes:
+
 - Security headers
 - Cache optimization
 - Redirects and rewrites
@@ -211,21 +238,25 @@ The `vercel.json` file includes:
 ## 🧪 Testing & Validation
 
 ### Run Tests
+
 ```bash
 npm run test
 ```
 
 ### SEO Validation
+
 ```bash
 npm run seo:validate
 ```
 
 ### Performance Audit
+
 ```bash
 npm run perf:audit
 ```
 
 Tests include:
+
 - Component unit tests
 - Data validation tests
 - Property-based testing with fast-check
@@ -235,6 +266,7 @@ Tests include:
 ## 📊 Performance Optimizations
 
 This site is optimized for:
+
 - **Lighthouse Score**: 95+ across all metrics
 - **Core Web Vitals**: Excellent ratings
 - **SEO**: Targeting #1 ranking for "Muhamad Ali Ridho" and "madaldho"
@@ -244,6 +276,7 @@ This site is optimized for:
 - **Caching**: Optimal cache headers and CDN configuration
 
 ### SEO Features
+
 - Comprehensive meta tags and Open Graph
 - Schema.org structured data (Person, Website, Article)
 - Dynamic sitemap generation
@@ -253,6 +286,7 @@ This site is optimized for:
 - Local SEO for Jakarta, Indonesia
 
 ### Performance Monitoring
+
 - Core Web Vitals tracking
 - Resource loading monitoring
 - User engagement analytics
@@ -281,10 +315,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👨‍💻 Author
 
 **Muhamad Ali Ridho**
+
 - Website: [muhamadaliridho.me](https://muhamadaliridho.me)
 - GitHub: [@muhamadaliridho](https://github.com/muhamadaliridho)
 - LinkedIn: [muhamadaliridho](https://linkedin.com/in/muhamadaliridho)
-- Email: hello@muhamadaliridho.me
+- Email: aldhoproject@gmail.com
 
 ---
 

@@ -34,7 +34,7 @@ From building AI-powered applications to developing IoT systems and crafting mod
 When I'm not coding, you'll find me researching the latest tech trends, experimenting with new frameworks, or contributing to open-source projects.`,
     photo: "/profile-photo.jpg",
     location: "Jakarta, Indonesia",
-    email: "hello@muhamadaliridho.me",
+    email: "aldhoproject@gmail.com",
     resumeUrl: "/resume-en.pdf",
   },
   id: {
@@ -55,7 +55,7 @@ Dari membangun aplikasi bertenaga AI hingga mengembangkan sistem IoT dan mencipt
 Ketika saya tidak coding, Anda akan menemukan saya meneliti tren teknologi terbaru, bereksperimen dengan framework baru, atau berkontribusi pada proyek open-source.`,
     photo: "/profile-photo.jpg",
     location: "Jakarta, Indonesia",
-    email: "hello@muhamadaliridho.me",
+    email: "aldhoproject@gmail.com",
     resumeUrl: "/resume-id.pdf",
   },
 };
