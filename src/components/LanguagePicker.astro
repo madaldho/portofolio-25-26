@@ -11,26 +11,31 @@ const translatePath = useTranslatedPath(lang);
 const currentRoute = removeLocaleFromUrl(Astro.url.pathname);
 ---
 
-<div class="language-picker relative">
+<div class="language-picker relative group">
   <button
-    id="language-toggle"
-    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 text-white"
+    class="language-toggle-btn flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 text-white w-full justify-between focus:outline-none focus:ring-2 focus:ring-primary/50"
     aria-label="Select Language"
   >
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
-      ></path>
-    </svg>
-    <span class="text-sm font-medium">
-      {lang === "id" ? "ID" : "EN"}
-    </span>
+    <div class="flex items-center gap-2">
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+        ></path>
+      </svg>
+      <span class="text-sm font-medium">
+        {lang === "id" ? "ID" : "EN"}
+      </span>
+    </div>
     <svg
-      class="w-3 h-3 transition-transform duration-200"
-      id="language-chevron"
+      class="language-chevron w-3 h-3 transition-transform duration-200"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -44,8 +49,7 @@ const currentRoute = removeLocaleFromUrl(Astro.url.pathname);
   </button>
 
   <div
-    id="language-menu"
-    class="absolute right-0 top-full mt-2 w-48 bg-dark-surface/95 backdrop-blur-xl rounded-lg shadow-xl border border-dark-border opacity-0 invisible transform scale-95 transition-all duration-200 z-50"
+    class="language-menu absolute right-0 top-full mt-2 w-48 bg-dark-surface/95 backdrop-blur-xl rounded-lg shadow-xl border border-dark-border opacity-0 invisible transform scale-95 transition-all duration-200 z-50 origin-top-right group-hover:block nav-dropdown"
   >
     {
       Object.entries(languages).map(([langCode, label]) => (
@@ -86,58 +90,66 @@ const currentRoute = removeLocaleFromUrl(Astro.url.pathname);
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("language-toggle");
-    const menu = document.getElementById("language-menu");
-    const chevron = document.getElementById("language-chevron");
+    // Select all language pickers (desktop and mobile)
+    const pickers = document.querySelectorAll(".language-picker");
 
-    if (!toggle || !menu || !chevron) return;
+    pickers.forEach((picker) => {
+      const toggle = picker.querySelector(
+        ".language-toggle-btn"
+      ) as HTMLElement;
+      const menu = picker.querySelector(".language-menu") as HTMLElement;
+      const chevron = picker.querySelector(".language-chevron") as HTMLElement;
 
-    let isOpen = false;
+      if (!toggle || !menu || !chevron) return;
 
-    function openMenu() {
-      isOpen = true;
-      if (menu) {
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
         menu.classList.remove("opacity-0", "invisible", "scale-95");
         menu.classList.add("opacity-100", "visible", "scale-100");
-      }
-      if (chevron) {
         chevron.style.transform = "rotate(180deg)";
       }
-    }
 
-    function closeMenu() {
-      isOpen = false;
-      if (menu) {
+      function closeMenu() {
+        isOpen = false;
         menu.classList.add("opacity-0", "invisible", "scale-95");
         menu.classList.remove("opacity-100", "visible", "scale-100");
-      }
-      if (chevron) {
         chevron.style.transform = "rotate(0deg)";
       }
-    }
 
-    toggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      isOpen ? closeMenu() : openMenu();
-    });
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
 
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (
-        toggle &&
-        menu &&
-        !toggle.contains(e.target as Node) &&
-        !menu.contains(e.target as Node)
-      ) {
-        closeMenu();
-      }
-    });
+        // Close other open menus first
+        document.querySelectorAll(".language-menu").forEach((el) => {
+          if (el !== menu) {
+            el.classList.add("opacity-0", "invisible", "scale-95");
+            el.classList.remove("opacity-100", "visible", "scale-100");
+          }
+        });
 
-    // Close menu on escape key
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && isOpen) {
-        closeMenu();
-      }
+        // Toggle current
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!picker.contains(e.target as Node)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && isOpen) {
+          closeMenu();
+        }
+      });
     });
   });
 </script>

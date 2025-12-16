@@ -95,6 +95,7 @@ try {
           </div>
 
           <!-- Email -->
+          <!-- Email (Removed as per request) 
           <div>
             <label
               for="email"
@@ -106,7 +107,6 @@ try {
               type="email"
               id="email"
               name="email"
-              required
               class="w-full px-4 py-3 rounded-xl bg-dark-surface border border-dark-border
                      text-white placeholder-white/30 focus-ring
                      transition-colors"
@@ -114,6 +114,7 @@ try {
             />
             <p id="email-error" class="mt-1 text-sm text-red-500 hidden"></p>
           </div>
+          -->
 
           <!-- Message -->
           <div>
@@ -307,7 +308,6 @@ try {
 
 <script>
   const form = document.getElementById("contact-form") as HTMLFormElement;
-  const successMessage = document.getElementById("success-message");
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -320,7 +320,6 @@ try {
 
     const formData = new FormData(form);
     const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
     const message = formData.get("message") as string;
 
     let hasError = false;
@@ -328,13 +327,6 @@ try {
     // Validate name
     if (!name || name.trim().length === 0) {
       showError("name", "Name is required");
-      hasError = true;
-    }
-
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      showError("email", "Please enter a valid email address");
       hasError = true;
     }
 
@@ -346,19 +338,19 @@ try {
 
     if (hasError) return;
 
-    // Simulate form submission
-    const submitBtn = form.querySelector(
-      'button[type="submit"]'
-    ) as HTMLButtonElement;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = "<span>Sending...</span>";
+    // Create mailto link
+    // Target: aldhoproject@gmail.com
+    const emailTo = "aldhoproject@gmail.com";
+    const subject = `Portfolio Contact: ${name}`;
+    const body = `Name: ${name}\n\nMessage:\n${message}`;
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const mailtoLink = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Show success
-    form.classList.add("hidden");
-    successMessage?.classList.remove("hidden");
+    // Open mail client
+    window.location.href = mailtoLink;
+
+    // Optional: Reset form
+    form.reset();
   });
 
   function showError(field: string, message: string) {

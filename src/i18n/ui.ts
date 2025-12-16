@@ -120,6 +120,14 @@ export const ui = {
     'section.projects.label': 'My Work',
     'section.projects.desc': 'A collection of projects across different technology domains',
     'section.techStack': 'Tech Stack',
+
+    // Categories
+    'category.all': 'All',
+    'category.web': 'Web',
+    'category.mobile': 'Mobile',
+    'category.iot': 'IoT',
+    'category.aiMl': 'AI/ML',
+    'category.design': 'Design',
   },
   id: {
     // Navigation
