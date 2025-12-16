@@ -77,10 +77,5 @@
       "source": "/robots.txt",
       "destination": "/robots.txt"
     }
-  ],
-  "functions": {
-    "src/pages/api/**/*.ts": {
-      "maxDuration": 10
-    }
-  }
+  ]
 }
