@@ -1,5 +1,5 @@
 ---
-import { techInterests } from '../data/interests';
+
 import { journeyMilestones } from '../data/journey';
 import { getProfile, isContentfulConfigured } from '../utils/contentful';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
@@ -38,6 +38,19 @@ try {
 } catch (error) {
   console.warn('Error fetching profile in About:', error);
 }
+
+const techStackIcons = [
+  { name: 'HTML5', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
+  { name: 'CSS3', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
+  { name: 'JavaScript', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
+  { name: 'React', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+  { name: 'Astro', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/astro/astro-original.svg' },
+  { name: 'Tailwind CSS', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
+  { name: 'Figma', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+  { name: 'Git', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
+  { name: 'GitHub', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
+  { name: 'Node.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+];
 ---
 
 <section id="about" class="py-24 relative overflow-hidden bg-dark-bg">
@@ -58,9 +71,9 @@ try {
       </h2>
     </div>
 
-    <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-      <!-- LEFTSIDE: Photo (Sticky) -->
-      <div class="lg:col-span-5 lg:sticky lg:top-32">
+    <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+      <!-- LEFTSIDE: Photo -->
+      <div class="lg:col-span-5">
         <div class="relative group max-w-sm mx-auto lg:max-w-none">
           <!-- Artistic border/background -->
           <div class="absolute -inset-4 rounded-[2.5rem] bg-linear-to-tr from-primary/20 via-transparent to-secondary/20 blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
@@ -90,7 +103,7 @@ try {
           </div>
         </div>
 
-        <!-- Download CV Button Mobile (Optional placement) -->
+        <!-- Download CV Button Mobile -->
         <div class="mt-8 text-center lg:hidden">
           <a
             href={profileData.resume}
@@ -98,8 +111,8 @@ try {
             rel="noopener noreferrer"
             class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/25"
           >
-            <span>{lang === 'id' ? 'Unduh CV' : 'Download CV'}</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span>{t('about.downloadResume')}</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
           </a>
@@ -107,149 +120,118 @@ try {
       </div>
 
       <!-- RIGHTSIDE: Bio & Content -->
-      <div class="lg:col-span-7 space-y-16">
-        
+      <div class="lg:col-span-7 space-y-8">
         <!-- Bio -->
         <div class="space-y-6">
           <div>
-            <h3 class="text-3xl font-bold text-white mb-2">{profileData.name}</h3>
-            <p class="text-xl text-primary font-medium tracking-wide">{profileData.role}</p>
+            <h3 class="text-3xl lg:text-4xl font-bold text-white mb-2">{profileData.name}</h3>
+            <p class="text-xl text-primary font-medium tracking-wide font-mono">{profileData.role}</p>
           </div>
           
-          <div class="prose prose-invert prose-lg max-w-none text-muted leading-relaxed">
-            <p class="whitespace-pre-line">{profileData.bio}</p>
+          <div class="prose prose-invert prose-lg max-w-none">
+             <p class="text-muted leading-relaxed text-lg">
+                {t('about.description')}
+             </p>
           </div>
-
-          <!-- Desktop Download CV -->
-          <div class="hidden lg:block pt-4">
-             <a
-                href={profileData.resume}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-3 border-b-2 border-primary pb-1 text-white hover:text-primary transition-colors group"
-             >
-                <span class="font-medium">{lang === 'id' ? 'Unduh Resume Lengkap' : 'Download Full Resume'}</span>
-                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+          <div class="hidden lg:flex flex-wrap gap-4 pt-4">
+             <a href="#contact" class="px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-full transition-colors border border-white/10 hover:border-white/20 font-medium text-sm flex items-center gap-2 group">
+                {t('contact.title')}
+                <svg class="w-4 h-4 text-primary group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+             </a>
+             <a href={profileData.resume} target="_blank" class="px-8 py-3 bg-primary hover:bg-primary-light text-white rounded-full transition-colors font-medium text-sm flex items-center gap-2 shadow-lg hover:shadow-primary/25">
+                {t('about.downloadResume')}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
              </a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modern Infinite Tech Stack Slider -->
+    <!-- Modern Infinite Tech Stack Slider (Logos Only) -->
     <div class="mt-24 mb-24 relative">
          <div class="text-center mb-12">
-            <h4 class="text-2xl font-semibold text-white mb-2">{t('about.skills')}</h4>
+            <h4 class="text-2xl font-semibold text-white mb-3">{t('about.skills')}</h4>
             <div class="w-12 h-1 bg-primary mx-auto rounded-full"></div>
+            <p class="text-muted mt-4 max-w-2xl mx-auto">
+               {t('about.skillsDesc')}
+            </p>
          </div>
 
          <!-- Marquee Container -->
-         <div class="relative w-full overflow-hidden py-4 group">
+         <div class="relative w-full overflow-hidden py-8 group bg-dark-surface/30 border-y border-white/5 backdrop-blur-sm">
              <!-- Fade Gradients -->
-             <div class="absolute inset-y-0 left-0 w-20 md:w-32 bg-linear-to-r from-dark-bg to-transparent z-10 pointer-events-none"></div>
-             <div class="absolute inset-y-0 right-0 w-20 md:w-32 bg-linear-to-l from-dark-bg to-transparent z-10 pointer-events-none"></div>
+             <div class="absolute inset-y-0 left-0 w-24 bg-linear-to-r from-dark-bg to-transparent z-10 pointer-events-none"></div>
+             <div class="absolute inset-y-0 right-0 w-24 bg-linear-to-l from-dark-bg to-transparent z-10 pointer-events-none"></div>
 
-             <!-- Scrolling Track -->
-             <div class="flex gap-6 animate-marquee hover:pause whitespace-nowrap w-max">
-                 {[...techInterests, ...techInterests, ...techInterests].map((interest, i) => {
-                     let localizedName = interest.name;
-                     if (interest.id === 'web-dev') localizedName = t('skills.webDev.name' as any);
-                     else if (interest.id === 'design-creative') localizedName = t('skills.design.name' as any);
-                     else if (interest.id === 'digital-marketing') localizedName = t('skills.marketing.name' as any);
-                     else if (interest.id === 'tools') localizedName = t('skills.tools.name' as any);
-
-                     return (
-                     <div class="w-[280px] md:w-[320px] shrink-0 bg-dark-surface/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:border-primary/50 transition-colors duration-300 relative group/card">
-                        <!-- Glow Effect -->
-                        <div class="absolute inset-0 opacity-0 group-hover/card:opacity-20 transition-opacity duration-500 rounded-2xl pointer-events-none bg-radial-gradient" style={`background: radial-gradient(circle at center, ${interest.color}, transparent 70%);`}></div>
-                        
-                        <div class="flex items-center gap-4 mb-4 relative z-10">
-                           <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-white/5 group-hover/card:bg-white/10 transition-colors" style={`color: ${interest.color}`}>
-                               {interest.icon === 'globe' ? (
-                                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                               ) : interest.icon === 'palette' ? (
-                                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
-                               ) : interest.icon === 'trending' ? (
-                                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                               ) : interest.icon === 'tools' ? (
-                                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>
-                               ) : (
-                                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.214L18 21l-6.857-2.286L6 21l3.214-5.714L4 12l5.714-3.214z" /></svg>
-                               )}
-                           </div>
-                           <h5 class="font-semibold text-white text-lg">{localizedName}</h5>
-                        </div>
-
-                        <!-- Skill Tags Pillbox -->
-                        <div class="flex flex-wrap gap-2 relative z-10">
-                           {interest.currentlyLearning?.map(skill => (
-                              <span class="px-2.5 py-1 text-xs font-medium rounded-md bg-white/5 border border-white/5 text-white/70 group-hover/card:border-white/10 group-hover/card:bg-white/10 transition-colors">
-                                 {skill}
-                              </span>
-                           ))}
-                        </div>
-                     </div>
-                     );
-                 })}
+             <!-- Scrolling Content -->
+             <div class="flex gap-8 animate-marquee hover:pause whitespace-nowrap w-max items-center px-4">
+                 {[...techStackIcons, ...techStackIcons, ...techStackIcons, ...techStackIcons].map((tech) => (
+                      <div class="group/icon flex flex-col items-center gap-3 select-none px-4 transition-transform hover:scale-110 duration-300 cursor-pointer">
+                         <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center p-3 group-hover/icon:bg-white/10 group-hover/icon:border-primary/50 transition-all shadow-lg group-hover/icon:shadow-primary/20">
+                            <img 
+                               src={tech.url} 
+                               alt={tech.name}
+                               class="w-full h-full object-contain opacity-50 group-hover/icon:opacity-100 transition-opacity grayscale group-hover/icon:grayscale-0"
+                               loading="lazy"
+                            />
+                         </div>
+                         <span class="text-sm font-medium text-white/50 group-hover/icon:text-primary transition-colors">{tech.name}</span>
+                      </div>
+                  ))}
              </div>
          </div>
-      </div>
+    </div>
 
-      <!-- Centered Journey Section -->
-      <div class="max-w-4xl mx-auto">
-           <div class="text-center mb-12">
-             <h4 class="text-2xl font-semibold text-white mb-2">{t('about.journey')}</h4>
-             <div class="w-12 h-1 bg-primary mx-auto rounded-full"></div>
-           </div>
+    <!-- Centered Journey Section -->
+    <div class="max-w-4xl mx-auto">
+         <div class="text-center mb-12">
+           <h4 class="text-2xl font-semibold text-white mb-2">{t('about.journey')}</h4>
+           <div class="w-12 h-1 bg-primary mx-auto rounded-full"></div>
+         </div>
 
-           <div class="relative border-l border-white/10 ml-3 md:ml-0 md:pl-0 space-y-8 md:space-y-12 py-2">
-              <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 transform -translate-x-1/2"></div>
-              
-              {journeyMilestones.map((milestone, index) => {
-                const localizedTitle = t(`journey.${milestone.year}.title` as any) || milestone.title;
-                const localizedDesc = t(`journey.${milestone.year}.desc` as any) || milestone.description;
+         <div class="relative border-l border-white/10 ml-3 md:ml-0 md:pl-0 space-y-8 md:space-y-12 py-2">
+            <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 transform -translate-x-1/2"></div>
+            
+            {journeyMilestones.map((milestone, index) => {
+              const localizedTitle = t(`journey.${milestone.year}.title` as any) || milestone.title;
+              const localizedDesc = t(`journey.${milestone.year}.desc` as any) || milestone.description;
 
-                return (
-                <div class={`relative pl-8 md:pl-0 group md:flex md:items-center md:justify-between ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                   
-                   <!-- Timeline Dot (Mobile) -->
-                   <div class={`md:hidden absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full border border-dark-bg transition-colors duration-300 ${milestone.highlight ? 'bg-primary shadow-[0_0_10px_rgba(var(--color-primary),0.5)]' : 'bg-white/20 group-hover:bg-primary'}`}></div>
-                   
-                   <!-- Timeline Dot (Desktop) centered -->
-                   <div class={`hidden md:block absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-dark-bg z-10 transition-colors duration-300 ${milestone.highlight ? 'bg-primary shadow-[0_0_15px_rgba(var(--color-primary),0.6)] box-content' : 'bg-dark-surface border-white/20 group-hover:border-primary'}`}></div>
+              return (
+              <div class={`relative pl-8 md:pl-0 group md:flex md:items-center md:justify-between ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                 
+                 <!-- Timeline Dot (Mobile) -->
+                 <div class={`md:hidden absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full border border-dark-bg transition-colors duration-300 ${milestone.highlight ? 'bg-primary shadow-[0_0_10px_rgba(var(--color-primary),0.5)]' : 'bg-white/20 group-hover:bg-primary'}`}></div>
+                 
+                 <!-- Timeline Dot (Desktop) centered -->
+                 <div class={`hidden md:block absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-dark-bg z-10 transition-colors duration-300 ${milestone.highlight ? 'bg-primary shadow-[0_0_15px_rgba(var(--color-primary),0.6)] box-content' : 'bg-dark-surface border-white/20 group-hover:border-primary'}`}></div>
 
-                   <!-- Empty Space for Balance -->
-                   <div class="hidden md:block md:w-5/12"></div>
+                 <!-- Empty Space for Balance -->
+                 <div class="hidden md:block md:w-5/12"></div>
 
-                   <!-- Card Content -->
-                   <div class="md:w-5/12">
-                     <div class={`p-5 rounded-xl border border-white/5 bg-white/2 hover:bg-white/5 transition-colors group-hover:border-white/10 ${milestone.highlight ? 'border-primary/30 bg-primary/5' : ''}`}>
-                        <div class="flex items-center justify-between mb-2">
-                           <span class={`font-mono text-sm ${milestone.highlight ? 'text-primary font-bold' : 'text-white/40'}`}>
-                              {milestone.year}
-                           </span>
-                           {milestone.highlight && (
-                              <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                           )}
-                        </div>
-                        <h5 class="text-lg font-semibold text-white mb-2">
-                           {localizedTitle}
-                        </h5>
-                        <p class="text-muted text-sm leading-relaxed">
-                           {localizedDesc}
-                        </p>
-                     </div>
+                 <!-- Card Content -->
+                 <div class="md:w-5/12">
+                   <div class={`p-5 rounded-xl border border-white/5 bg-white/2 hover:bg-white/5 transition-colors group-hover:border-white/10 ${milestone.highlight ? 'border-primary/30 bg-primary/5' : ''}`}>
+                      <div class="flex items-center justify-between mb-2">
+                         <span class={`font-mono text-sm ${milestone.highlight ? 'text-primary font-bold' : 'text-white/40'}`}>
+                            {milestone.year}
+                         </span>
+                         {milestone.highlight && (
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                         )}
+                      </div>
+                      <h5 class="text-lg font-semibold text-white mb-2">
+                         {localizedTitle}
+                      </h5>
+                      <p class="text-muted text-sm leading-relaxed">
+                         {localizedDesc}
+                      </p>
                    </div>
+                 </div>
 
-                </div>
-              );
-              })}
-           </div>
-        </div>
-
-      </div>
+              </div>
+            );
+            })}
+         </div>
     </div>
   </div>
 </section>

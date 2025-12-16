@@ -29,9 +29,11 @@ export const ui = {
     'about.title': 'About Me',
     'about.subtitle': 'Get to know me better',
     'about.description': 'I\'m a passionate tech enthusiast with a deep interest in artificial intelligence, Internet of Things (IoT), and web development. I love exploring new technologies and creating innovative solutions that make a difference.',
-    'about.skills': 'Skills & Expertise',
+    'about.skills': 'Technical Expertise',
+    'about.skillsDesc': 'Technologies and tools I work with',
     'about.interests': 'Tech Interests',
     'about.journey': 'My Journey',
+    'about.downloadResume': 'Download Resume',
     
     // Projects Section
     'projects.title': 'Featured Projects',
@@ -138,11 +140,13 @@ export const ui = {
     
     // About Section
     'about.title': 'Tentang Saya',
-    'about.subtitle': 'Mari mengenal saya lebih baik',
-    'about.description': 'Saya adalah seorang tech enthusiast yang bersemangat dengan minat mendalam pada artificial intelligence, Internet of Things (IoT), dan web development. Saya suka mengeksplorasi teknologi baru dan menciptakan solusi inovatif yang membuat perbedaan.',
-    'about.skills': 'Keahlian & Expertise',
+    'about.subtitle': 'Mengenal saya lebih dekat',
+    'about.description': 'Saya seorang penggemar teknologi yang bersemangat dengan minat mendalam pada kecerdasan buatan, Internet of Things (IoT), dan pengembangan web.',
+    'about.skills': 'Keahlian Teknis',
+    'about.skillsDesc': 'Teknologi dan alat yang sering saya gunakan',
     'about.interests': 'Minat Teknologi',
     'about.journey': 'Perjalanan Saya',
+    'about.downloadResume': 'Unduh Resume',
     
     // Projects Section
     'projects.title': 'Proyek Unggulan',
