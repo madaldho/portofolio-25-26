@@ -568,16 +568,199 @@ export const fallbackBlogPosts: ContentfulSimpleBlog[] = [
   {
     sys: {
       id: 'fallback-blog-1',
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
+      createdAt: '2024-02-15T00:00:00Z',
+      updatedAt: '2024-02-15T00:00:00Z',
     },
     fields: {
-      title: 'Getting Started with Astro',
-      slug: 'getting-started-with-astro',
-      excerpt: 'Learn how to build fast, modern websites with Astro framework',
-      content: 'Astro is a modern web framework that allows you to build fast, content-focused websites...',
-      tags: ['astro', 'web-development', 'javascript'],
-      publishDate: '2024-01-01',
+      title: 'Cara Install Self-Hosted n8n di VPS Ubuntu',
+      slug: 'cara-install-n8n-vps-ubuntu',
+      excerpt: 'Panduan lengkap deploy n8n untuk otomasi workflow unlimited tanpa biaya langganan bulanan.',
+      content: 'n8n adalah tool workflow automation yang powerful. Dalam tutorial ini, kita akan install n8n menggunakan Docker di VPS Ubuntu...',
+      tags: ['automation', 'n8n', 'self-hosted', 'ubuntu'],
+      publishDate: '2024-02-15',
     },
   },
+  {
+    sys: {
+      id: 'fallback-blog-2',
+      createdAt: '2024-02-10T00:00:00Z',
+      updatedAt: '2024-02-10T00:00:00Z',
+    },
+    fields: {
+      title: 'Tutorial Mengaktifkan Gemini Nano di Android (AI on Device)',
+      slug: 'tutorial-gemini-nano-android',
+      excerpt: 'Cara akses model AI Google paling efisien, Gemini Nano, langsung di device Android kamu untuk performa offline.',
+      content: 'Gemini Nano membawa power LLM langsung ke saku Anda. Pelajari cara mengaktifkan AICore dan menggunakan API-nya...',
+      tags: ['ai', 'gemini', 'android', 'llm'],
+      publishDate: '2024-02-10',
+    },
+  },
+  {
+    sys: {
+      id: 'fallback-blog-3',
+      createdAt: '2024-02-01T00:00:00Z',
+      updatedAt: '2024-02-01T00:00:00Z',
+    },
+    fields: {
+      title: 'Deploy Telegram Bot Gratis dengan Cloudflare Workers',
+      slug: 'deploy-telegram-bot-cloudflare-workers',
+      excerpt: 'Bikin bot Telegram serverless dengan JavaScript yang bisa handle jutaan request tanpa biaya server.',
+      content: 'Lupakan Heroku atau VPS mahal. Cloudflare Workers adalah cara termudah dan termurah untuk hosting bot Telegram...',
+      tags: ['telegram', 'cloudflare', 'javascript', 'serverless'],
+      publishDate: '2024-02-01',
+    },
+  },
+];
+
+// Testimonial from Contentful
+export interface ContentfulTestimonial {
+  sys: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  fields: {
+    name: string;
+    role: string;
+    company: string;
+    quote: string;
+    avatar?: ContentfulAsset;
+    featured: boolean;
+  };
+}
+
+// Service from Contentful
+export interface ContentfulService {
+  sys: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  fields: {
+    title: string;
+    description: string;
+    icon: string; // Icon name string
+    features?: string[];
+    featured: boolean;
+  };
+}
+
+// API Functions for Testimonials
+export async function getTestimonials(preview = false, locale?: string): Promise<ContentfulTestimonial[]> {
+  try {
+    const client = preview ? previewClient : contentfulClient;
+    if (!client) {
+      console.warn('Contentful client not available');
+      return [];
+    }
+
+    const query: any = {
+      content_type: 'testimonial',
+      order: ['-sys.createdAt'],
+    };
+
+    if (locale) {
+      query.locale = locale;
+    }
+
+    const entries = await client.getEntries(query);
+    return entries.items as unknown as ContentfulTestimonial[];
+  } catch (error) {
+    console.warn('Error fetching testimonials from Contentful:', error);
+    return [];
+  }
+}
+
+// API Functions for Services
+export async function getServices(preview = false, locale?: string): Promise<ContentfulService[]> {
+  try {
+    const client = preview ? previewClient : contentfulClient;
+    if (!client) {
+      console.warn('Contentful client not available');
+      return [];
+    }
+
+    const query: any = {
+      content_type: 'service',
+      order: ['sys.createdAt'],
+    };
+
+    if (locale) {
+      query.locale = locale;
+    }
+
+    const entries = await client.getEntries(query);
+    return entries.items as unknown as ContentfulService[];
+  } catch (error) {
+    console.warn('Error fetching services from Contentful:', error);
+    return [];
+  }
+}
+
+// Fallback Testimonials
+export const fallbackTestimonials: ContentfulTestimonial[] = [
+  {
+    sys: { id: 't1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+    fields: {
+      name: 'Sarah Johnson',
+      role: 'CTO',
+      company: 'TechStart Inc',
+      quote: 'Ali delivered an exceptional web application that scaled with our user growth. His attention to detail and performance optimization is outstanding.',
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 't2', createdAt: '2024-01-02', updatedAt: '2024-01-02' },
+    fields: {
+      name: 'Michael Chen',
+      role: 'Product Manager',
+      company: 'InnovateLab',
+      quote: 'Working with Ali was seamless. He understood our requirements immediately and suggested improvements we hadn\'t thought of. Highly recommended for AI integrations.',
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 't3', createdAt: '2024-01-03', updatedAt: '2024-01-03' },
+    fields: {
+      name: 'David Smith',
+      role: 'Founder',
+      company: 'EcoSolutions',
+      quote: 'The IoT dashboard Ali built for us is intuitive and robust. It completely transformed how we monitor our field sensors.',
+      featured: true,
+    }
+  }
+];
+
+// Fallback Services
+export const fallbackServices: ContentfulService[] = [
+  {
+    sys: { id: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+    fields: {
+      title: 'Web App Development',
+      description: 'High-performance, scalable web applications built with modern frameworks like Astro, React, and Next.js.',
+      icon: 'code',
+      features: ['Custom Architecture', 'Performance Optimization', 'SEO-ready'],
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 's2', createdAt: '2024-01-02', updatedAt: '2024-01-02' },
+    fields: {
+      title: 'AI Solutions',
+      description: 'Integrating intelligent agents and machine learning models to automate workflows and enhance user experience.',
+      icon: 'cpu',
+      features: ['LLM Integration', 'Automation Scripts', 'Smart Analysis'],
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 's3', createdAt: '2024-01-03', updatedAt: '2024-01-03' },
+    fields: {
+      title: 'IoT Systems',
+      description: 'End-to-end IoT solutions from firmware to cloud dashboards for real-time monitoring and control.',
+      icon: 'wifi',
+      features: ['Firmware Development', 'MQTT/WebSocket', 'Real-time Dashboards'],
+      featured: true,
+    }
+  }
 ];

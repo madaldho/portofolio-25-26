@@ -1,11 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import { getSimpleProjects, isContentfulConfigured } from '../utils/contentful';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const locale = lang === 'id' ? 'id-ID' : 'en-US';
 const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 
 // Try to get projects from Contentful first, fallback to static content
 let projects: any[] = [];
@@ -154,11 +155,12 @@ const categoryColors: Record<string, string> = {
     </div>
     <!-- Projects Grid -->
     <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {sortedProjects.map((project) => (
+      {sortedProjects.map((project, index) => (
         <article
           class="project-card group card-elevated"
           data-category={project.data.category}
           data-cursor-hover
+          style={index >= 3 ? "display: none;" : ""}
         >
           <!-- Thumbnail -->
           <div class="relative aspect-video overflow-hidden">
@@ -251,6 +253,18 @@ const categoryColors: Record<string, string> = {
         </article>
       ))}
     </div>
+    </div>
+
+    <!-- View All Projects Button -->
+    <div class="text-center mt-12">
+      <a 
+        href={translatePath('/projects')}
+        class="btn-secondary min-w-[160px]"
+        data-cursor-hover
+      >
+        {t('projects.viewAll' as any) || 'View All Projects'}
+      </a>
+    </div>
   </div>
 </section>
 
@@ -268,14 +282,20 @@ const categoryColors: Record<string, string> = {
       btn.setAttribute('data-active', 'true');
       
       // Filter projects
+      let visibleCount = 0;
+      
       projectCards.forEach((card) => {
         const cardCategory = card.getAttribute('data-category');
-        if (category === 'all' || cardCategory === category) {
+        const isMatch = category === 'all' || cardCategory === category;
+
+        if (isMatch && visibleCount < 3) {
+          visibleCount++;
           (card as HTMLElement).style.display = 'block';
+          // Small timeout to allow display:block to apply before opacity transition
           setTimeout(() => {
             (card as HTMLElement).style.opacity = '1';
             (card as HTMLElement).style.transform = 'translateY(0)';
-          }, 50);
+          }, 10);
         } else {
           (card as HTMLElement).style.opacity = '0';
           (card as HTMLElement).style.transform = 'translateY(20px)';

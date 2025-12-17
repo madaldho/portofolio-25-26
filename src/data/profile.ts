@@ -23,7 +23,7 @@ export const profiles: MultilingualProfile = {
     rotatingTexts: [
       "I create innovative solutions",
       "I explore AI technologies",
-      "I build IoT projects",
+      "I build WoW Projects",
       "I develop web applications",
       "I love emerging tech",
     ],
@@ -44,7 +44,7 @@ When I'm not coding, you'll find me researching the latest tech trends, experime
     rotatingTexts: [
       "Saya menciptakan solusi inovatif",
       "Saya mengeksplorasi teknologi AI",
-      "Saya membangun proyek IoT",
+      "Saya membangun proyek WoW",
       "Saya mengembangkan aplikasi web",
       "Saya menyukai teknologi baru",
     ],

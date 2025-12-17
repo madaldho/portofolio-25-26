@@ -1,0 +1,206 @@
+---
+import {
+  getTestimonials,
+  isContentfulConfigured,
+  fallbackTestimonials,
+  type ContentfulTestimonial,
+} from "../utils/contentful";
+import { getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const locale = lang === "id" ? "id-ID" : "en-US";
+
+let testimonials: ContentfulTestimonial[] = [];
+
+try {
+  if (isContentfulConfigured()) {
+    testimonials = await getTestimonials(false, locale);
+  }
+} catch (error) {
+  console.warn("Error fetching testimonials:", error);
+}
+
+// Use fallback if no testimonials found
+if (testimonials.length === 0) {
+  testimonials = fallbackTestimonials;
+}
+---
+
+<section id="testimonials" class="py-20 relative overflow-hidden bg-dark-bg/50">
+  <!-- Decoration -->
+  <div
+    class="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/20 to-transparent"
+  >
+  </div>
+  <div
+    class="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-secondary/20 to-transparent"
+  >
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      <!-- Left: Header -->
+      <div class="lg:col-span-4">
+        <p class="text-primary font-mono text-sm mb-4">// Testimonials</p>
+        <h2 class="text-display text-4xl mb-6">
+          {lang === "id" ? "Apa Kata Mereka" : "What They Say"}
+        </h2>
+        <p class="text-muted mb-8">
+          {
+            lang === "id"
+              ? "Pengalaman dari mereka yang telah berkolaborasi dengan saya."
+              : "Experiences from those who have collaborated with me on various projects."
+          }
+        </p>
+
+        <!-- Navigation Buttons -->
+        <div class="flex gap-4">
+          <button
+            id="prev-testimonial"
+            class="w-12 h-12 rounded-full border border-white/10 hover:border-primary hover:text-primary flex items-center justify-center transition-all focus-ring"
+            aria-label="Previous testimonial"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path></svg
+            >
+          </button>
+          <button
+            id="next-testimonial"
+            class="w-12 h-12 rounded-full border border-white/10 hover:border-primary hover:text-primary flex items-center justify-center transition-all focus-ring"
+            aria-label="Next testimonial"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"></path></svg
+            >
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Slider -->
+      <div class="lg:col-span-8 overflow-hidden relative">
+        <div
+          class="testimonial-slider flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 hide-scrollbar scroll-smooth"
+        >
+          {
+            testimonials.map((testimonial) => (
+              <div class="min-w-[300px] md:min-w-[400px] snap-start">
+                <div class="card-elevated p-8 h-full relative group">
+                  <div class="absolute top-6 right-8 text-primary/20 text-6xl font-serif leading-none select-none group-hover:text-primary/40 transition-colors">
+                    ”
+                  </div>
+
+                  <p class="text-lg text-white/90 mb-6 relative z-10 italic">
+                    "{testimonial.fields.quote}"
+                  </p>
+
+                  <div class="flex items-center gap-4 mt-auto">
+                    <div class="w-12 h-12 rounded-full bg-white/10 overflow-hidden flex items-center justify-center text-xl font-bold text-white/50">
+                      {testimonial.fields.avatar?.fields?.file?.url ? (
+                        <img
+                          src={testimonial.fields.avatar.fields.file.url}
+                          alt={testimonial.fields.name}
+                          class="w-full h-full object-cover"
+                        />
+                      ) : (
+                        testimonial.fields.name.charAt(0)
+                      )}
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-white">
+                        {testimonial.fields.name}
+                      </h4>
+                      <p class="text-sm text-muted">
+                        {testimonial.fields.role} @ {testimonial.fields.company}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const slider = document.querySelector(".testimonial-slider");
+  const prevBtn = document.getElementById("prev-testimonial");
+  const nextBtn = document.getElementById("next-testimonial");
+
+  if (slider && prevBtn && nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      slider.scrollBy({ left: 320, behavior: "smooth" });
+    });
+
+    prevBtn.addEventListener("click", () => {
+      slider.scrollBy({ left: -320, behavior: "smooth" });
+    });
+  }
+</script>
+
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  :global(body.light) #testimonials {
+    background-color: var(--color-light-surface);
+    /* Slightly different bg to separate from services if needed, or same as bg */
+  }
+
+  :global(body.light) #testimonials h2,
+  :global(body.light) #testimonials h4 {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) #testimonials .text-muted {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  :global(body.light) #testimonials .text-white\/90 {
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  :global(body.light) #testimonials .card-elevated {
+    background-color: var(--color-light-bg);
+    border-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  }
+
+  :global(body.light) #testimonials .card-elevated:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  :global(body.light) #testimonials button.border-white\/10 {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  :global(body.light) #testimonials button.border-white\/10:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+</style>

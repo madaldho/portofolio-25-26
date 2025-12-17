@@ -1,0 +1,119 @@
+---
+import { getServices, isContentfulConfigured, fallbackServices, type ContentfulService } from '../utils/contentful';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const t = useTranslations(lang);
+
+let services: ContentfulService[] = [];
+
+try {
+  if (isContentfulConfigured()) {
+    services = await getServices(false, locale);
+  }
+} catch (error) {
+  console.warn('Error fetching services:', error);
+}
+
+// Use fallback if no services found
+if (services.length === 0) {
+  services = fallbackServices;
+}
+
+// Icon mapping (simple SVG paths)
+const iconMap: Record<string, string> = {
+  code: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />',
+  cpu: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />',
+  wifi: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />',
+  default: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />'
+};
+---
+
+<section id="services" class="section-padding relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <p class="text-accent font-mono text-sm mb-4">// Services</p>
+      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+        {lang === 'id' ? 'Layanan & Kolaborasi' : 'Services & Collaboration'}
+      </h2>
+      <p class="text-muted max-w-2xl mx-auto">
+        {lang === 'id' 
+          ? 'Membantu mewujudkan ide Anda dengan solusi teknologi berkualitas tinggi.' 
+          : 'Helping you bring ideas to life with high-quality technology solutions.'}
+      </p>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="grid md:grid-cols-3 gap-8">
+      {services.map((service, index) => (
+        <div 
+          class="card-elevated p-8 group hover:-translate-y-2 transition-transform duration-300"
+          data-cursor-hover
+          style={`animation-delay: ${index * 100}ms`}
+        >
+          <!-- Icon -->
+          <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300 text-primary">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={iconMap[service.fields.icon] || iconMap.default}></svg>
+          </div>
+
+          <!-- Content -->
+          <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+            {service.fields.title}
+          </h3>
+          <p class="text-muted text-sm mb-6 leading-relaxed">
+            {service.fields.description}
+          </p>
+
+          <!-- Features List -->
+          {service.fields.features && (
+            <ul class="space-y-2">
+              {service.fields.features.map((feature) => (
+                <li class="flex items-start gap-2 text-sm text-white/80">
+                  <svg class="w-5 h-5 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(body.light) #services {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) #services h2,
+  :global(body.light) #services h3 {
+    color: var(--color-dark-bg);
+  }
+
+  :global(body.light) #services .text-accent {
+      color: #6d5e00 !important;
+  }
+  
+  :global(body.light) #services .card-elevated {
+    background-color: var(--color-light-surface);
+    border-color: rgba(0,0,0,0.05);
+  }
+  
+  :global(body.light) #services .card-elevated:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  :global(body.light) #services .text-muted {
+      color: rgba(0,0,0,0.6);
+  }
+  
+  :global(body.light) #services .text-white\/80 {
+      color: rgba(0,0,0,0.7);
+  }
+</style>
