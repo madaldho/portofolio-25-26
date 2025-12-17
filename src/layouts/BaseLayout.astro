@@ -10,6 +10,16 @@ import {
   getLocalizedMetadata,
 } from "../i18n/utils";
 
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/space-grotesk/500.css";
+import "@fontsource/space-grotesk/600.css";
+import "@fontsource/space-grotesk/700.css";
+
 interface Props {
   title?: string;
   description?: string;
@@ -66,19 +76,25 @@ const {
       structuredData={structuredData}
     />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts: Clash Display (Optimized Loading) -->
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap"
+      as="style"
     />
-
-    <!-- Clash Display from CDN -->
     <link
       href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <!-- Theme Script (prevent flash) -->
     <script is:inline>

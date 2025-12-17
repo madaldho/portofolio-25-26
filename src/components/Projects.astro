@@ -170,12 +170,12 @@ const categoryColors: Record<string, string> = {
               loading="lazy"
             />
             <!-- Category Badge -->
-            <div
-              class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
-              style={`background: ${categoryColors[project.data.category] || categoryColors.other}`}
-            >
-              {project.data.category.toUpperCase()}
-            </div>
+            <div 
+                  class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
+                  style={{ background: `var(--color-cat-${project.data.category})` }}
+                >
+                  {project.data.category.toUpperCase()}
+                </div>
             <!-- Overlay on hover -->
             <div class="absolute inset-0 bg-dark-bg/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
               {project.data.liveUrl && (

@@ -52,6 +52,14 @@
   --z-noise: 400;
 }
 
+:root {
+  --color-cat-web: #FF3D00;
+  --color-cat-mobile: #EC4899;
+  --color-cat-iot: #10B981;
+  --color-cat-ai-ml: #6366F1;
+  --color-cat-other: #F59E0B;
+}
+
 /* Base Styles */
 html {
   scroll-behavior: smooth;
@@ -154,6 +162,13 @@ body.light {
   --color-dark-surface-2: #F8F9FA;
   --color-dark-border: #E5E7EB;
   color: #1F2937;
+  
+  /* Category Colors - Darker for Light Mode */
+  --color-cat-web: #c2410c; /* Orange-700 */
+  --color-cat-mobile: #be185d; /* Pink-700 */
+  --color-cat-iot: #047857; /* Emerald-700 */
+  --color-cat-ai-ml: #4338ca; /* Indigo-700 */
+  --color-cat-other: #b45309; /* Amber-700 */
 }
 
 /* Light mode scrollbar */

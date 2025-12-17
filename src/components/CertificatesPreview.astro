@@ -77,8 +77,8 @@ function getImageUrl(cert: ContentfulCertificate): string {
               <!-- Category Badge -->
               {cert.fields.category && (
                 <div
-                  class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white"
-                  style={`background: ${categoryColors[cert.fields.category] || categoryColors.other}`}
+                  class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
+                  style={{ background: `var(--color-cat-${cert.fields.category})` }}
                 >
                   {cert.fields.category.toUpperCase()}
                 </div>
