@@ -57,11 +57,16 @@
 }
 
 :root {
-  --color-cat-web: #FF3D00;
-  --color-cat-mobile: #EC4899;
-  --color-cat-iot: #10B981;
-  --color-cat-ai-ml: #6366F1;
-  --color-cat-other: #F59E0B;
+  /* Category Badge Colors - Darkened for WCAG AA contrast with white text (4.5:1+) */
+  --color-cat-web: #C62D00;      /* Dark Orange - 5.7:1 contrast */
+  --color-cat-mobile: #9D174D;   /* Pink-800 - 6.3:1 contrast */
+  --color-cat-iot: #047857;      /* Emerald-700 - 4.8:1 contrast */
+  --color-cat-ai-ml: #4338CA;    /* Indigo-700 - 7.0:1 contrast */
+  --color-cat-other: #92400E;    /* Amber-800 - 5.7:1 contrast */
+  --color-cat-cloud: #4338CA;    /* Same as AI-ML */
+  --color-cat-programming: #C62D00; /* Same as Web */
+  --color-cat-design: #9D174D;   /* Same as Mobile */
+  --color-cat-marketing: #047857; /* Same as IoT */
 }
 
 /* Base Styles */
@@ -162,22 +167,29 @@ body.light {
 body.light {
   /* Override Primary Color for Light Mode to pass AA Contrast with White Text */
   --color-primary: #C62D00; /* Darker orange, >4.5:1 contrast against white */
-  --color-primary-light: #FF5722;
+  --color-primary-light: #E65100;
   
-  --color-secondary: #008F63; /* Darker green for light mode */
-  --color-secondary-dark: #007A55;
+  /* Accent color - Dark gold for light mode (yellow is invisible on white) */
+  --color-accent: #B45309; /* Amber-700: 4.5:1 contrast on white */
+  
+  --color-secondary: #047857; /* Darker green for light mode */
+  --color-secondary-dark: #065F46;
   
   --color-dark-surface: #FFFFFF;
   --color-dark-surface-2: #F8F9FA;
   --color-dark-border: #E5E7EB;
   color: #1F2937;
   
-  /* Category Colors - Darker for Light Mode */
-  --color-cat-web: #c2410c; /* Orange-700 */
-  --color-cat-mobile: #be185d; /* Pink-700 */
-  --color-cat-iot: #047857; /* Emerald-700 */
-  --color-cat-ai-ml: #4338ca; /* Indigo-700 */
-  --color-cat-other: #b45309; /* Amber-700 */
+  /* Category Colors - Match root values for consistency */
+  --color-cat-web: #C62D00;      /* Dark Orange */
+  --color-cat-mobile: #9D174D;   /* Pink-800 */
+  --color-cat-iot: #047857;      /* Emerald-700 */
+  --color-cat-ai-ml: #4338CA;    /* Indigo-700 */
+  --color-cat-other: #92400E;    /* Amber-800 */
+  --color-cat-cloud: #4338CA;
+  --color-cat-programming: #C62D00;
+  --color-cat-design: #9D174D;
+  --color-cat-marketing: #047857;
 }
 
 /* Light mode scrollbar */
