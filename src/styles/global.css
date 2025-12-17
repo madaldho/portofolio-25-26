@@ -7,23 +7,27 @@
 
 /* Custom Theme Variables */
 @theme {
-  /* Colors - Premium & Bold */
-  --color-primary: #FF3D00;
-  --color-primary-light: #FF6B35;
-  --color-secondary: #00FF88;
-  --color-secondary-dark: #00D4AA;
+  /* Colors - Optimized for Contrast */
+  --color-primary: #E63500; /* Darkened from #FF3D00 for better white-text contrast (approx 4.5:1) */
+  --color-primary-light: #FF5722;
+  --color-secondary: #00CC8E;
+  --color-secondary-dark: #00996B;
   --color-accent: #FFE600;
   
   /* Dark Mode */
   --color-dark-bg: #0A0A0A;
-  --color-dark-surface: #141414;
+  --color-dark-surface: #121212;
   --color-dark-surface-2: #1A1A1A;
   --color-dark-border: #2A2A2A;
   
   /* Light Mode */
-  --color-light-bg: #F5F5F0;
-  --color-light-surface: #FFFFFF;
-  --color-light-border: #E5E5E5;
+  --color-light-bg: #FFFFFF;
+  --color-light-surface: #F3F4F6;
+  --color-light-border: #E5E7EB;
+
+  /* Accent Colors for Text */
+  --text-primary-dark: #FF3D00; /* Vibrant for dark mode */
+  --text-primary-light: #C62D00; /* Darker for light mode legibility */
   
   /* Typography Scale */
   --font-display: 'Clash Display', 'Satoshi', system-ui, sans-serif;
@@ -156,8 +160,13 @@ body.light {
 
 /* Light mode color overrides for better contrast */
 body.light {
-  --color-secondary: #00996B;
+  /* Override Primary Color for Light Mode to pass AA Contrast with White Text */
+  --color-primary: #C62D00; /* Darker orange, >4.5:1 contrast against white */
+  --color-primary-light: #FF5722;
+  
+  --color-secondary: #008F63; /* Darker green for light mode */
   --color-secondary-dark: #007A55;
+  
   --color-dark-surface: #FFFFFF;
   --color-dark-surface-2: #F8F9FA;
   --color-dark-border: #E5E7EB;

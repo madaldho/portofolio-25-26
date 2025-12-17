@@ -134,7 +134,7 @@ const techStackIcons = [
              </p>
           </div>
           <div class="hidden lg:flex flex-wrap gap-4 pt-4">
-             <a href="#contact" class="px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-full transition-colors border border-white/10 hover:border-white/20 font-medium text-sm flex items-center gap-2 group">
+             <a href="#contact" class="btn-outline-custom px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-full transition-colors border border-white/10 hover:border-white/20 font-medium text-sm flex items-center gap-2 group">
                 {t('contact.title')}
                 <svg class="w-4 h-4 text-primary group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
              </a>
@@ -347,5 +347,16 @@ const techStackIcons = [
   /* Highlighted milestone year override */
   :global(body.light) .journey-card.highlight .text-primary {
     color: #C62D00 !important;
+  }
+
+  /* Custom Outline Button Light Mode Override */
+  :global(body.light) .btn-outline-custom {
+    color: #1F2937 !important;
+    background-color: transparent !important;
+    border-color: #374151 !important;
+  }
+  :global(body.light) .btn-outline-custom:hover {
+    background-color: #E5E7EB !important;
+    color: #000000 !important;
   }
 </style>
