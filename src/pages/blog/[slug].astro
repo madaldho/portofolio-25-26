@@ -35,6 +35,7 @@ export async function getStaticPaths() {
                     title: post.fields.title,
                     excerpt: post.fields.excerpt,
                     content: post.fields.content,
+                    body: post.fields.body || "",
                     tags: Array.isArray(post.fields.tags)
                       ? post.fields.tags
                       : [],
@@ -43,10 +44,12 @@ export async function getStaticPaths() {
                     featuredImage: imageUrl,
                     readingTime:
                       post.fields.readingTime ||
-                      calculateReadingTime(post.fields.content),
+                      calculateReadingTime(
+                        post.fields.content || { content: [] }
+                      ),
                   },
                 },
-                isRichText: true,
+                isRichText: !post.fields.body, // Prioritize Markdown body
                 isUsingContentful: true,
               },
             };
@@ -194,12 +197,20 @@ if (!post) {
         <!-- Content -->
         <div class="max-w-none">
           {
-            isRichText && typeof post.data.content === "object" ? (
+            !isRichText && post.data.body ? (
+              /* MARKDOWN RENDERER (Default for new posts) */
+              <div
+                class="rich-text-content"
+                set:html={formatMarkdown(post.data.body)}
+              />
+            ) : isRichText && typeof post.data.content === "object" ? (
+              /* RICH TEXT RENDERER (Legacy fallback) */
               <RichText
                 content={post.data.content as any}
                 className="blog-content"
               />
             ) : (
+              /* FALLBACK for legacy markdown or simple text */
               <div
                 class="rich-text-content"
                 set:html={formatMarkdown(post.data.content)}
@@ -269,97 +280,6 @@ if (!post) {
 
 <style>
   /* Rich text content styling - inherits from richText.ts utility */
-  .rich-text-content {
-    line-height: 1.7;
-  }
-
-  /* Override any default prose styles that might conflict */
-  .rich-text-content h1,
-  .rich-text-content h2,
-  .rich-text-content h3,
-  .rich-text-content h4,
-  .rich-text-content h5,
-  .rich-text-content h6 {
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .rich-text-content p {
-    line-height: 1.7;
-  }
-
-  .rich-text-content ul,
-  .rich-text-content ol {
-    padding-left: 1.5rem;
-  }
-
-  .rich-text-content li {
-    margin: 0.5rem 0;
-  }
-
-  /* Ensure proper spacing for embedded assets */
-  .rich-text-content figure {
-    margin: 2rem 0;
-  }
-
-  .rich-text-content img {
-    border-radius: 0.5rem;
-    box-shadow:
-      0 10px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-
-  /* Code block enhancements */
-  .rich-text-content pre {
-    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .rich-text-content code {
-    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
-  }
-
-  /* Table responsive styling */
-  .rich-text-content table {
-    overflow-x: auto;
-    display: block;
-    white-space: nowrap;
-  }
-
-  @media (min-width: 768px) {
-    .rich-text-content table {
-      display: table;
-      white-space: normal;
-    }
-  }
-
-  /* Blockquote styling */
-  .rich-text-content blockquote {
-    position: relative;
-  }
-
-  .rich-text-content blockquote::before {
-    content: '"';
-    position: absolute;
-    left: -0.5rem;
-    top: -0.5rem;
-    font-size: 3rem;
-    color: var(--color-primary);
-    opacity: 0.3;
-  }
-
-  /* Link styling */
-  .rich-text-content a {
-    text-decoration: underline;
-    text-underline-offset: 0.25rem;
-    text-decoration-thickness: 1px;
-  }
-
-  .rich-text-content a:hover {
-    text-decoration-thickness: 2px;
-  }
-
   /* Keep hero section same as dark mode for better contrast on image */
   :global(body.light) .blog-hero .text-white {
     color: white !important;
@@ -375,10 +295,5 @@ if (!post) {
 
   :global(body.light) .blog-hero .text-primary {
     color: var(--color-primary) !important;
-  }
-
-  /* Light mode overrides for blockquote */
-  :global(body.light) .rich-text-content blockquote::before {
-    color: var(--color-primary);
   }
 </style>

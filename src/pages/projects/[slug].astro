@@ -129,12 +129,16 @@ const galleryImages = getGalleryImages();
           </nav>
 
           <!-- Category Badge -->
-          <div
-            class="inline-block px-3 py-1 rounded-full text-xs font-medium text-white mb-4"
-            style={`background: ${categoryColors[project.fields.category] || categoryColors.other}`}
-          >
-            {project.fields.category.toUpperCase()}
-          </div>
+          {
+            project.fields.category && (
+              <div
+                class="inline-block px-3 py-1 rounded-full text-xs font-medium text-white mb-4"
+                style={`background: ${categoryColors[project.fields.category] || categoryColors.other}`}
+              >
+                {(project.fields.category || "other").toUpperCase()}
+              </div>
+            )
+          }
 
           <!-- Title -->
           <h1
@@ -155,18 +159,20 @@ const galleryImages = getGalleryImages();
     <article class="section-padding">
       <div class="max-w-4xl mx-auto px-6">
         <!-- Tech Stack -->
-        {
-          project.fields.technologies &&
-            project.fields.technologies.length > 0 && (
-              <div class="flex flex-wrap gap-2 mb-8">
-                {project.fields.technologies.map((tech: string) => (
-                  <span class="px-3 py-1 text-sm rounded-full bg-primary/10 text-primary border border-primary/20">
-                    {tech}
-                  </span>
-                ))}
-              </div>
+        <div class="flex flex-wrap gap-2 mb-8">
+          {
+            project.fields.technologies &&
+            project.fields.technologies.length > 0 ? (
+              project.fields.technologies.map((tech: string) => (
+                <span class="px-3 py-1 text-sm rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {tech}
+                </span>
+              ))
+            ) : (
+              <span class="text-white/40 italic">No technologies listed</span>
             )
-        }
+          }
+        </div>
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-4 mb-8">

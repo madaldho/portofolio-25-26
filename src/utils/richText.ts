@@ -1,5 +1,5 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
-import { BLOCKS, MARKS, INLINES, type Document, type Node } from '@contentful/rich-text-types';
+import { BLOCKS, MARKS, INLINES, type Document, type Node, type Block, type Inline } from '@contentful/rich-text-types';
 import type { ContentfulAsset } from './contentful';
 
 // Rich text rendering options
@@ -12,10 +12,10 @@ export const richTextRenderOptions = {
   },
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node: Node, next: any) => {
+       const block = node as Block;
        // Check if this paragraph is acting as a code block (entirely code mark)
-       // This is a common pattern in Contentful editors without native code block support
-       if (node.content.length === 1 && node.content[0].marks && node.content[0].marks.some((m: any) => m.type === 'code')) {
-           const text = node.content[0].value;
+       if (block.content.length === 1 && block.content[0].nodeType === 'text' && block.content[0].marks && block.content[0].marks.some((m: any) => m.type === 'code')) {
+           const text = block.content[0].value;
            return `
             <div class="my-8 rounded-lg overflow-hidden border border-dark-border bg-dark-surface">
               <div class="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-dark-border/50">
@@ -31,56 +31,56 @@ export const richTextRenderOptions = {
               </div>
             </div>`;
        }
-       return `<p class="mb-6 text-white/90 leading-relaxed text-base">${next(node.content)}</p>`;
+       return `<p class="mb-6 text-white/90 leading-relaxed text-base">${next(block.content)}</p>`;
     },
     
     [BLOCKS.HEADING_1]: (node: Node, next: any) => 
-      `<h1 class="text-4xl md:text-5xl font-bold mb-8 mt-12 text-white first:mt-0">${next(node.content)}</h1>`,
+      `<h1 class="text-4xl md:text-5xl font-bold mb-8 mt-12 text-white first:mt-0">${next((node as Block).content)}</h1>`,
     
     [BLOCKS.HEADING_2]: (node: Node, next: any) => 
-      `<h2 class="text-3xl md:text-4xl font-semibold mb-6 mt-10 text-white first:mt-0">${next(node.content)}</h2>`,
+      `<h2 class="text-3xl md:text-4xl font-semibold mb-6 mt-10 text-white first:mt-0">${next((node as Block).content)}</h2>`,
     
     [BLOCKS.HEADING_3]: (node: Node, next: any) => 
-      `<h3 class="text-2xl md:text-3xl font-semibold mb-5 mt-8 text-white first:mt-0">${next(node.content)}</h3>`,
+      `<h3 class="text-2xl md:text-3xl font-semibold mb-5 mt-8 text-white first:mt-0">${next((node as Block).content)}</h3>`,
     
     [BLOCKS.HEADING_4]: (node: Node, next: any) => 
-      `<h4 class="text-xl md:text-2xl font-semibold mb-4 mt-6 text-white first:mt-0">${next(node.content)}</h4>`,
+      `<h4 class="text-xl md:text-2xl font-semibold mb-4 mt-6 text-white first:mt-0">${next((node as Block).content)}</h4>`,
     
     [BLOCKS.HEADING_5]: (node: Node, next: any) => 
-      `<h5 class="text-lg md:text-xl font-semibold mb-3 mt-5 text-white first:mt-0">${next(node.content)}</h5>`,
+      `<h5 class="text-lg md:text-xl font-semibold mb-3 mt-5 text-white first:mt-0">${next((node as Block).content)}</h5>`,
     
     [BLOCKS.HEADING_6]: (node: Node, next: any) => 
-      `<h6 class="text-base md:text-lg font-semibold mb-2 mt-4 text-white first:mt-0">${next(node.content)}</h6>`,
+      `<h6 class="text-base md:text-lg font-semibold mb-2 mt-4 text-white first:mt-0">${next((node as Block).content)}</h6>`,
     
     [BLOCKS.UL_LIST]: (node: Node, next: any) => 
-      `<ul class="list-disc list-outside mb-6 space-y-3 text-white/90 pl-6">${next(node.content)}</ul>`,
+      `<ul class="list-disc list-outside mb-6 space-y-3 text-white/90 pl-6">${next((node as Block).content)}</ul>`,
     
     [BLOCKS.OL_LIST]: (node: Node, next: any) => 
-      `<ol class="list-decimal list-outside mb-6 space-y-3 text-white/90 pl-6">${next(node.content)}</ol>`,
+      `<ol class="list-decimal list-outside mb-6 space-y-3 text-white/90 pl-6">${next((node as Block).content)}</ol>`,
     
     [BLOCKS.LIST_ITEM]: (node: Node, next: any) => 
-      `<li class="leading-relaxed">${next(node.content)}</li>`,
+      `<li class="leading-relaxed">${next((node as Block).content)}</li>`,
     
     [BLOCKS.QUOTE]: (node: Node, next: any) => 
       `<blockquote class="relative pl-6 py-2 my-8 border-l-4 border-primary bg-dark-surface/50 rounded-r-lg italic text-white/80">
-        <div class="not-italic">${next(node.content)}</div>
+        <div class="not-italic">${next((node as Block).content)}</div>
       </blockquote>`,
 
     [BLOCKS.TABLE]: (node: Node, next: any) => 
       `<div class="overflow-x-auto my-8 rounded-lg border border-dark-border">
         <table class="w-full text-left border-collapse">
-          <tbody>${next(node.content)}</tbody>
+          <tbody>${next((node as Block).content)}</tbody>
         </table>
       </div>`,
     
     [BLOCKS.TABLE_ROW]: (node: Node, next: any) => 
-      `<tr>${next(node.content)}</tr>`,
+      `<tr>${next((node as Block).content)}</tr>`,
     
     [BLOCKS.TABLE_HEADER_CELL]: (node: Node, next: any) => 
-      `<th class="bg-dark-surface p-4 text-left border-b border-dark-border font-semibold text-white whitespace-nowrap">${next(node.content)}</th>`,
+      `<th class="bg-dark-surface p-4 text-left border-b border-dark-border font-semibold text-white whitespace-nowrap">${next((node as Block).content)}</th>`,
     
     [BLOCKS.TABLE_CELL]: (node: Node, next: any) => 
-      `<td class="p-4 border-b border-dark-border/50 text-white/80 align-top">${next(node.content)}</td>`,
+      `<td class="p-4 border-b border-dark-border/50 text-white/80 align-top">${next((node as Block).content)}</td>`,
     
     [BLOCKS.HR]: () => 
       `<hr class="my-8 border-dark-border">`,
@@ -126,7 +126,8 @@ export const richTextRenderOptions = {
     },
     
     [INLINES.HYPERLINK]: (node: Node, next: any) => {
-      const uri = node.data?.uri || '';
+      const inline = node as Inline;
+      const uri = inline.data?.uri || '';
       const isExternal = uri.startsWith('http') && !uri.includes(window?.location?.hostname || '');
       
       return `
@@ -135,7 +136,7 @@ export const richTextRenderOptions = {
           ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''}
           class="text-primary hover:text-primary-light underline transition-colors"
         >
-          ${next(node.content)}
+          ${next(inline.content)}
           ${isExternal ? '<svg class="inline w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>' : ''}
         </a>
       `;
@@ -167,9 +168,10 @@ export const lightModeRichTextRenderOptions = {
   renderNode: {
     ...richTextRenderOptions.renderNode,
     [BLOCKS.PARAGRAPH]: (node: Node, next: any) => {
+       const block = node as Block;
        // Check if this paragraph is acting as a code block (entirely code mark)
-       if (node.content.length === 1 && node.content[0].marks && node.content[0].marks.some((m: any) => m.type === 'code')) {
-           const text = node.content[0].value;
+       if (block.content.length === 1 && block.content[0].nodeType === 'text' && block.content[0].marks && block.content[0].marks.some((m: any) => m.type === 'code')) {
+           const text = block.content[0].value;
            return `
             <div class="my-8 rounded-lg overflow-hidden border border-light-border bg-light-surface">
               <div class="flex items-center justify-between px-4 py-2 bg-black/5 border-b border-light-border/50">
@@ -185,53 +187,53 @@ export const lightModeRichTextRenderOptions = {
               </div>
             </div>`;
        }
-      return `<p class="mb-6 text-dark-bg/90 leading-relaxed text-base">${next(node.content)}</p>`;
+      return `<p class="mb-6 text-dark-bg/90 leading-relaxed text-base">${next(block.content)}</p>`;
     },
     
     [BLOCKS.HEADING_1]: (node: Node, next: any) => 
-      `<h1 class="text-4xl md:text-5xl font-bold mb-8 mt-12 text-dark-bg first:mt-0">${next(node.content)}</h1>`,
+      `<h1 class="text-4xl md:text-5xl font-bold mb-8 mt-12 text-dark-bg first:mt-0">${next((node as Block).content)}</h1>`,
     
     [BLOCKS.HEADING_2]: (node: Node, next: any) => 
-      `<h2 class="text-3xl md:text-4xl font-semibold mb-6 mt-10 text-dark-bg first:mt-0">${next(node.content)}</h2>`,
+      `<h2 class="text-3xl md:text-4xl font-semibold mb-6 mt-10 text-dark-bg first:mt-0">${next((node as Block).content)}</h2>`,
     
     [BLOCKS.HEADING_3]: (node: Node, next: any) => 
-      `<h3 class="text-2xl md:text-3xl font-semibold mb-5 mt-8 text-dark-bg first:mt-0">${next(node.content)}</h3>`,
+      `<h3 class="text-2xl md:text-3xl font-semibold mb-5 mt-8 text-dark-bg first:mt-0">${next((node as Block).content)}</h3>`,
     
     [BLOCKS.HEADING_4]: (node: Node, next: any) => 
-      `<h4 class="text-xl md:text-2xl font-semibold mb-4 mt-6 text-dark-bg first:mt-0">${next(node.content)}</h4>`,
+      `<h4 class="text-xl md:text-2xl font-semibold mb-4 mt-6 text-dark-bg first:mt-0">${next((node as Block).content)}</h4>`,
     
     [BLOCKS.HEADING_5]: (node: Node, next: any) => 
-      `<h5 class="text-lg md:text-xl font-semibold mb-3 mt-5 text-dark-bg first:mt-0">${next(node.content)}</h5>`,
+      `<h5 class="text-lg md:text-xl font-semibold mb-3 mt-5 text-dark-bg first:mt-0">${next((node as Block).content)}</h5>`,
     
     [BLOCKS.HEADING_6]: (node: Node, next: any) => 
-      `<h6 class="text-base md:text-lg font-semibold mb-2 mt-4 text-dark-bg first:mt-0">${next(node.content)}</h6>`,
+      `<h6 class="text-base md:text-lg font-semibold mb-2 mt-4 text-dark-bg first:mt-0">${next((node as Block).content)}</h6>`,
     
     [BLOCKS.UL_LIST]: (node: Node, next: any) => 
-      `<ul class="list-disc list-outside mb-6 space-y-3 text-dark-bg/90 pl-6">${next(node.content)}</ul>`,
+      `<ul class="list-disc list-outside mb-6 space-y-3 text-dark-bg/90 pl-6">${next((node as Block).content)}</ul>`,
     
     [BLOCKS.OL_LIST]: (node: Node, next: any) => 
-      `<ol class="list-decimal list-outside mb-6 space-y-3 text-dark-bg/90 pl-6">${next(node.content)}</ol>`,
+      `<ol class="list-decimal list-outside mb-6 space-y-3 text-dark-bg/90 pl-6">${next((node as Block).content)}</ol>`,
     
     [BLOCKS.QUOTE]: (node: Node, next: any) => 
       `<blockquote class="relative pl-6 py-2 my-8 border-l-4 border-primary bg-light-surface/50 border border-light-border rounded-r-lg italic text-dark-bg/90">
-        <div class="not-italic">${next(node.content)}</div>
+        <div class="not-italic">${next((node as Block).content)}</div>
       </blockquote>`,
 
     [BLOCKS.TABLE]: (node: Node, next: any) => 
       `<div class="overflow-x-auto my-8 rounded-lg border border-light-border">
         <table class="w-full text-left border-collapse">
-          <tbody>${next(node.content)}</tbody>
+          <tbody>${next((node as Block).content)}</tbody>
         </table>
       </div>`,
     
     [BLOCKS.TABLE_ROW]: (node: Node, next: any) => 
-      `<tr>${next(node.content)}</tr>`,
+      `<tr>${next((node as Block).content)}</tr>`,
     
     [BLOCKS.TABLE_HEADER_CELL]: (node: Node, next: any) => 
-      `<th class="bg-light-surface p-4 text-left border-b border-light-border font-semibold text-dark-bg whitespace-nowrap">${next(node.content)}</th>`,
+      `<th class="bg-light-surface p-4 text-left border-b border-light-border font-semibold text-dark-bg whitespace-nowrap">${next((node as Block).content)}</th>`,
     
     [BLOCKS.TABLE_CELL]: (node: Node, next: any) => 
-      `<td class="p-4 border-b border-light-border/50 text-dark-bg/80 align-top">${next(node.content)}</td>`,
+      `<td class="p-4 border-b border-light-border/50 text-dark-bg/80 align-top">${next((node as Block).content)}</td>`,
     
     [BLOCKS.HR]: () => 
       `<hr class="my-8 border-light-border">`,

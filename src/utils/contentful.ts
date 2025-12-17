@@ -91,6 +91,7 @@ export interface ContentfulBlogPost {
     slug: string;
     excerpt: string;
     content: Document; // Contentful Rich Text
+    body?: string; // Markdown Content
     featuredImage: ContentfulAsset;
     tags: string[];
     publishDate: string;

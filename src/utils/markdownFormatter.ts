@@ -127,15 +127,26 @@ renderer.image = ({ href, text, title }: any) => {
 export function formatMarkdown(content: string | any): string {
     let textContent = '';
     
+    // Safely handle different content structures
+    if (!content) {
+        return '';
+    }
+    
     if (typeof content === 'string') {
         textContent = content;
-    } else if (content && typeof content === 'object') {
+    } else if (typeof content === 'object') {
+        // Try to get localized content or fallback
         if (content['en-US']) textContent = content['en-US'];
         else if (content['id-ID']) textContent = content['id-ID'];
-        else textContent = Object.values(content)[0] as string || '';
+        else if (Object.keys(content).length > 0) textContent = Object.values(content)[0] as string || '';
     }
 
-    if (!textContent) return '';
+    if (!textContent || typeof textContent !== 'string') return '';
 
-    return marked.parse(textContent, { renderer }) as string;
+    try {
+        return marked.parse(textContent, { renderer }) as string;
+    } catch (e) {
+        console.error('Error parsing markdown:', e);
+        return textContent; // Fallback to raw text if parsing fails
+    }
 }
