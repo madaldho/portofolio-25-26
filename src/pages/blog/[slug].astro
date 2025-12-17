@@ -346,8 +346,11 @@ function formatContent(content: any): string {
         <!-- Content -->
         <div class="max-w-none">
           {
-            isRichText ? (
-              <RichText content={post.data.content} className="blog-content" />
+            isRichText && typeof post.data.content === "object" ? (
+              <RichText
+                content={post.data.content as any}
+                className="blog-content"
+              />
             ) : (
               <div
                 class="rich-text-content"

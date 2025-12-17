@@ -31,7 +31,7 @@ try {
         <a href="/" class="text-2xl font-display font-bold gradient-text">
           MAR
         </a>
-        <p class="text-white/60 text-sm mt-2">
+        <p class="text-white/80 text-sm mt-2">
           © {currentYear}
           {profileName}. {t("footer.copyright")}
         </p>
@@ -45,7 +45,7 @@ try {
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="text-white/60 hover:text-primary transition-colors"
+              class="text-white/80 hover:text-primary transition-colors"
               aria-label={`Visit my ${social.platform} profile`}
               title={social.platform}
             >
@@ -114,7 +114,7 @@ try {
 
     <!-- Built with -->
     <div class="text-center mt-8 pt-8 border-t border-dark-border">
-      <p class="text-white/60 text-sm">
+      <p class="text-white/80 text-sm">
         Built with <span class="text-primary">♥</span> from madaldho
       </p>
     </div>
@@ -127,11 +127,11 @@ try {
   }
 
   :global(body.light) footer p {
-    color: rgba(10, 10, 10, 0.4);
+    color: rgba(10, 10, 10, 0.7);
   }
 
   :global(body.light) footer a:not(.gradient-text) {
-    color: rgba(10, 10, 10, 0.4);
+    color: rgba(10, 10, 10, 0.7);
   }
 
   :global(body.light) footer a:hover {
