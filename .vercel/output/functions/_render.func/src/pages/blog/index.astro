@@ -23,20 +23,30 @@ try {
             : post.fields.featuredImage.fields.file.url;
         }
         
+        // Safely convert content to HTML
+        let contentHtml = '';
+        let wordCount = 100;
+        try {
+          if (post.fields.content && typeof post.fields.content === 'object') {
+            contentHtml = documentToHtmlString(post.fields.content);
+            wordCount = contentHtml.replace(/<[^>]*>/g, '').split(' ').length || 100;
+          }
+        } catch (e) {
+          console.warn('Error converting rich text:', e);
+        }
+        
         return {
           id: post.sys.id,
           slug: post.fields.slug,
           data: {
-            title: post.fields.title,
-            excerpt: post.fields.excerpt,
-            content: documentToHtmlString(post.fields.content),
+            title: post.fields.title || 'Untitled',
+            excerpt: post.fields.excerpt || '',
+            content: contentHtml,
             tags: post.fields.tags || [],
-            publishDate: post.fields.publishDate,
-            publishedAt: post.fields.publishDate,
+            publishDate: post.fields.publishDate || new Date().toISOString(),
+            publishedAt: post.fields.publishDate || new Date().toISOString(),
             featuredImage: imageUrl,
-            readingTime: post.fields.readingTime || Math.ceil(
-              (documentToHtmlString(post.fields.content).replace(/<[^>]*>/g, '').split(' ').length || 100) / 200
-            )
+            readingTime: post.fields.readingTime || Math.ceil(wordCount / 200)
           }
         };
       });
@@ -142,7 +152,7 @@ const sortedPosts = blogPosts.sort((a, b) =>
                 <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
                 
                 <!-- Reading Time -->
-                <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/80 backdrop-blur-sm rounded-full text-xs text-white">
+                <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/90 backdrop-blur-sm rounded-full text-xs reading-time-badge">
                   {post.data.readingTime} min read
                 </div>
               </div>
@@ -182,10 +192,11 @@ const sortedPosts = blogPosts.sort((a, b) =>
                 <!-- Read More -->
                 <a 
                   href={`/blog/${post.slug}`}
+                  aria-label={`Read full article: ${post.data.title}`}
                   class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
                 >
                   Read More
-                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </a>
@@ -224,5 +235,10 @@ const sortedPosts = blogPosts.sort((a, b) =>
   :global(body.light) h2,
   :global(body.light) h3 {
     color: var(--color-dark-bg);
+  }
+  
+  /* Ensure reading time badge stays white in light mode */
+  .reading-time-badge {
+    color: white !important;
   }
 </style>

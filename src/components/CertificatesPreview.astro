@@ -144,13 +144,14 @@ function getImageUrl(cert: ContentfulCertificate): string {
     <div class="text-center">
       <a 
         href={translatePath('/certificates')}
+        aria-label="View all certificates and certifications"
         class="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-light 
                text-white rounded-xl transition-all duration-300 hover:scale-105 
                focus-ring shadow-lg hover:shadow-xl"
         data-cursor-hover
       >
         <span class="font-medium">{t('certificates.viewAll' as any)}</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </a>
@@ -164,9 +165,9 @@ function getImageUrl(cert: ContentfulCertificate): string {
   </div>
 
   <!-- Certificate Modal -->
-  <div id="cert-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-modal hidden items-center justify-center p-4">
-    <button onclick="closeCertModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div id="cert-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-modal hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Certificate image viewer">
+    <button onclick="closeCertModal()" aria-label="Close certificate viewer" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>

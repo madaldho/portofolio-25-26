@@ -39,17 +39,26 @@ try {
             : post.fields.featuredImage.fields.file.url;
         }
         
+        // Safely calculate reading time
+        let readingTime = post.fields.readingTime || 5;
+        try {
+          if (!post.fields.readingTime && post.fields.content && typeof post.fields.content === 'object') {
+            const contentHtml = documentToHtmlString(post.fields.content);
+            readingTime = Math.ceil((contentHtml.replace(/<[^>]*>/g, '').split(' ').length || 100) / 200);
+          }
+        } catch (e) {
+          console.warn('Error calculating reading time:', e);
+        }
+        
         return {
           id: post.sys.id,
           slug: post.fields.slug,
           data: {
-            title: post.fields.title,
-            excerpt: post.fields.excerpt,
+            title: post.fields.title || 'Untitled',
+            excerpt: post.fields.excerpt || '',
             tags: post.fields.tags || [],
-            publishDate: post.fields.publishDate,
-            readingTime: post.fields.readingTime || Math.ceil(
-              (documentToHtmlString(post.fields.content).replace(/<[^>]*>/g, '').split(' ').length || 100) / 200
-            ),
+            publishDate: post.fields.publishDate || new Date().toISOString(),
+            readingTime,
             featuredImage: imageUrl
           }
         };
@@ -142,7 +151,7 @@ const latestPosts = blogPosts
             <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent"></div>
             
             <!-- Reading Time -->
-            <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/80 backdrop-blur-sm rounded-full text-xs text-white">
+            <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/90 backdrop-blur-sm rounded-full text-xs text-white reading-time-badge">
               {post.data.readingTime} {t('blog.readTime')}
             </div>
           </div>
@@ -199,13 +208,14 @@ const latestPosts = blogPosts
     <div class="text-center">
       <a 
         href={translatePath('/blog')}
+        aria-label="View all blog posts"
         class="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary-light
                text-white font-medium rounded-full transition-all duration-300
                hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-1"
         data-cursor-hover
       >
         {t('blog.viewAll')}
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </a>
@@ -221,5 +231,10 @@ const latestPosts = blogPosts
   :global(body.light) #blog h2,
   :global(body.light) #blog h3 {
     color: var(--color-dark-bg);
+  }
+  
+  /* Ensure reading time badge stays white in light mode */
+  .reading-time-badge {
+    color: white !important;
   }
 </style>

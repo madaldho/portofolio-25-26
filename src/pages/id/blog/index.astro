@@ -11,7 +11,12 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 // Get blog posts from Contentful (Rich Text blogPost, not simpleBlog)
-const posts = await getBlogPosts(false, "en-US");
+let posts: any[] = [];
+try {
+  posts = await getBlogPosts(false, "en-US");
+} catch (error) {
+  console.warn("Error fetching blog posts:", error);
+}
 const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
 ---
 
@@ -25,7 +30,7 @@ const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
         >
           {t("blog.title")}
         </h1>
-        <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
+        <p class="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
           {t("blog.subtitle")}
         </p>
       </div>
@@ -53,7 +58,7 @@ const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
                     )}
 
                     <div class="flex-1">
-                      <div class="flex items-center gap-4 mb-3 text-sm text-white/50">
+                      <div class="flex items-center gap-4 mb-3 text-sm text-white/70">
                         <time datetime={post.fields.publishDate}>
                           {formatDate(new Date(post.fields.publishDate), lang)}
                         </time>
@@ -71,7 +76,7 @@ const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
 
                       {post.fields.tags && post.fields.tags.length > 0 && (
                         <div class="flex flex-wrap gap-2">
-                          {post.fields.tags.map((tag) => (
+                          {post.fields.tags.map((tag: string) => (
                             <span class="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
                               {tag}
                             </span>

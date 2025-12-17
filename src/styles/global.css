@@ -329,11 +329,11 @@ body.light .text-muted {
 }
 
 .text-subtle {
-  @apply text-white/40;
+  @apply text-white/70;
 }
 
 body.light .text-subtle {
-  @apply text-dark-bg/40;
+  @apply text-dark-bg/70;
 }
 
 /* Better interactive states */

@@ -1,6 +1,6 @@
 import { d as createAstro, c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead, e as addAttribute, F as Fragment, u as unescapeHTML } from '../../chunks/astro/server_Cs80HLQR.mjs';
 import 'piccolore';
-import { $ as $$BaseLayout } from '../../chunks/BaseLayout_CfkRjAR6.mjs';
+import { $ as $$BaseLayout } from '../../chunks/BaseLayout_BrByd7ND.mjs';
 import { i as isContentfulConfigured, g as getBlogPost, a as getSimpleBlogPost } from '../../chunks/contentful_MPr82VON.mjs';
 import { c as calculateReadingTime, $ as $$RichText } from '../../chunks/RichText_BnsZPS0k.mjs';
 /* empty css                                     */

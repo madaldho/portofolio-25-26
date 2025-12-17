@@ -1,6 +1,6 @@
 import { d as createAstro, c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../chunks/astro/server_Cs80HLQR.mjs';
 import 'piccolore';
-import { $ as $$BaseLayout } from '../chunks/BaseLayout_CfkRjAR6.mjs';
+import { $ as $$BaseLayout } from '../chunks/BaseLayout_BrByd7ND.mjs';
 import { i as isContentfulConfigured, b as getBlogPosts, c as getSimpleBlogPosts } from '../chunks/contentful_MPr82VON.mjs';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 /* empty css                                 */
@@ -22,20 +22,28 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
           if (post.fields.featuredImage?.fields?.file?.url) {
             imageUrl = post.fields.featuredImage.fields.file.url.startsWith("//") ? `https:${post.fields.featuredImage.fields.file.url}` : post.fields.featuredImage.fields.file.url;
           }
+          let contentHtml = "";
+          let wordCount = 100;
+          try {
+            if (post.fields.content && typeof post.fields.content === "object") {
+              contentHtml = documentToHtmlString(post.fields.content);
+              wordCount = contentHtml.replace(/<[^>]*>/g, "").split(" ").length || 100;
+            }
+          } catch (e) {
+            console.warn("Error converting rich text:", e);
+          }
           return {
             id: post.sys.id,
             slug: post.fields.slug,
             data: {
-              title: post.fields.title,
-              excerpt: post.fields.excerpt,
-              content: documentToHtmlString(post.fields.content),
+              title: post.fields.title || "Untitled",
+              excerpt: post.fields.excerpt || "",
+              content: contentHtml,
               tags: post.fields.tags || [],
-              publishDate: post.fields.publishDate,
-              publishedAt: post.fields.publishDate,
+              publishDate: post.fields.publishDate || (/* @__PURE__ */ new Date()).toISOString(),
+              publishedAt: post.fields.publishDate || (/* @__PURE__ */ new Date()).toISOString(),
               featuredImage: imageUrl,
-              readingTime: post.fields.readingTime || Math.ceil(
-                (documentToHtmlString(post.fields.content).replace(/<[^>]*>/g, "").split(" ").length || 100) / 200
-              )
+              readingTime: post.fields.readingTime || Math.ceil(wordCount / 200)
             }
           };
         });
@@ -97,15 +105,15 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
 Learning <span class="gradient-text" data-astro-cid-5tznm7mj>Journey</span> </h1> <p class="text-muted text-lg max-w-2xl mx-auto mb-8" data-astro-cid-5tznm7mj>
 Sharing insights, tutorials, and discoveries from my exploration of technology.
           From web development to IoT and AI/ML projects.
-</p> </div> </section> <!-- Blog Posts --> <section class="section-padding" data-astro-cid-5tznm7mj> <div class="max-w-6xl mx-auto px-6" data-astro-cid-5tznm7mj> <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-astro-cid-5tznm7mj> ${sortedPosts.map((post) => renderTemplate`<article class="card-elevated group" data-cursor-hover data-astro-cid-5tznm7mj> <!-- Featured Image --> <div class="relative aspect-video overflow-hidden" data-astro-cid-5tznm7mj> <img${addAttribute(post.data.featuredImage, "src")}${addAttribute(post.data.title, "alt")} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" data-astro-cid-5tznm7mj> <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent" data-astro-cid-5tznm7mj></div> <!-- Reading Time --> <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/80 backdrop-blur-sm rounded-full text-xs text-white" data-astro-cid-5tznm7mj> ${post.data.readingTime} min read
+</p> </div> </section> <!-- Blog Posts --> <section class="section-padding" data-astro-cid-5tznm7mj> <div class="max-w-6xl mx-auto px-6" data-astro-cid-5tznm7mj> <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-astro-cid-5tznm7mj> ${sortedPosts.map((post) => renderTemplate`<article class="card-elevated group" data-cursor-hover data-astro-cid-5tznm7mj> <!-- Featured Image --> <div class="relative aspect-video overflow-hidden" data-astro-cid-5tznm7mj> <img${addAttribute(post.data.featuredImage, "src")}${addAttribute(post.data.title, "alt")} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" data-astro-cid-5tznm7mj> <div class="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent" data-astro-cid-5tznm7mj></div> <!-- Reading Time --> <div class="absolute top-4 right-4 px-3 py-1 bg-dark-bg/90 backdrop-blur-sm rounded-full text-xs reading-time-badge" data-astro-cid-5tznm7mj> ${post.data.readingTime} min read
 </div> </div> <!-- Content --> <div class="p-6" data-astro-cid-5tznm7mj> <!-- Date --> <time class="text-primary text-sm font-mono" data-astro-cid-5tznm7mj> ${new Date(post.data.publishDate).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric"
   })} </time> <!-- Title --> <h2 class="text-xl font-semibold mt-2 mb-3 group-hover:text-primary transition-colors" data-astro-cid-5tznm7mj> <a${addAttribute(`/blog/${post.slug}`, "href")} class="hover:underline" data-astro-cid-5tznm7mj> ${post.data.title} </a> </h2> <!-- Excerpt --> <p class="text-muted text-sm mb-4 line-clamp-3" data-astro-cid-5tznm7mj> ${post.data.excerpt} </p> <!-- Tags --> <div class="flex flex-wrap gap-2 mb-4" data-astro-cid-5tznm7mj> ${Array.isArray(post.data.tags) && post.data.tags.slice(0, 3).map((tag) => renderTemplate`<span class="px-2 py-1 text-xs rounded-md bg-white/5 text-subtle" data-astro-cid-5tznm7mj>
-#${tag} </span>`)} </div> <!-- Read More --> <a${addAttribute(`/blog/${post.slug}`, "href")} class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium" data-astro-cid-5tznm7mj>
+#${tag} </span>`)} </div> <!-- Read More --> <a${addAttribute(`/blog/${post.slug}`, "href")}${addAttribute(`Read full article: ${post.data.title}`, "aria-label")} class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium" data-astro-cid-5tznm7mj>
 Read More
-<svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-5tznm7mj> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" data-astro-cid-5tznm7mj></path> </svg> </a> </div> </article>`)} </div> <!-- Empty State --> ${sortedPosts.length === 0 && renderTemplate`<div class="text-center py-16" data-astro-cid-5tznm7mj> <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center" data-astro-cid-5tznm7mj> <svg class="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-5tznm7mj> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-astro-cid-5tznm7mj></path> </svg> </div> <h3 class="text-xl font-semibold mb-2" data-astro-cid-5tznm7mj>No Blog Posts Yet</h3> <p class="text-muted" data-astro-cid-5tznm7mj>Check back soon for new content!</p> </div>`} </div> </section> </main> ` })} `;
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-5tznm7mj> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" data-astro-cid-5tznm7mj></path> </svg> </a> </div> </article>`)} </div> <!-- Empty State --> ${sortedPosts.length === 0 && renderTemplate`<div class="text-center py-16" data-astro-cid-5tznm7mj> <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center" data-astro-cid-5tznm7mj> <svg class="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-astro-cid-5tznm7mj> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-astro-cid-5tznm7mj></path> </svg> </div> <h3 class="text-xl font-semibold mb-2" data-astro-cid-5tznm7mj>No Blog Posts Yet</h3> <p class="text-muted" data-astro-cid-5tznm7mj>Check back soon for new content!</p> </div>`} </div> </section> </main> ` })} `;
 }, "/Users/madaldho/Portofolio Baru/src/pages/blog/index.astro", void 0);
 
 const $$file = "/Users/madaldho/Portofolio Baru/src/pages/blog/index.astro";
