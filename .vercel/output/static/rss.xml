@@ -9,7 +9,7 @@
     <language>en-us</language>
     <managingEditor>aldhoproject@gmail.com (Muhamad Ali Ridho)</managingEditor>
     <webMaster>aldhoproject@gmail.com (Muhamad Ali Ridho)</webMaster>
-    <lastBuildDate>Wed, 17 Dec 2025 11:49:20 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 17 Dec 2025 16:35:19 GMT</lastBuildDate>
     <atom:link href="https://muhamadaliridho.me/rss.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://muhamadaliridho.me/og-image.png</url>
@@ -23,6 +23,36 @@
     <category>AI</category>
     <category>IoT</category>
     <category>Programming</category>
+    <item>
+      <title><![CDATA[How to Create a Free Business Email with Your Own Domain & Cloudflare (Without Hosting) ]]></title>
+      <description><![CDATA[Want to have a professional email address like admin@yourbusiness.com with no monthly fees? Follow this complete guide to set up a free business email using Cloudflare Email Routing and Gmail. Simple and cost‑effective! ]]></description>
+      <content:encoded><![CDATA[Want to have a professional email address like admin@yourbusiness.com with no monthly fees? Follow this complete guide to set up a free business email using Cloudflare Email Routing and Gmail. Simple and cost‑effective! ]]></content:encoded>
+      <link>https://muhamadaliridho.me/blog/how-to-crate-mail-bussines</link>
+      <guid isPermaLink="true">https://muhamadaliridho.me/blog/how-to-crate-mail-bussines</guid>
+      <pubDate>Wed, 17 Dec 2025 13:48:43 GMT</pubDate>
+      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
+      <category>Technology</category>
+    </item>
+    <item>
+      <title><![CDATA[Deploy Telegram Bot Gratis dengan Cloudflare Workers]]></title>
+      <description><![CDATA[Bikin bot Telegram serverless dengan JavaScript yang bisa handle jutaan request tanpa biaya server.]]></description>
+      <content:encoded><![CDATA[<p>Lupakan Heroku atau VPS mahal. Cloudflare Workers adalah cara termudah dan termurah untuk hosting bot Telegram...</p>]]></content:encoded>
+      <link>https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</link>
+      <guid isPermaLink="true">https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</guid>
+      <pubDate>Wed, 17 Dec 2025 11:56:53 GMT</pubDate>
+      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
+      <category>Technology</category>
+    </item>
+    <item>
+      <title><![CDATA[Cara Install Self-Hosted n8n di VPS Ubuntu]]></title>
+      <description><![CDATA[Panduan lengkap deploy n8n untuk otomasi workflow unlimited tanpa biaya langganan bulanan.]]></description>
+      <content:encoded><![CDATA[<p>n8n adalah tool workflow automation yang powerful. Dalam tutorial ini, kita akan install n8n menggunakan Docker di VPS Ubuntu...</p>]]></content:encoded>
+      <link>https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</link>
+      <guid isPermaLink="true">https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</guid>
+      <pubDate>Wed, 17 Dec 2025 11:56:51 GMT</pubDate>
+      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
+      <category>Technology</category>
+    </item>
     <item>
       <title><![CDATA[Hallo]]></title>
       <description><![CDATA[test aha ini mah]]></description>

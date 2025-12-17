@@ -215,7 +215,7 @@ export const lightModeRichTextRenderOptions = {
       `<ol class="list-decimal list-outside mb-6 space-y-3 text-dark-bg/90 pl-6">${next((node as Block).content)}</ol>`,
     
     [BLOCKS.QUOTE]: (node: Node, next: any) => 
-      `<blockquote class="relative pl-6 py-2 my-8 border-l-4 border-primary bg-light-surface/50 border border-light-border rounded-r-lg italic text-dark-bg/90">
+      `<blockquote class="relative pl-6 py-2 my-8 border-l-4 border-primary bg-light-surface/50 rounded-r-lg italic text-dark-bg/90">
         <div class="not-italic">${next((node as Block).content)}</div>
       </blockquote>`,
 

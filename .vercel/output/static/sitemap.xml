@@ -31,44 +31,50 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://muhamadaliridho.me/blog/how-to-crate-mail-bussines</loc>
+    <lastmod>2025-12-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://muhamadaliridho.me/blog/allo</loc>
-    <lastmod>2025-12-16</lastmod>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/apatuh</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/building-modern-web-applications-astro</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/getting-started-iot-development</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/id/blog/how-to-crate-mail-bussines</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/building-iot-projects-esp32</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/id/blog/allo</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/understanding-rag-retrieval-augmented-generation</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/id/blog/deploy-telegram-bot-cloudflare-workers</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/id/blog/welcome-enhanced-blog</loc>
-    <lastmod>2025-12-16</lastmod>
+    <loc>https://muhamadaliridho.me/id/blog/cara-install-n8n-vps-ubuntu</loc>
+    <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
