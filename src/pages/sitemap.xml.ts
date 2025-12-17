@@ -84,7 +84,7 @@ export const GET: APIRoute = async () => {
     try {
       if (contentfulClient) {
         const blogEntriesId = await contentfulClient.getEntries({
-          content_type: 'simpleBlog',
+          content_type: 'blogPost',
           limit: 1000,
           locale: 'id-ID',
           order: ['-sys.updatedAt'],

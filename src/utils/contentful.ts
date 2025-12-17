@@ -98,24 +98,7 @@ export interface ContentfulBlogPost {
   };
 }
 
-// Simple Blog from Contentful (using the 'simpleBlog' content type)
-export interface ContentfulSimpleBlog {
-  sys: {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-  fields: {
-    title: string;
-    slug: string;
-    excerpt: string;
-    content: string; // Text field, not rich text
-    featuredImage?: ContentfulAsset; // Optional uploaded image
-    imageUrl?: string; // Optional fallback URL
-    tags: string[];
-    publishDate: string;
-  };
-}
+
 
 // Certificate from Contentful
 export interface ContentfulCertificate {
@@ -341,59 +324,7 @@ export async function getBlogPost(slug: string, preview = false, locale?: string
   }
 }
 
-// API Functions for Simple Blog Posts
-export async function getSimpleBlogPosts(preview = false, locale?: string): Promise<ContentfulSimpleBlog[]> {
-  try {
-    const client = preview ? previewClient : contentfulClient;
-    if (!client) {
-      console.warn('Contentful client not available');
-      return [];
-    }
 
-    const entries = locale
-      ? await client.getEntries({
-        content_type: 'simpleBlog',
-        order: ['-fields.publishDate'],
-        locale: locale,
-      })
-      : await client.getEntries({
-        content_type: 'simpleBlog',
-        order: ['-fields.publishDate'],
-      });
-
-    return entries.items as unknown as ContentfulSimpleBlog[];
-  } catch (error) {
-    console.warn('Error fetching simple blog posts from Contentful:', error);
-    return [];
-  }
-}
-
-export async function getSimpleBlogPost(slug: string, preview = false, locale?: string): Promise<ContentfulSimpleBlog | null> {
-  try {
-    const client = preview ? previewClient : contentfulClient;
-    if (!client) {
-      throw new Error('Contentful client not available');
-    }
-
-    const entries = locale 
-      ? await client.getEntries({
-          content_type: 'simpleBlog',
-          'fields.slug': slug,
-          limit: 1,
-          locale: locale,
-        })
-      : await client.getEntries({
-          content_type: 'simpleBlog',
-          'fields.slug': slug,
-          limit: 1,
-        });
-
-    return (entries.items[0] as unknown as ContentfulSimpleBlog) || null;
-  } catch (error) {
-    console.error(`Error fetching simple blog post "${slug}" from Contentful:`, error);
-    return null;
-  }
-}
 
 // API Functions for Certificates
 export async function getCertificates(preview = false, locale?: string): Promise<ContentfulCertificate[]> {
@@ -564,53 +495,7 @@ export const fallbackProjects: ContentfulSimpleProject[] = [
   },
 ];
 
-export const fallbackBlogPosts: ContentfulSimpleBlog[] = [
-  {
-    sys: {
-      id: 'fallback-blog-1',
-      createdAt: '2024-02-15T00:00:00Z',
-      updatedAt: '2024-02-15T00:00:00Z',
-    },
-    fields: {
-      title: 'Cara Install Self-Hosted n8n di VPS Ubuntu',
-      slug: 'cara-install-n8n-vps-ubuntu',
-      excerpt: 'Panduan lengkap deploy n8n untuk otomasi workflow unlimited tanpa biaya langganan bulanan.',
-      content: 'n8n adalah tool workflow automation yang powerful. Dalam tutorial ini, kita akan install n8n menggunakan Docker di VPS Ubuntu...',
-      tags: ['automation', 'n8n', 'self-hosted', 'ubuntu'],
-      publishDate: '2024-02-15',
-    },
-  },
-  {
-    sys: {
-      id: 'fallback-blog-2',
-      createdAt: '2024-02-10T00:00:00Z',
-      updatedAt: '2024-02-10T00:00:00Z',
-    },
-    fields: {
-      title: 'Tutorial Mengaktifkan Gemini Nano di Android (AI on Device)',
-      slug: 'tutorial-gemini-nano-android',
-      excerpt: 'Cara akses model AI Google paling efisien, Gemini Nano, langsung di device Android kamu untuk performa offline.',
-      content: 'Gemini Nano membawa power LLM langsung ke saku Anda. Pelajari cara mengaktifkan AICore dan menggunakan API-nya...',
-      tags: ['ai', 'gemini', 'android', 'llm'],
-      publishDate: '2024-02-10',
-    },
-  },
-  {
-    sys: {
-      id: 'fallback-blog-3',
-      createdAt: '2024-02-01T00:00:00Z',
-      updatedAt: '2024-02-01T00:00:00Z',
-    },
-    fields: {
-      title: 'Deploy Telegram Bot Gratis dengan Cloudflare Workers',
-      slug: 'deploy-telegram-bot-cloudflare-workers',
-      excerpt: 'Bikin bot Telegram serverless dengan JavaScript yang bisa handle jutaan request tanpa biaya server.',
-      content: 'Lupakan Heroku atau VPS mahal. Cloudflare Workers adalah cara termudah dan termurah untuk hosting bot Telegram...',
-      tags: ['telegram', 'cloudflare', 'javascript', 'serverless'],
-      publishDate: '2024-02-01',
-    },
-  },
-];
+
 
 // Testimonial from Contentful
 export interface ContentfulTestimonial {

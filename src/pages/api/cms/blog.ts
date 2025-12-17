@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
     
     const entry = {
       id: `blog_${Date.now()}`,
-      contentType: 'simpleBlog',
+      contentType: 'blogPost',
       fields: {
         title: { 'en-US': data.title },
         slug: { 'en-US': data.slug },
@@ -60,7 +60,7 @@ export const GET: APIRoute = async () => {
       // Simulated blog posts for now
       {
         id: 'sample_blog_1',
-        contentType: 'simpleBlog',
+        contentType: 'blogPost',
         fields: {
           title: { 'en-US': 'Welcome to My Blog' },
           slug: { 'en-US': 'welcome-to-my-blog' },
@@ -110,7 +110,7 @@ export const PUT: APIRoute = async ({ request }) => {
     
     const updatedEntry = {
       id,
-      contentType: 'simpleBlog',
+      contentType: 'blogPost',
       fields: {
         title: { 'en-US': updateData.title },
         slug: { 'en-US': updateData.slug },

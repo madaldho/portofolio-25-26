@@ -24,7 +24,7 @@ export interface ProjectData {
 
 export interface ContentEntry {
   id: string;
-  contentType: 'simpleBlog' | 'simpleProject';
+  contentType: 'blogPost' | 'simpleProject';
   fields: Record<string, any>;
   status: 'draft' | 'published';
   createdAt: string;
@@ -65,7 +65,7 @@ export class CMSManager {
       // Fallback to localStorage with better structure
       const entry: ContentEntry = {
         id: `blog_${Date.now()}`,
-        contentType: 'simpleBlog',
+        contentType: 'blogPost',
         fields: {
           title: { 'en-US': data.title },
           slug: { 'en-US': data.slug },
@@ -160,7 +160,7 @@ export class CMSManager {
       entry.updatedAt = new Date().toISOString();
 
       // Save back to localStorage
-      if (entry.contentType === 'simpleBlog') {
+      if (entry.contentType === 'blogPost') {
         const updatedPosts = blogPosts.map((p: ContentEntry) => p.id === id ? entry : p);
         localStorage.setItem('cms_blogPosts', JSON.stringify(updatedPosts));
       } else {
@@ -210,15 +210,15 @@ export class CMSManager {
   async getAllBlogPosts(): Promise<ContentEntry[]> {
     try {
       // Import Contentful functions dynamically to avoid SSR issues
-      const { getSimpleBlogPosts, isContentfulConfigured } = await import('./contentful');
+      const { getBlogPosts, isContentfulConfigured } = await import('./contentful');
       
       if (isContentfulConfigured()) {
-        const contentfulPosts = await getSimpleBlogPosts();
+        const contentfulPosts = await getBlogPosts();
         if (contentfulPosts.length > 0) {
           // Transform Contentful blog posts to match CMS Manager structure
           return contentfulPosts.map(post => ({
             id: post.sys.id,
-            contentType: 'simpleBlog' as const,
+            contentType: 'blogPost' as const,
             fields: {
               title: { 'en-US': post.fields.title },
               slug: { 'en-US': post.fields.slug },

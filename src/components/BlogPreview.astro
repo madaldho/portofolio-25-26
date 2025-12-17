@@ -1,5 +1,5 @@
 ---
-import { getSimpleBlogPosts, getBlogPosts, isContentfulConfigured, fallbackBlogPosts } from '../utils/contentful';
+import { getBlogPosts, isContentfulConfigured } from '../utils/contentful';
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { getLangFromUrl, useTranslatedPath, useTranslations } from '../i18n/utils';
 
@@ -64,36 +64,6 @@ try {
         };
       });
       isUsingContentful = true;
-    } else {
-      // Fallback to simple blog posts
-      const contentfulPosts = await getSimpleBlogPosts(false, locale);
-      if (contentfulPosts.length > 0) {
-        blogPosts = contentfulPosts.map(post => {
-          // Get image: prefer uploaded asset, then imageUrl field, then default
-          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
-          if (post.fields.featuredImage?.fields?.file?.url) {
-            imageUrl = post.fields.featuredImage.fields.file.url.startsWith('//')
-              ? `https:${post.fields.featuredImage.fields.file.url}`
-              : post.fields.featuredImage.fields.file.url;
-          } else if (post.fields.imageUrl) {
-            imageUrl = post.fields.imageUrl;
-          }
-          
-          return {
-            id: post.sys.id,
-            slug: post.fields.slug,
-            data: {
-              title: post.fields.title,
-              excerpt: post.fields.excerpt,
-              tags: post.fields.tags || [],
-              publishDate: post.fields.publishDate,
-              readingTime: Math.ceil((typeof post.fields.content === 'string' ? post.fields.content.split(' ').length : 100) / 200),
-              featuredImage: imageUrl
-            }
-          };
-        });
-        isUsingContentful = true;
-      }
     }
   }
 } catch (error) {
@@ -102,18 +72,9 @@ try {
 
 // Fallback data if no Contentful posts
 if (blogPosts.length === 0) {
-  blogPosts = fallbackBlogPosts.map(post => ({
-    id: post.sys.id,
-    slug: post.fields.slug,
-    data: {
-      title: post.fields.title,
-      excerpt: post.fields.excerpt,
-      tags: post.fields.tags || [],
-      publishDate: post.fields.publishDate,
-      readingTime: Math.ceil((typeof post.fields.content === 'string' ? post.fields.content.split(' ').length : 100) / 200),
-      featuredImage: `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`
-    }
-  }));
+  // Empty fallback or hardcoded dummy data if needed, but removing the dependency on fallbackBlogPosts which was deleted
+  // using empty array for now or minimal dummy to preventing breakage if no content
+   blogPosts = [];
 }
 
 // Sort by date and take latest 3

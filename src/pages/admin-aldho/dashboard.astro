@@ -171,7 +171,7 @@ import ProjectForm from "../../components/admin/ProjectForm.astro";
             </p>
             <div class="space-y-3">
               <a
-                href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=simpleBlog"
+                href="https://app.contentful.com/spaces/hbrrn0bf99r5/entries?contentTypeId=blogPost"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="w-full bg-primary hover:bg-primary-light text-white py-3 px-4
@@ -505,7 +505,7 @@ import ProjectForm from "../../components/admin/ProjectForm.astro";
               .map((item) => {
                 const title = item.fields.title?.["en-US"] || "Untitled";
                 const type =
-                  item.contentType === "simpleBlog" ? "Blog Post" : "Project";
+                  item.contentType === "blogPost" ? "Blog Post" : "Project";
                 const date = new Date(item.updatedAt).toLocaleDateString();
                 const status =
                   item.status === "published" ? "Published" : "Draft";
@@ -598,7 +598,7 @@ import ProjectForm from "../../components/admin/ProjectForm.astro";
       }
 
       // Create a simple list modal with Contentful links
-      const contentTypeId = type === "blog" ? "simpleBlog" : "simpleProject";
+      const contentTypeId = type === "blog" ? "blogPost" : "simpleProject";
       const listHtml = content
         .map((item) => {
           const title = item.fields.title?.["en-US"] || "Untitled";
