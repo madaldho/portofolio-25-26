@@ -217,4 +217,13 @@ function getImageUrl(cert: ContentfulCertificate): string {
   :global(body.light) #certificates h3 {
     color: var(--color-dark-bg);
   }
+
+  /* Light mode primary/accent text - darker for contrast */
+  :global(body.light) #certificates .text-primary {
+    color: #C62D00 !important;
+  }
+
+  :global(body.light) #certificates .text-accent {
+    color: #B8A500 !important;
+  }
 </style>

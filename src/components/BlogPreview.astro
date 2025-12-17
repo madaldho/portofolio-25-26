@@ -232,6 +232,16 @@ const latestPosts = blogPosts
   :global(body.light) #blog h3 {
     color: var(--color-dark-bg);
   }
+
+  /* Light mode primary text - darker for contrast */
+  :global(body.light) #blog .text-primary {
+    color: #C62D00 !important;
+  }
+  
+  /* Ensure read more link has good contrast */
+  :global(body.light) #blog a.text-primary:hover {
+    color: #FF3D00 !important; /* Brighter on hover is fine */
+  }
   
   /* Ensure reading time badge stays white in light mode */
   .reading-time-badge {

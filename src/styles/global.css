@@ -336,6 +336,44 @@ body.light .text-subtle {
   @apply text-dark-bg/70;
 }
 
+/* Light Mode Primary Color - Darker for better contrast */
+body.light .text-primary {
+  color: #C62D00 !important; /* Darker orange for better contrast */
+}
+
+body.light .text-accent {
+  color: #B8A500 !important; /* Darker yellow for better contrast */
+}
+
+/* Light mode buttons - ensure white text on primary bg */
+body.light .btn-primary,
+body.light .bg-primary {
+  color: white !important;
+}
+
+body.light .btn-primary span,
+body.light .bg-primary span {
+  color: white !important;
+}
+
+/* Filter buttons in light mode */
+body.light .filter-btn {
+  color: #1F2937;
+  border-color: #E5E7EB;
+  background-color: #FFFFFF;
+}
+
+body.light .filter-btn:hover,
+body.light .filter-btn[data-active="true"] {
+  color: #C62D00;
+  border-color: #C62D00;
+}
+
+/* Category badges - ensure white text */
+body.light [style*="background: #"] {
+  color: white !important;
+}
+
 /* Better interactive states */
 .interactive {
   @apply transition-all duration-300 hover:scale-105 active:scale-95;

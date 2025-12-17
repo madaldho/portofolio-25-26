@@ -226,16 +226,31 @@ const profile = getProfile(lang as "en" | "id");
   }
 
   :global(body.light) #home h2 {
-    color: rgba(10, 10, 10, 0.8);
+    color: rgba(10, 10, 10, 0.9);
   }
 
   :global(body.light) #home p {
-    color: rgba(10, 10, 10, 0.6);
+    color: rgba(10, 10, 10, 0.8);
   }
 
-  :global(body.light) #home .text-white\/60,
-  :global(body.light) #home .text-white\/50,
-  :global(body.light) #home .text-white\/40 {
-    color: rgba(10, 10, 10, 0.5);
+  :global(body.light) #home .text-white\/80,
+  :global(body.light) #home .text-white\/70,
+  :global(body.light) #home .text-white\/60 {
+    color: rgba(10, 10, 10, 0.7) !important;
+  }
+
+  /* Scroll indicator in light mode */
+  :global(body.light) #home .border-white\/40 {
+    border-color: rgba(10, 10, 10, 0.3) !important;
+  }
+
+  :global(body.light) #home .bg-white\/60 {
+    background-color: rgba(10, 10, 10, 0.5) !important;
+  }
+
+  /* Ensure buttons keep white text */
+  :global(body.light) #home .btn-primary,
+  :global(body.light) #home .bg-primary {
+    color: white !important;
   }
 </style>

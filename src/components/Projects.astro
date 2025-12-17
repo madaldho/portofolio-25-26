@@ -371,7 +371,12 @@ const categoryColors: Record<string, string> = {
   }
   
   :global(body.light) .filter-btn:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: #C62D00;
+    color: #C62D00;
+  }
+
+  /* Light mode primary text - darker for contrast */
+  :global(body.light) #projects .text-primary {
+    color: #C62D00 !important;
   }
 </style>

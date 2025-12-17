@@ -328,4 +328,24 @@ const techStackIcons = [
   :global(body.light) .milestone-year {
     color: #4a4a4a;
   }
+
+  /* Light mode primary text - darker for contrast */
+  :global(body.light) #about .text-primary {
+    color: #C62D00 !important;
+  }
+
+  /* Ensure buttons keep white text in light mode */
+  :global(body.light) #about .bg-primary {
+    color: white !important;
+  }
+
+  :global(body.light) #about a.bg-primary,
+  :global(body.light) #about button.bg-primary {
+    color: white !important;
+  }
+
+  /* Highlighted milestone year override */
+  :global(body.light) .journey-card.highlight .text-primary {
+    color: #C62D00 !important;
+  }
 </style>
