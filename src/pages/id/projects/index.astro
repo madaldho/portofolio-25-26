@@ -93,12 +93,25 @@ const sortedProjects = projects.sort((a, b) =>
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 );
 
+// Extract unique categories from projects
+const uniqueCategories = [
+  ...new Set(projects.map((project) => project.data.category).filter(Boolean)),
+];
+
+// Create category objects with labels
 const categories = [
-  { id: 'all', label: t('category.all' as any) },
-  { id: 'web', label: t('category.web' as any) },
-  { id: 'mobile', label: t('category.mobile' as any) },
-  { id: 'iot', label: t('category.iot' as any) },
-  { id: 'ai-ml', label: t('category.aiMl' as any) },
+  { id: "all", label: t("category.all" as any) },
+  ...uniqueCategories.map((cat) => {
+    // Try to get translation, fallback to formatted text
+    const translationKey = `category.${cat}`;
+    const translatedLabel = t(translationKey as any);
+    
+    const label = translatedLabel !== translationKey 
+      ? translatedLabel 
+      : cat.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+    return { id: cat, label };
+  }),
 ];
 ---
 
