@@ -1,0 +1,1 @@
+const e="Cileungsi1";function n(){return typeof window>"u"?!1:sessionStorage.getItem("admin-auth")==="true"}function i(t){return t===e?(sessionStorage.setItem("admin-auth","true"),!0):!1}function s(){sessionStorage.removeItem("admin-auth")}export{i as a,n as c,s as l};

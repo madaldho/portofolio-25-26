@@ -1,0 +1,44 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://muhamadaliridho.me/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin-aldho/
+Disallow: /api/
+
+# Allow all other content
+Allow: /blog/
+Allow: /projects/
+Allow: /certificates/
+Allow: /id/
+Allow: /id/blog/
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block AI training bots (optional)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /

@@ -42,7 +42,7 @@ const profile = getProfile(lang as "en" | "id");
     <!-- Greeting -->
     <div class="overflow-hidden mb-4">
       <p
-        class="text-lg md:text-xl text-white/60 font-mono animate-reveal-up"
+        class="text-lg md:text-xl text-white/70 font-mono animate-reveal-up"
         style="animation-delay: 0.1s;"
       >
         {t("hero.greeting")}
@@ -89,7 +89,7 @@ const profile = getProfile(lang as "en" | "id");
     <!-- Tagline -->
     <div class="overflow-hidden mb-12">
       <p
-        class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto animate-reveal-up"
+        class="text-lg md:text-xl text-white/70 max-w-2xl mx-auto animate-reveal-up"
         style="animation-delay: 0.5s;"
       >
         {t("hero.description")}
@@ -129,7 +129,8 @@ const profile = getProfile(lang as "en" | "id");
     >
       <a
         href="#about"
-        class="flex flex-col items-center gap-3 text-white/40 hover:text-white/60 transition-colors group"
+        aria-label="Scroll down to About section"
+        class="flex flex-col items-center gap-3 text-white/60 hover:text-white/80 transition-colors group"
       >
         <span
           class="font-mono tracking-widest uppercase text-xs group-hover:text-primary transition-colors"

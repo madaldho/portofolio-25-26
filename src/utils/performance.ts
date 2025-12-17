@@ -100,9 +100,10 @@ export class PerformanceMonitor {
   }
 
   private reportMetric(name: string, value: number) {
-    // Send metrics to analytics service
-    if (typeof gtag !== 'undefined') {
-      gtag('event', name, {
+    // Send metrics to analytics service (Google Analytics if available)
+    const win = window as typeof window & { gtag?: (...args: unknown[]) => void };
+    if (typeof win.gtag !== 'undefined') {
+      win.gtag('event', name, {
         event_category: 'Web Vitals',
         value: Math.round(value),
         non_interaction: true,
@@ -119,6 +120,12 @@ export class PerformanceMonitor {
   }
 
   private async sendToAnalytics(metric: string, value: number) {
+    // Skip in production to avoid 405 errors (API routes don't work in static builds)
+    const isDev = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    
+    if (!isDev) return;
+    
     try {
       await fetch('/api/analytics/performance', {
         method: 'POST',
@@ -135,7 +142,9 @@ export class PerformanceMonitor {
       });
     } catch (error) {
       // Silently fail - don't impact user experience
-      console.warn('Failed to send performance metric:', error);
+      if (isDev) {
+        console.warn('Failed to send performance metric:', error);
+      }
     }
   }
 
