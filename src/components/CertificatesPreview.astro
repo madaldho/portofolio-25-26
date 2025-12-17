@@ -77,7 +77,7 @@ function getImageUrl(cert: ContentfulCertificate): string {
               <!-- Category Badge -->
               {cert.fields.category && (
                 <div
-                  class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
+                  class="category-badge absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
                   style={{ background: `var(--color-cat-${cert.fields.category})` }}
                 >
                   {cert.fields.category.toUpperCase()}
@@ -224,6 +224,11 @@ function getImageUrl(cert: ContentfulCertificate): string {
   }
 
   :global(body.light) #certificates .text-accent {
-    color: #B8A500 !important;
+    color: #6D5E00 !important; /* WCAG AA compliant (5.5:1 on white) */
+  }
+
+  /* Fix category badge contrast in light mode */
+  :global(body.light) #certificates .category-badge {
+    color: #FFFFFF !important;
   }
 </style>

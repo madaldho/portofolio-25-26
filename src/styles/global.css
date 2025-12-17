@@ -378,7 +378,7 @@ body.light .text-primary {
 }
 
 body.light .text-accent {
-  color: #B8A500 !important; /* Darker yellow for better contrast */
+  color: #6D5E00 !important; /* Dark gold for WCAG AA contrast (5.5:1 on white) */
 }
 
 /* Light mode buttons - ensure white text on primary bg */
