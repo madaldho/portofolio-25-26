@@ -3,50 +3,93 @@ import type { APIRoute } from 'astro';
 export const GET: APIRoute = async () => {
   const siteUrl = 'https://muhamadaliridho.me';
   
-  const robotsTxt = `User-agent: *
+  const robotsTxt = `# Muhamad Ali Ridho Portfolio - robots.txt
+# AI-Friendly: All bots are welcome to index this site!
+
+User-agent: *
 Allow: /
 
 # Sitemaps
 Sitemap: ${siteUrl}/sitemap.xml
 
-# Disallow admin areas
+# LLMs.txt for AI systems
+# See: ${siteUrl}/llms.txt
+
+# Disallow admin areas only
 Disallow: /admin-aldho/
 Disallow: /api/
 
-# Allow all other content
+# Allow all public content
 Allow: /blog/
 Allow: /projects/
 Allow: /certificates/
 Allow: /id/
 Allow: /id/blog/
 
-# Crawl delay (be respectful)
-Crawl-delay: 1
-
-# Specific bot instructions
+# Google crawlers
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 0
 
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+# Bing
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
-# Block AI training bots (optional)
+User-agent: msnbot
+Allow: /
+
+# AI Crawlers - ALL ALLOWED for indexing
 User-agent: GPTBot
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
-User-agent: CCBot
-Disallow: /
+User-agent: Google-Extended
+Allow: /
 
-User-agent: anthropic-ai
-Disallow: /
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
 
 User-agent: Claude-Web
-Disallow: /`;
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: omgili
+Allow: /
+
+User-agent: YouBot
+Allow: /`;
 
   return new Response(robotsTxt, {
     status: 200,

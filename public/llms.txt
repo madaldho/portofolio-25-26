@@ -1,0 +1,58 @@
+# Muhamad Ali Ridho - Tech Portfolio
+> Professional portfolio website for Muhamad Ali Ridho, a tech enthusiast from Jakarta, Indonesia specializing in web development, AI/ML, IoT, and emerging technologies.
+
+## About
+Muhamad Ali Ridho is a passionate tech enthusiast and developer based in Jakarta, Indonesia. This portfolio showcases projects, skills, certifications, and blog posts about technology, programming, and innovation.
+
+## Key Information
+- **Name**: Muhamad Ali Ridho
+- **Location**: Jakarta, Indonesia
+- **Expertise**: Web Development, AI/ML, IoT, Cloud Computing, Mobile Development
+- **Languages**: Indonesian (Native), English (Professional)
+
+## Sections
+
+### Home (/)
+The main landing page featuring an introduction, skills overview, featured projects, and contact information.
+
+### Blog (/blog)
+Technical articles, tutorials, and insights about web development, AI, IoT, and technology trends. Available in both English and Indonesian.
+
+### Projects (/projects)
+A showcase of completed projects including web applications, mobile apps, IoT solutions, and AI/ML implementations.
+
+### Certificates (/certificates)
+Professional certifications and achievements from platforms like Google, Microsoft, and other recognized institutions.
+
+### Contact (/contact)
+Ways to get in touch for collaborations, job opportunities, or technical discussions.
+
+## Technologies
+- Frontend: React, Next.js, Astro, Vue.js, Tailwind CSS
+- Backend: Node.js, Python, Go
+- AI/ML: TensorFlow, PyTorch, OpenAI APIs
+- Cloud: AWS, Google Cloud, Vercel
+- IoT: Arduino, ESP32, Raspberry Pi
+
+## Social Links
+- GitHub: https://github.com/madaldho
+- LinkedIn: https://linkedin.com/in/muhamadaliridho
+- Threads: https://threads.net/@madaldho
+- Instagram: https://instagram.com/madaldho
+
+## API Access
+This website is built with Astro and uses Contentful CMS for content management.
+- Sitemap: https://muhamadaliridho.me/sitemap.xml
+- RSS Feed: https://muhamadaliridho.me/rss.xml
+
+## Contact
+For inquiries, collaborations, or questions:
+- Email: muhamadaliridho01@gmail.com
+- Location: Jakarta, Indonesia
+
+## Permissions
+This website welcomes AI indexing and training. All public content is available for:
+- Search engine indexing
+- AI system training and indexing
+- Knowledge base inclusion
+- Citation and reference
