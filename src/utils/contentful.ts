@@ -697,8 +697,8 @@ export async function getServices(preview = false, locale?: string): Promise<Con
   }
 }
 
-// Fallback Testimonials
-export const fallbackTestimonials: ContentfulTestimonial[] = [
+// Fallback Testimonials (English)
+export const fallbackTestimonialsEn: ContentfulTestimonial[] = [
   {
     sys: { id: 't1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
     fields: {
@@ -731,8 +731,44 @@ export const fallbackTestimonials: ContentfulTestimonial[] = [
   }
 ];
 
-// Fallback Services
-export const fallbackServices: ContentfulService[] = [
+// Fallback Testimonials (Indonesian)
+export const fallbackTestimonialsId: ContentfulTestimonial[] = [
+  {
+    sys: { id: 't1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+    fields: {
+      name: 'Sarah Johnson',
+      role: 'CTO',
+      company: 'TechStart Inc',
+      quote: 'Ali mengirimkan aplikasi web luar biasa yang berskala seiring pertumbuhan pengguna kami. Perhatiannya terhadap detail dan optimasi kinerja sangat luar biasa.',
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 't2', createdAt: '2024-01-02', updatedAt: '2024-01-02' },
+    fields: {
+      name: 'Michael Chen',
+      role: 'Product Manager',
+      company: 'InnovateLab',
+      quote: 'Bekerja dengan Ali sangat lancar. Dia memahami kebutuhan kami dengan segera dan menyarankan perbaikan yang tidak kami pikirkan. Sangat direkomendasikan untuk integrasi AI.',
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 't3', createdAt: '2024-01-03', updatedAt: '2024-01-03' },
+    fields: {
+      name: 'David Smith',
+      role: 'Founder',
+      company: 'EcoSolutions',
+      quote: 'Dashboard IoT yang Ali bangun untuk kami intuitif dan kuat. Ini benar-benar mengubah cara kami memantau sensor lapangan kami.',
+      featured: true,
+    }
+  }
+];
+
+export const fallbackTestimonials = fallbackTestimonialsEn;
+
+// Fallback Services (English)
+export const fallbackServicesEn: ContentfulService[] = [
   {
     sys: { id: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
     fields: {
@@ -764,3 +800,40 @@ export const fallbackServices: ContentfulService[] = [
     }
   }
 ];
+
+// Fallback Services (Indonesian)
+export const fallbackServicesId: ContentfulService[] = [
+  {
+    sys: { id: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+    fields: {
+      title: 'Pengembangan Web App',
+      description: 'Aplikasi web berkinerja tinggi dan skalabel yang dibangun dengan framework modern seperti Astro, React, dan Next.js.',
+      icon: 'code',
+      features: ['Arsitektur Kustom', 'Optimasi Performa', 'Siap SEO'],
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 's2', createdAt: '2024-01-02', updatedAt: '2024-01-02' },
+    fields: {
+      title: 'Solusi AI',
+      description: 'Mengintegrasikan agen cerdas dan model machine learning untuk mengotomatisasi alur kerja dan meningkatkan pengalaman pengguna.',
+      icon: 'cpu',
+      features: ['Integrasi LLM', 'Skrip Otomasi', 'Analisis Cerdas'],
+      featured: true,
+    }
+  },
+  {
+    sys: { id: 's3', createdAt: '2024-01-03', updatedAt: '2024-01-03' },
+    fields: {
+      title: 'Sistem IoT',
+      description: 'Solusi IoT end-to-end dari firmware hingga dashboard cloud untuk pemantauan dan kontrol real-time.',
+      icon: 'wifi',
+      features: ['Pengembangan Firmware', 'MQTT/WebSocket', 'Dashboard Real-time'],
+      featured: true,
+    }
+  }
+];
+
+// Maintain internal backward compatibility if needed, using EN as default
+export const fallbackServices = fallbackServicesEn;

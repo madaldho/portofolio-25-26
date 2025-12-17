@@ -1,5 +1,5 @@
 ---
-import { getServices, isContentfulConfigured, fallbackServices, type ContentfulService } from '../utils/contentful';
+import { getServices, isContentfulConfigured, fallbackServicesEn, fallbackServicesId, type ContentfulService } from '../utils/contentful';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
@@ -16,9 +16,12 @@ try {
   console.warn('Error fetching services:', error);
 }
 
-// Use fallback if no services found
-if (services.length === 0) {
-  services = fallbackServices;
+// Validation function
+const isValidService = (s: ContentfulService) => s.fields && s.fields.title && s.fields.description;
+
+// Use fallback if no services found or if they are invalid (empty fields due to missing translations)
+if (services.length === 0 || !services.some(isValidService)) {
+  services = lang === 'id' ? fallbackServicesId : fallbackServicesEn;
 }
 
 // Icon mapping (simple SVG paths)
