@@ -41,6 +41,7 @@ export const ui = {
     'projects.viewAll': 'View All Projects',
     'projects.liveDemo': 'Live Demo',
     'projects.sourceCode': 'Source Code',
+    'projects.viewProject': 'View Details',
     'projects.category.web': 'Web Development',
     'projects.category.mobile': 'Mobile Development',
     'projects.category.iot': 'IoT Projects',
