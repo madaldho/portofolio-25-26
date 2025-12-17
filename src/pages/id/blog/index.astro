@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { getSimpleBlogPosts } from "../../../utils/contentful";
+import { getBlogPosts } from "../../../utils/contentful";
 import {
   formatDate,
   getLangFromUrl,
@@ -10,8 +10,8 @@ import {
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-// Get blog posts from Contentful with Indonesian locale
-const posts = await getSimpleBlogPosts(false, "id-ID");
+// Get blog posts from Contentful (Rich Text blogPost, not simpleBlog)
+const posts = await getBlogPosts(false, "en-US");
 const publishedPosts = posts.filter((post) => post.fields && post.fields.title);
 ---
 

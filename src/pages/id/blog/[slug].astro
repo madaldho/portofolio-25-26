@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import RichText from "../../../components/RichText.astro";
 import {
-  getSimpleBlogPosts,
   getBlogPosts,
   isContentfulConfigured,
 } from "../../../utils/contentful";
@@ -12,53 +11,22 @@ import {
   useTranslations,
 } from "../../../i18n/utils";
 
-// Helper function to get field value from localized or string field
-function getFieldValue(field: any, locale: string = "id-ID"): string {
-  if (typeof field === "string") {
-    return field;
-  } else if (field && typeof field === "object") {
-    return field[locale] || field["en-US"] || Object.values(field)[0] || "";
-  }
-  return "";
-}
-
-// ... existing imports
-
 export async function getStaticPaths() {
   let posts: any[] = [];
 
   if (isContentfulConfigured()) {
-    // Try rich text posts first
-    const richTextPosts = await getBlogPosts(false, "id-ID");
-    if (richTextPosts.length > 0) {
-      posts = richTextPosts;
-    } else {
-      // Fallback
-      posts = await getSimpleBlogPosts(false, "id-ID");
-    }
-  } else {
-    // Fallback if not configured
-    posts = await getSimpleBlogPosts(false, "id-ID");
+    // Only get Rich Text blog posts
+    posts = await getBlogPosts(false, "en-US");
   }
 
   const publishedPosts = posts.filter(
-    (post) => post.fields && post.fields.title
+    (post) => post.fields && post.fields.title && post.fields.slug
   );
 
-  return publishedPosts.map((post) => {
-    const slugValue =
-      typeof post.fields.slug === "string"
-        ? post.fields.slug
-        : post.fields.slug?.["id-ID"] ||
-          post.fields.slug?.["en-US"] ||
-          Object.values(post.fields.slug || {})[0] ||
-          "";
-
-    return {
-      params: { slug: slugValue },
-      props: { post },
-    };
-  });
+  return publishedPosts.map((post) => ({
+    params: { slug: post.fields.slug },
+    props: { post },
+  }));
 }
 
 const { slug } = Astro.params;
@@ -76,11 +44,10 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
 ---
 
 <BaseLayout
-  title={getFieldValue(currentPost.fields.title, "id-ID")}
-  description={getFieldValue(currentPost.fields.excerpt, "id-ID") ||
+  title={currentPost.fields.title}
+  description={currentPost.fields.excerpt ||
     `${t("blog.publishedOn")} ${formatDate(new Date(currentPost.fields.publishDate), lang)}`}
-  image={currentPost.fields.featuredImage?.fields?.file?.url ||
-    currentPost.fields.imageUrl}
+  image={currentPost.fields.featuredImage?.fields?.file?.url}
 >
   <main class="min-h-screen pt-24 pb-16">
     <article class="max-w-4xl mx-auto px-6">
@@ -117,7 +84,7 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
                   currentPost.fields.featuredImage?.fields?.file?.url ||
                   currentPost.fields.imageUrl
                 }
-                alt={getFieldValue(currentPost.fields.title, "id-ID")}
+                alt={currentPost.fields.title}
                 class="w-full h-64 md:h-80 object-cover rounded-2xl"
                 loading="eager"
               />
@@ -151,13 +118,13 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
         <h1
           class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-6"
         >
-          {getFieldValue(currentPost.fields.title, "id-ID")}
+          {currentPost.fields.title}
         </h1>
 
         {
-          getFieldValue(currentPost.fields.excerpt, "id-ID") && (
+          currentPost.fields.excerpt && (
             <p class="text-lg md:text-xl text-white/70 leading-relaxed mb-8">
-              {getFieldValue(currentPost.fields.excerpt, "id-ID")}
+              {currentPost.fields.excerpt}
             </p>
           )
         }
@@ -179,11 +146,22 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
       <!-- Article Content -->
       <div class="prose prose-invert prose-lg max-w-none">
         {
-          getFieldValue(currentPost.fields.content, "id-ID") && (
-            <div class="whitespace-pre-wrap">
-              {getFieldValue(currentPost.fields.content, "id-ID")}
-            </div>
-          )
+          (() => {
+            const content = currentPost.fields.content;
+            // Check if content is Rich Text (object) or plain text (string)
+            if (
+              content &&
+              typeof content === "object" &&
+              content.nodeType === "document"
+            ) {
+              // Rich Text content - use RichText component
+              return <RichText content={content} />;
+            } else if (typeof content === "string" && content.trim()) {
+              // Plain text content
+              return <div class="whitespace-pre-wrap">{content}</div>;
+            }
+            return <p class="text-white/60">Tidak ada konten.</p>;
+          })()
         }
       </div>
 
@@ -197,7 +175,7 @@ if (!currentPost || !currentPost.fields || !currentPost.fields.title) {
             <span class="text-white/60 font-medium">Bagikan:</span>
             <div class="flex items-center gap-3">
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(getFieldValue(currentPost.fields.title, "id-ID"))}&url=${encodeURIComponent(Astro.url.toString())}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(currentPost.fields.title)}&url=${encodeURIComponent(Astro.url.toString())}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="p-2 rounded-lg bg-dark-surface/50 hover:bg-dark-surface transition-colors duration-300 focus-ring"
