@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getSimpleBlogPosts, getBlogPosts, isContentfulConfigured } from '../../utils/contentful';
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
-export const prerender = false;
+export const prerender = true;
 
 // Try to get blog posts from Contentful
 let blogPosts: any[] = [];

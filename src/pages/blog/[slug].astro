@@ -2,132 +2,147 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   getSimpleBlogPost,
+  getSimpleBlogPosts,
   getBlogPost,
+  getBlogPosts,
   isContentfulConfigured,
 } from "../../utils/contentful";
 import { renderRichText, calculateReadingTime } from "../../utils/richText";
 import RichText from "../../components/RichText.astro";
 
-export const prerender = false;
+// Switch to Static Site Generation
+export const prerender = true;
 
-const { slug } = Astro.params;
+export async function getStaticPaths() {
+  const posts = [];
 
-if (!slug) {
-  return Astro.redirect("/404");
-}
-
-let post: any = null;
-let isUsingContentful = false;
-let isRichText = false;
-
-try {
   if (isContentfulConfigured()) {
-    // 1. Try Rich Text Post (blogPost)
-    const richTextPost = await getBlogPost(slug, false, "en-US");
+    try {
+      // 1. Fetch Rich Text Posts
+      const richPosts = await getBlogPosts(false, "en-US");
+      if (richPosts && richPosts.length > 0) {
+        posts.push(
+          ...richPosts.map((post) => {
+            // Get image logic
+            let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+            if (post.fields.featuredImage?.fields?.file?.url) {
+              const url = post.fields.featuredImage.fields.file.url;
+              imageUrl = url.startsWith("//") ? `https:${url}` : url;
+            }
 
-    if (richTextPost) {
-      // Get image
-      let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
-      if (richTextPost.fields.featuredImage?.fields?.file?.url) {
-        imageUrl = richTextPost.fields.featuredImage.fields.file.url.startsWith(
-          "//"
-        )
-          ? `https:${richTextPost.fields.featuredImage.fields.file.url}`
-          : richTextPost.fields.featuredImage.fields.file.url;
+            return {
+              params: { slug: post.fields.slug },
+              props: {
+                post: {
+                  id: post.sys.id,
+                  slug: post.fields.slug,
+                  data: {
+                    title: post.fields.title,
+                    excerpt: post.fields.excerpt,
+                    content: post.fields.content,
+                    tags: Array.isArray(post.fields.tags)
+                      ? post.fields.tags
+                      : [],
+                    publishDate: post.fields.publishDate,
+                    publishedAt: post.fields.publishDate,
+                    featuredImage: imageUrl,
+                    readingTime:
+                      post.fields.readingTime ||
+                      calculateReadingTime(post.fields.content),
+                  },
+                },
+                isRichText: true,
+                isUsingContentful: true,
+              },
+            };
+          })
+        );
       }
 
-      post = {
-        id: richTextPost.sys.id,
-        slug: slug,
-        data: {
-          title: richTextPost.fields.title,
-          excerpt: richTextPost.fields.excerpt,
-          content: richTextPost.fields.content,
-          tags: Array.isArray(richTextPost.fields.tags)
-            ? richTextPost.fields.tags
-            : [],
-          publishDate: richTextPost.fields.publishDate,
-          publishedAt: richTextPost.fields.publishDate,
-          featuredImage: imageUrl,
-          readingTime:
-            richTextPost.fields.readingTime ||
-            calculateReadingTime(richTextPost.fields.content),
-        },
-      };
-      isUsingContentful = true;
-      isRichText = true;
+      // 2. Fetch Simple Posts (Fallback)
+      const simplePosts = await getSimpleBlogPosts(false, "en-US");
+      if (simplePosts && simplePosts.length > 0) {
+        // Avoid duplicates (prefer rich text if slug exists)
+        const existingSlugs = new Set(posts.map((p) => p.params.slug));
+
+        simplePosts.forEach((post) => {
+          if (existingSlugs.has(post.fields.slug)) return;
+
+          let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
+          if (post.fields.featuredImage?.fields?.file?.url) {
+            const url = post.fields.featuredImage.fields.file.url;
+            imageUrl = url.startsWith("//") ? `https:${url}` : url;
+          } else if (post.fields.imageUrl) {
+            imageUrl = post.fields.imageUrl;
+          }
+
+          const contentString =
+            typeof post.fields.content === "string" ? post.fields.content : "";
+
+          posts.push({
+            params: { slug: post.fields.slug },
+            props: {
+              post: {
+                id: post.sys.id,
+                slug: post.fields.slug,
+                data: {
+                  title: post.fields.title,
+                  excerpt: post.fields.excerpt,
+                  content: post.fields.content,
+                  tags: Array.isArray(post.fields.tags) ? post.fields.tags : [],
+                  publishDate: post.fields.publishDate,
+                  publishedAt: post.fields.publishDate,
+                  featuredImage: imageUrl,
+                  readingTime: Math.ceil(
+                    (contentString.split(/\s+/).length || 100) / 200
+                  ),
+                },
+              },
+              isRichText: false,
+              isUsingContentful: true,
+            },
+          });
+        });
+      }
+    } catch (e) {
+      console.warn("Error fetching blog posts for static paths:", e);
     }
-    // 2. Fallback to Simple Post (simpleBlog) if rich text not found
-    else {
-      const simplePost = await getSimpleBlogPost(slug, false, "en-US");
+  }
 
-      if (simplePost) {
-        let imageUrl = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80`;
-        if (simplePost.fields.featuredImage?.fields?.file?.url) {
-          imageUrl = simplePost.fields.featuredImage.fields.file.url.startsWith(
-            "//"
-          )
-            ? `https:${simplePost.fields.featuredImage.fields.file.url}`
-            : simplePost.fields.featuredImage.fields.file.url;
-        } else if (simplePost.fields.imageUrl) {
-          imageUrl = simplePost.fields.imageUrl;
-        }
-
-        const contentString =
-          typeof simplePost.fields.content === "string"
-            ? simplePost.fields.content
-            : "";
-
-        post = {
-          id: simplePost.sys.id,
-          slug: slug,
+  // 3. Fallback Post (if no Contentful or for demo)
+  const hasFallback = posts.some(
+    (p) => p.params.slug === "getting-started-with-astro"
+  );
+  if (!hasFallback) {
+    posts.push({
+      params: { slug: "getting-started-with-astro" },
+      props: {
+        post: {
+          id: "fallback-1",
+          slug: "getting-started-with-astro",
           data: {
-            title: simplePost.fields.title,
-            excerpt: simplePost.fields.excerpt,
-            content: simplePost.fields.content,
-            tags: Array.isArray(simplePost.fields.tags)
-              ? simplePost.fields.tags
-              : [],
-            publishDate: simplePost.fields.publishDate,
-            publishedAt: simplePost.fields.publishDate,
-            featuredImage: imageUrl,
-            readingTime: Math.ceil(
-              (contentString.split(/\s+/).length || 100) / 200
-            ),
+            title: "Getting Started with Astro",
+            excerpt:
+              "Learn how to build fast, modern websites with Astro framework",
+            content: `Astro is a revolutionary web framework that allows you to build...`,
+            tags: ["astro", "web-development", "javascript", "performance"],
+            publishDate: "2024-12-15",
+            publishedAt: "2024-12-15",
+            featuredImage:
+              "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80",
+            readingTime: 5,
           },
-        };
-        isUsingContentful = true;
-        isRichText = false;
-      }
-    }
+        },
+        isRichText: false,
+        isUsingContentful: false,
+      },
+    });
   }
-} catch (error) {
-  console.warn("Error fetching blog post:", error);
+
+  return posts;
 }
 
-// 3. Last resort fallback (Demo content) if not using Contentful or nothing found
-if (!post) {
-  if (slug === "getting-started-with-astro") {
-    post = {
-      id: "fallback-1",
-      slug: "getting-started-with-astro",
-      data: {
-        title: "Getting Started with Astro",
-        excerpt:
-          "Learn how to build fast, modern websites with Astro framework",
-        content: `Astro is a revolutionary web framework...`, // Content truncated for brevity, but logically matches previous fallback
-        tags: ["astro", "web-development", "javascript", "performance"],
-        publishDate: "2024-12-15",
-        publishedAt: "2024-12-15",
-        featuredImage:
-          "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80",
-        readingTime: 5,
-      },
-    };
-    // Re-assign full content because I truncated it above, but actually I should keep the full string if I can, or better yet, just redirect 404 if it's not the specific fallback slug.
-    // For now let's just use the redirect logic for "real" not found.
-  }
-}
+const { post, isRichText, isUsingContentful } = Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
