@@ -583,6 +583,49 @@ export async function getServices(preview = false, locale?: string): Promise<Con
   }
 }
 
+// Tech Stack from Contentful
+export interface ContentfulTechStack {
+  sys: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  fields: {
+    title: string;
+    description: string; // Contentful Text (Long string)
+    iconImage: ContentfulAsset;
+    skills?: string[];
+    // Color is removed, handled by frontend palette
+  };
+}
+
+// API Functions for Tech Stack
+export async function getTechStacks(preview = false, locale?: string): Promise<ContentfulTechStack[]> {
+  try {
+    const client = preview ? previewClient : contentfulClient;
+    if (!client) {
+      console.warn('Contentful client not available');
+      return [];
+    }
+
+    const query: any = {
+      content_type: '3YZAsHbiOc0TNM0vctxlIo', // Using the ID returned from creation
+      order: ['sys.createdAt'],
+      include: 2, // Important to fetch the asset
+    };
+
+    if (locale) {
+      query.locale = locale;
+    }
+
+    const entries = await client.getEntries(query);
+    return entries.items as unknown as ContentfulTechStack[];
+  } catch (error) {
+    console.warn('Error fetching tech stacks from Contentful:', error);
+    return [];
+  }
+}
+
 // Fallback Testimonials (English)
 export const fallbackTestimonialsEn: ContentfulTestimonial[] = [
   {

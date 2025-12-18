@@ -1,19 +1,61 @@
 ---
 import { techInterests } from '../data/interests';
+import { getTechStacks, isContentfulConfigured, type ContentfulTechStack } from '../utils/contentful';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
+const locale = lang === 'id' ? 'id-ID' : 'en-US';
 const t = useTranslations(lang);
 
-// Duplicate interests to create seamless loop
-const duplicatedInterests = [...techInterests, ...techInterests];
+// Fetch data from Contentful
+let techStacks: ContentfulTechStack[] = [];
 
-const keyMapping: Record<string, string> = {
-  'web-dev': 'skills.webDev',
-  'design-creative': 'skills.design',
-  'digital-marketing': 'skills.marketing',
-  'tools': 'skills.tools'
+try {
+  if (isContentfulConfigured()) {
+    techStacks = await getTechStacks(false, locale);
+  }
+} catch (error) {
+  console.warn('Error fetching tech stacks:', error);
+}
+
+// Premium Color Palette (Auto-assigned)
+const premiumColors = [
+  '#3B82F6', // Blue
+  '#EC4899', // Pink
+  '#10B981', // Green
+  '#F59E0B', // Orange
+  '#8B5CF6', // Violet
+  '#06B6D4', // Cyan
+];
+
+// Helper to get fallback icon string based on name
+const getFallbackIcon = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes('web')) return '🌐';
+  if (n.includes('design') || n.includes('desain')) return '🎨';
+  if (n.includes('marketing') || n.includes('pemasaran')) return '📈';
+  if (n.includes('tools') || n.includes('alat') || n.includes('platform')) return '💡';
+  return '⚡';
 };
+
+// Process Data
+const displayItems = techStacks.length > 0 ? techStacks.map((item, index) => ({
+  id: item.sys.id,
+  name: item.fields.title,
+  iconUrl: item.fields.iconImage?.fields?.file?.url ? `https:${item.fields.iconImage.fields.file.url}` : null,
+  fallbackIcon: getFallbackIcon(item.fields.title), // Deduce icon from Title
+  description: item.fields.description,
+  currentlyLearning: item.fields.skills,
+  color: premiumColors[index % premiumColors.length]
+})) : techInterests.map((item, index) => ({
+   ...item,
+   iconUrl: null, 
+   fallbackIcon: getFallbackIcon(item.name || item.id), // Use name or id for local fallback
+   color: premiumColors[index % premiumColors.length] 
+}));
+
+// Duplicate for seamless loop
+const duplicatedInterests = [...displayItems, ...displayItems];
 
 const title = t('section.techStack');
 const parts = title.split(' ');
@@ -21,78 +63,184 @@ const firstPart = parts[0];
 const secondPart = parts.slice(1).join(' ');
 ---
 
-<section id="interests" class="section-padding relative bg-dark-surface overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6">
+<section id="interests" class="section-padding relative bg-dark-bg overflow-hidden">
+  <!-- Dynamic Background Glow -->
+  <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[128px] pointer-events-none mix-blend-screen"></div>
+  <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[128px] pointer-events-none mix-blend-screen"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
     <!-- Section Header -->
-    <div class="text-center mb-12">
-      <p class="text-secondary font-mono text-sm mb-4">// {t('about.skills')}</p>
-      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4">
+    <div class="text-center mb-16">
+      <p class="text-secondary font-mono text-sm mb-4 tracking-wider uppercase">// {t('about.skills')}</p>
+      <h2 class="text-display text-4xl md:text-5xl lg:text-6xl mb-4 font-bold">
         {firstPart} <span class="gradient-text-accent">{secondPart}</span>
       </h2>
     </div>
 
     <!-- Marquee Container -->
-    <div class="marquee-container relative w-full overflow-hidden mask-gradient py-8">
-      <div class="marquee-content flex gap-8 animate-scroll hover:pause">
-        {duplicatedInterests.map((interest) => {
-          const transKey = keyMapping[interest.id];
-          // Use type assertion to avoid TS errors with dynamic keys in this context
-          const name = transKey ? t(`${transKey}.name` as any) : interest.name;
-          const desc = transKey ? t(`${transKey}.desc` as any) : interest.description;
-          
-          return (
+    <div class="marquee-container relative w-full overflow-hidden leading-relaxed py-10">
+      <!-- Gradient Masks -->
+      <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-dark-bg to-transparent z-20 pointer-events-none fade-mask-left"></div>
+      <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-dark-bg to-transparent z-20 pointer-events-none fade-mask-right"></div>
+
+      <div class="marquee-content flex gap-8 animate-scroll hover:pause px-4">
+        {duplicatedInterests.map((interest) => (
           <div
-            class="shrink-0 w-72 card-elevated p-6 group cursor-default"
-            style={`--interest-color: ${interest.color}`}
+            class="shrink-0 w-80 card-premium p-8 group cursor-default relative overflow-hidden transition-all duration-500 hover:-translate-y-2"
+            style={`--interest-color: ${interest.color};`}
           >
-            <!-- Icon -->
-            <div
-              class="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-              style={`background: ${interest.color}15`}
-            >
-              <span class="text-2xl">
-                {interest.icon === 'globe' ? '🌐' : 
-                 interest.icon === 'palette' ? '🎨' : 
-                 interest.icon === 'trending' ? '📈' : 
-                 interest.icon === 'camera' ? '📸' : 
-                 interest.icon === 'star' ? '⭐' : '💡'}
-              </span>
-            </div>
+            <!-- Background Gradient (Always visible but subtle) -->
+            <div class="absolute inset-0 bg-[var(--interest-color)] opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"></div>
+            
+            <!-- Gradient Border Stroke -->
+            <div class="absolute inset-0 rounded-[24px] p-[1px] bg-gradient-to-br from-[var(--interest-color)]/20 via-white/5 to-transparent pointer-events-none"></div>
 
-            <!-- Content -->
-            <h3 class="text-lg font-semibold mb-2 group-hover:text-white transition-colors" style={`color: ${interest.color}`}>
-              {name}
-            </h3>
-            <p class="text-muted text-sm line-clamp-2">
-              {desc}
-            </p>
+            <!-- Top Glow Line -->
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--interest-color)]/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <!-- Learning Tags -->
-            {interest.currentlyLearning && interest.currentlyLearning.length > 0 && (
-              <div class="mt-4 pt-3 border-t border-dark-border flex flex-wrap gap-2">
-                {interest.currentlyLearning.slice(0, 3).map((item) => (
-                  <span
-                    class="px-2 py-0.5 text-[10px] rounded-md"
-                    style={`background: ${interest.color}10; color: ${interest.color}`}
-                  >
-                    {item}
+            <!-- Content Container -->
+            <div class="relative z-10">
+              <!-- Icon -->
+              <div
+                class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 shadow-lg"
+                style={`background: linear-gradient(135deg, ${interest.color}15, ${interest.color}05); box-shadow: 0 8px 32px -8px ${interest.color}30; border: 1px solid ${interest.color}20;`}
+              >
+                {interest.iconUrl ? (
+                  <img 
+                    src={interest.iconUrl} 
+                    alt={interest.name} 
+                    class="w-8 h-8 object-contain drop-shadow-md transition-transform duration-500 group-hover:rotate-12"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span class="text-3xl filter drop-shadow-sm transition-transform duration-500 group-hover:rotate-12">
+                    {interest.fallbackIcon}
                   </span>
-                ))}
+                )}
               </div>
-            )}
+
+              <!-- Content -->
+              <h3 class="text-xl font-bold mb-3 text-white title-text transition-colors duration-300">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 group-hover:from-[var(--interest-color)] group-hover:to-white">
+                  {interest.name}
+                </span>
+              </h3>
+              <p class="text-muted text-sm line-clamp-3 mb-6 leading-relaxed desc-text mix-blend-plus-lighter">
+                {interest.description}
+              </p>
+
+              <!-- Learning Tags -->
+              {interest.currentlyLearning && interest.currentlyLearning.length > 0 && (
+                <div class="mt-auto pt-4 border-t border-white/5 flex flex-wrap gap-2">
+                  {interest.currentlyLearning.slice(0, 4).map((item) => (
+                    <span
+                      class="px-3 py-1 text-[11px] font-medium rounded-full border transition-all duration-300 tag-item"
+                      style={`
+                        background: ${interest.color}08; 
+                        color: ${interest.color}; 
+                        border-color: ${interest.color}15;
+                      `}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        );
-        })}
+        ))}
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .mask-gradient {
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  /* Premium Card Styles */
+  .card-premium {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
   }
 
+  .card-premium:hover {
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3), 
+                0 0 20px -5px var(--interest-color);
+  }
+
+  /* Light Mode Overrides */
+  :global(body.light) #interests {
+    background-color: #FAFAFA; /* Slightly off-white for better depth */
+  }
+
+  :global(body.light) .fade-mask-left {
+    background: linear-gradient(to right, #FAFAFA, transparent);
+  }
+  :global(body.light) .fade-mask-right {
+    background: linear-gradient(to left, #FAFAFA, transparent);
+  }
+
+  :global(body.light) .text-display {
+    color: #111827; /* Gray-900 */
+  }
+  
+  /* Light Mode Card - Cleaner Look */
+  :global(body.light) .card-premium {
+    background: #FFFFFF;
+    border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    backdrop-filter: none; /* Disable glass in light mode for crispness */
+  }
+  
+  :global(body.light) .card-premium:hover {
+    border-color: var(--interest-color); /* Colorful border on hover */
+    box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08),
+                0 0 0 1px var(--interest-color); /* Crisp colored ring */
+    transform: translateY(-4px);
+  }
+
+  /* Hide the dark mode specific gradient overlays in light mode to prevent "muddy" look */
+  :global(body.light) .card-premium .absolute.inset-0 {
+    opacity: 0 !important; 
+  }
+  
+  /* Re-enable ONLY the colorful hover glow in light mode, but cleaner */
+  /* We use a specific selector to target the inner gradient div we added in the markup if needed, 
+     but simply hiding the "muddy" overlays and relying on the card-premium:hover effects above is cleaner. */
+
+  :global(body.light) .title-text span {
+    color: #111827 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+  }
+  
+  :global(body.light) .card-premium:hover .title-text span {
+    color: var(--interest-color) !important;
+  }
+  
+  :global(body.light) .desc-text {
+    color: #4B5563; /* Gray-600 */
+    mix-blend-mode: normal;
+  }
+
+  /* Light Mode Chips/Tags - High Contrast */
+  :global(body.light) .tag-item {
+     /* Override inline styles with !important to ensure readability or use overly specific selectors */
+     background-color: #F3F4F6 !important; /* Default Gray-100 base */
+     border-color: #E5E7EB !important;
+     color: #374151 !important; /* Dark Gray text */
+     font-weight: 600;
+  }
+
+  /* When hovering card, infuse color into tags but keep contrast high */
+  :global(body.light) .card-premium:hover .tag-item {
+    background-color: white !important;
+    border-color: var(--interest-color) !important;
+    color: var(--interest-color) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  /* Animation */
   @keyframes scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -105,13 +253,5 @@ const secondPart = parts.slice(1).join(' ');
 
   .marquee-content:hover {
     animation-play-state: paused;
-  }
-
-  :global(body.light) #interests {
-    background-color: var(--color-light-surface);
-  }
-  
-  :global(body.light) #interests h2 {
-    color: var(--color-dark-bg);
   }
 </style>

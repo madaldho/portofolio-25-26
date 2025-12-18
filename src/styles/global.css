@@ -744,3 +744,65 @@ body.light .success-state {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+
+/* ============================================
+   LIGHT MODE MARKDOWN OVERRIDES
+   ============================================ */
+
+body.light .rich-text-content {
+  color: #1F2937; /* Dark Gray */
+}
+
+body.light .rich-text-content h1,
+body.light .rich-text-content h2,
+body.light .rich-text-content h3,
+body.light .rich-text-content h4,
+body.light .rich-text-content h5,
+body.light .rich-text-content h6 {
+  color: #111827; /* Near Black */
+}
+
+body.light .rich-text-content p,
+body.light .rich-text-content ul,
+body.light .rich-text-content ol {
+  color: #374151; /* Gray-700 */
+}
+
+body.light .rich-text-content strong,
+body.light .rich-text-content b {
+  color: #111827; /* Near Black */
+}
+
+body.light .rich-text-content blockquote {
+  background-color: rgba(0, 0, 0, 0.03); /* Light gray tint */
+  color: #4B5563; /* Gray-600 */
+  border-left-color: var(--color-primary);
+}
+
+body.light .rich-text-content th {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #111827;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light .rich-text-content td {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  color: #374151;
+}
+
+body.light .rich-text-content code {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #BE185D; /* Pink-700 for better visibility in light mode */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Maintain dark code blocks even in light mode for contrast */
+body.light .rich-text-content pre {
+  background-color: #1e293b; /* Slate-800 */
+  color: #e2e8f0;
+}
+body.light .rich-text-content pre code {
+  color: inherit;
+  background-color: transparent;
+  border: none;
+}
