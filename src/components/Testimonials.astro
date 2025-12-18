@@ -151,14 +151,63 @@ if (testimonials.length === 0 || !testimonials.some(isValidTestimonial)) {
   const prevBtn = document.getElementById("prev-testimonial");
   const nextBtn = document.getElementById("next-testimonial");
 
+  let autoSlideInterval: number | undefined;
+  const SCROLL_AMOUNT = 320; // Matches the scrollBy value
+  const AUTO_SLIDE_DELAY = 5000; // 5 seconds
+
+  const scrollNext = () => {
+    if (!slider) return;
+
+    // Check if we've reached the end
+    // Use a small buffer (10px) to account for fractional pixels
+    if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 10) {
+      // Loop back to start
+      slider.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      slider.scrollBy({ left: SCROLL_AMOUNT, behavior: "smooth" });
+    }
+  };
+
+  const startAutoSlide = () => {
+    // Clear existing to be safe
+    stopAutoSlide();
+    autoSlideInterval = window.setInterval(scrollNext, AUTO_SLIDE_DELAY);
+  };
+
+  const stopAutoSlide = () => {
+    if (autoSlideInterval) {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = undefined;
+    }
+  };
+
   if (slider && prevBtn && nextBtn) {
+    // Manual Navigation
     nextBtn.addEventListener("click", () => {
-      slider.scrollBy({ left: 320, behavior: "smooth" });
+      scrollNext();
+      // Reset timer on interaction so it doesn't jump right after user clicks
+      stopAutoSlide();
+      startAutoSlide();
     });
 
     prevBtn.addEventListener("click", () => {
-      slider.scrollBy({ left: -320, behavior: "smooth" });
+      slider.scrollBy({ left: -SCROLL_AMOUNT, behavior: "smooth" });
+      stopAutoSlide();
+      startAutoSlide();
     });
+
+    // Pause on hover
+    slider.addEventListener("mouseenter", stopAutoSlide);
+    slider.addEventListener("mouseleave", startAutoSlide);
+
+    // Also pause if buttons are hovered (optional preference, but good UX)
+    prevBtn.addEventListener("mouseenter", stopAutoSlide);
+    prevBtn.addEventListener("mouseleave", startAutoSlide);
+    nextBtn.addEventListener("mouseenter", stopAutoSlide);
+    nextBtn.addEventListener("mouseleave", startAutoSlide);
+
+    // Initial Start
+    startAutoSlide();
   }
 </script>
 

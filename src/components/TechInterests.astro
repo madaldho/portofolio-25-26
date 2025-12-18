@@ -80,8 +80,8 @@ const secondPart = parts.slice(1).join(' ');
     <!-- Marquee Container -->
     <div class="marquee-container relative w-full overflow-hidden leading-relaxed py-10">
       <!-- Gradient Masks -->
-      <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-dark-bg to-transparent z-20 pointer-events-none fade-mask-left"></div>
-      <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-dark-bg to-transparent z-20 pointer-events-none fade-mask-right"></div>
+      <div class="absolute inset-y-0 left-0 w-32 bg-linear-to-r from-dark-bg to-transparent z-20 pointer-events-none fade-mask-left"></div>
+      <div class="absolute inset-y-0 right-0 w-32 bg-linear-to-l from-dark-bg to-transparent z-20 pointer-events-none fade-mask-right"></div>
 
       <div class="marquee-content flex gap-8 animate-scroll hover:pause px-4">
         {duplicatedInterests.map((interest) => (
@@ -90,13 +90,13 @@ const secondPart = parts.slice(1).join(' ');
             style={`--interest-color: ${interest.color};`}
           >
             <!-- Background Gradient (Always visible but subtle) -->
-            <div class="absolute inset-0 bg-[var(--interest-color)] opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"></div>
+            <div class="absolute inset-0 bg-(--interest-color) opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"></div>
             
             <!-- Gradient Border Stroke -->
-            <div class="absolute inset-0 rounded-[24px] p-[1px] bg-gradient-to-br from-[var(--interest-color)]/20 via-white/5 to-transparent pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-[24px] p-px bg-linear-to-br from-(--interest-color)/20 via-white/5 to-transparent pointer-events-none"></div>
 
             <!-- Top Glow Line -->
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--interest-color)]/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-(--interest-color)/50 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
 
             <!-- Content Container -->
             <div class="relative z-10">
@@ -121,7 +121,7 @@ const secondPart = parts.slice(1).join(' ');
 
               <!-- Content -->
               <h3 class="text-xl font-bold mb-3 text-white title-text transition-colors duration-300">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 group-hover:from-[var(--interest-color)] group-hover:to-white">
+                <span class="bg-clip-text text-transparent bg-linear-to-r from-white to-white/80 group-hover:from-(--interest-color) group-hover:to-white">
                   {interest.name}
                 </span>
               </h3>
