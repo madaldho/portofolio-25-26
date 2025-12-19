@@ -9,7 +9,7 @@
     <language>en-us</language>
     <managingEditor>aldhoproject@gmail.com (Muhamad Ali Ridho)</managingEditor>
     <webMaster>aldhoproject@gmail.com (Muhamad Ali Ridho)</webMaster>
-    <lastBuildDate>Wed, 17 Dec 2025 16:51:07 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 19 Dec 2025 02:05:38 GMT</lastBuildDate>
     <atom:link href="https://muhamadaliridho.me/rss.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://muhamadaliridho.me/og-image.png</url>
@@ -40,16 +40,6 @@
       <link>https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</link>
       <guid isPermaLink="true">https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</guid>
       <pubDate>Wed, 17 Dec 2025 11:56:53 GMT</pubDate>
-      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
-      <category>Technology</category>
-    </item>
-    <item>
-      <title><![CDATA[Cara Install Self-Hosted n8n di VPS Ubuntu]]></title>
-      <description><![CDATA[Panduan lengkap deploy n8n untuk otomasi workflow unlimited tanpa biaya langganan bulanan.]]></description>
-      <content:encoded><![CDATA[<p>n8n adalah tool workflow automation yang powerful. Dalam tutorial ini, kita akan install n8n menggunakan Docker di VPS Ubuntu...</p>]]></content:encoded>
-      <link>https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</link>
-      <guid isPermaLink="true">https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</guid>
-      <pubDate>Wed, 17 Dec 2025 11:56:51 GMT</pubDate>
       <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
       <category>Technology</category>
     </item>

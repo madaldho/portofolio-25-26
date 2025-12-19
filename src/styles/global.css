@@ -806,3 +806,66 @@ body.light .rich-text-content pre code {
   background-color: transparent;
   border: none;
 }
+
+/* ============================================
+   MARKDOWN CODE BLOCKS - Theme Aware
+   ============================================ */
+
+/* Code Block Container */
+.markdown-code-block {
+  background-color: var(--color-dark-surface);
+  border-color: var(--color-dark-border);
+}
+
+.markdown-code-header {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.markdown-code-filename {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.markdown-code-lang {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.markdown-code-block pre {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Inline Code */
+.markdown-inline-code {
+  background-color: var(--color-dark-surface);
+  border: 1px solid var(--color-dark-border);
+  color: var(--color-secondary);
+}
+
+/* Light Mode Overrides */
+body.light .markdown-code-block {
+  background-color: #1e293b; /* Keep dark for code blocks */
+  border-color: #334155;
+}
+
+body.light .markdown-code-header {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.light .markdown-code-filename {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.light .markdown-code-lang {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+body.light .markdown-code-block pre {
+  color: #e2e8f0;
+}
+
+body.light .markdown-inline-code {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #BE185D; /* Pink-700 for visibility */
+}

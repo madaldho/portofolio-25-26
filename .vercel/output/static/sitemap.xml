@@ -2,31 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://muhamadaliridho.me/</loc>
-    <lastmod>2025-12-17</lastmod>
+    <lastmod>2025-12-19</lastmod>
     <priority>1</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://muhamadaliridho.me/blog</loc>
-    <lastmod>2025-12-17</lastmod>
+    <lastmod>2025-12-19</lastmod>
     <priority>0.9</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://muhamadaliridho.me/certificates</loc>
-    <lastmod>2025-12-17</lastmod>
+    <lastmod>2025-12-19</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://muhamadaliridho.me/id</loc>
-    <lastmod>2025-12-17</lastmod>
+    <lastmod>2025-12-19</lastmod>
     <priority>1</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://muhamadaliridho.me/id/blog</loc>
-    <lastmod>2025-12-17</lastmod>
+    <lastmod>2025-12-19</lastmod>
     <priority>0.9</priority>
     <changefreq>daily</changefreq>
   </url>
@@ -49,12 +49,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/blog/cara-install-n8n-vps-ubuntu</loc>
-    <lastmod>2025-12-17</lastmod>
-    <priority>0.8</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://muhamadaliridho.me/id/blog/how-to-crate-mail-bussines</loc>
     <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
@@ -68,12 +62,6 @@
   </url>
   <url>
     <loc>https://muhamadaliridho.me/id/blog/deploy-telegram-bot-cloudflare-workers</loc>
-    <lastmod>2025-12-17</lastmod>
-    <priority>0.8</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://muhamadaliridho.me/id/blog/cara-install-n8n-vps-ubuntu</loc>
     <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>

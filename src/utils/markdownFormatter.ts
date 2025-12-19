@@ -15,18 +15,18 @@ renderer.code = ({ text, lang }: any) => {
   const fileName = lang?.includes(':') ? lang.split(':')[1] : '';
 
   return `
-    <div class="my-8 rounded-lg overflow-hidden border border-dark-border bg-dark-surface">
-      <div class="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-dark-border/50">
+    <div class="markdown-code-block my-8 rounded-lg overflow-hidden border">
+      <div class="markdown-code-header flex items-center justify-between px-4 py-2 border-b">
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
           <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
           <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
-          ${fileName ? `<span class="ml-2 text-xs text-white/50 font-mono">${fileName}</span>` : ''}
+          ${fileName ? `<span class="ml-2 text-xs font-mono markdown-code-filename">${fileName}</span>` : ''}
         </div>
-        <span class="text-xs text-white/40 uppercase font-semibold tracking-wider">${language}</span>
+        <span class="text-xs uppercase font-semibold tracking-wider markdown-code-lang">${language}</span>
       </div>
       <div class="p-4 overflow-x-auto">
-        <pre class="font-mono text-sm leading-relaxed text-white/90"><code>${text}</code></pre>
+        <pre class="font-mono text-sm leading-relaxed"><code>${text}</code></pre>
       </div>
     </div>
   `;
@@ -34,7 +34,7 @@ renderer.code = ({ text, lang }: any) => {
 
 // 8. Inline Code
 renderer.codespan = ({ text }: any) => {
-  return `<code class="px-1.5 py-0.5 bg-dark-surface border border-dark-border rounded text-sm font-mono text-secondary">${text}</code>`;
+  return `<code class="markdown-inline-code px-1.5 py-0.5 rounded text-sm font-mono">${text}</code>`;
 };
 
 // 9. Images
