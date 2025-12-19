@@ -277,11 +277,16 @@ export function extractPlainText(document: Document): string {
   return document.content.map(extractFromNode).join(' ').trim();
 }
 
-// Utility function to calculate reading time from rich text
-export function calculateReadingTime(document: Document): number {
-  const plainText = extractPlainText(document);
+// Utility function to calculate reading time from rich text or markdown string
+export function calculateReadingTime(content: Document | string): number {
+  const plainText = typeof content === 'string' 
+    ? content 
+    : extractPlainText(content);
+    
   const wordsPerMinute = 200; // Average reading speed
-  const wordCount = plainText.split(/\s+/).length;
+  const wordCount = plainText.trim().split(/\s+/).length;
+  
+  if (wordCount === 0 || plainText.trim() === '') return 1;
   return Math.ceil(wordCount / wordsPerMinute);
 }
 

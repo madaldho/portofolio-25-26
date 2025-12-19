@@ -44,9 +44,11 @@ export async function getStaticPaths() {
                     featuredImage: imageUrl,
                     readingTime:
                       post.fields.readingTime ||
-                      calculateReadingTime(
-                        post.fields.content || { content: [] }
-                      ),
+                      (post.fields.body
+                        ? calculateReadingTime(post.fields.body)
+                        : calculateReadingTime(
+                            post.fields.content || { content: [] }
+                          )),
                   },
                 },
                 isRichText: !post.fields.body, // Prioritize Markdown body
