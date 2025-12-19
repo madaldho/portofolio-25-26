@@ -81,10 +81,10 @@ export const ui = {
     'common.lightMode': 'Light Mode',
     'common.darkMode': 'Dark Mode',
     
-    // SEO
-    'seo.title': 'Muhamad Ali Ridho - Tech Enthusiast | AI, IoT & Web Development Portfolio',
-    'seo.description': 'Portfolio of Muhamad Ali Ridho, a Tech Enthusiast exploring AI, IoT, Web Development, and more. Building the future one project at a time.',
-    'seo.keywords': 'Muhamad Ali Ridho, madaldho, Tech Enthusiast, Full Stack Developer, Web Development, AI Development, IoT Projects, JavaScript Developer, React Developer, Node.js Developer, Tech Blog, Programming Portfolio, Indonesia Developer, Jakarta Tech',
+    // SEO - Optimized for Personal Branding
+    'seo.title': 'Muhamad Ali Ridho | Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia',
+    'seo.description': 'Muhamad Ali Ridho (madaldho) is a Vibe Coder, Digital Marketer, and Tech Enthusiast from Indonesia. Exploring AI, Web Development, Digital Marketing, and emerging technologies. Building the future one project at a time.',
+    'seo.keywords': 'Muhamad Ali Ridho, Muhammad Ali Ridho, madaldho, Aldho, M Ali Ridho, Vibe Coder, Digital Marketer, Digital Marketing, Tech Enthusiast, Content Creator, Developer Indonesia, Jakarta, Web Development, AI, Tech Blog, Portfolio, Indonesia Tech, kreator digital indonesia',
     
     // Certificates
     'certificates.title': 'My Certificates',
@@ -214,10 +214,10 @@ export const ui = {
     'common.lightMode': 'Mode Terang',
     'common.darkMode': 'Mode Gelap',
     
-    // SEO
-    'seo.title': 'Muhamad Ali Ridho - Tech Enthusiast | Portfolio AI, IoT & Web Development',
-    'seo.description': 'Portfolio Muhamad Ali Ridho, seorang Tech Enthusiast yang mengeksplorasi AI, IoT, Web Development, dan lainnya. Membangun masa depan satu proyek pada satu waktu.',
-    'seo.keywords': 'Muhamad Ali Ridho, madaldho, Tech Enthusiast, Full Stack Developer, Web Development, AI Development, Proyek IoT, JavaScript Developer, React Developer, Node.js Developer, Tech Blog, Portfolio Programming, Developer Indonesia, Jakarta Tech',
+    // SEO - Optimized for Personal Branding
+    'seo.title': 'Muhamad Ali Ridho | Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia',
+    'seo.description': 'Muhamad Ali Ridho (madaldho) adalah Vibe Coder, Digital Marketer, dan Tech Enthusiast dari Indonesia. Mengeksplorasi AI, Web Development, Digital Marketing, dan teknologi emerging. Membangun masa depan satu proyek pada satu waktu.',
+    'seo.keywords': 'Muhamad Ali Ridho, Muhammad Ali Ridho, madaldho, Aldho, M Ali Ridho, Vibe Coder, Digital Marketer, Digital Marketing, Tech Enthusiast, Kreator Konten, Developer Indonesia, Jakarta, Web Development, AI, Tech Blog, Portfolio, teknologi indonesia, kreator digital',
     
     // Certificates
     'certificates.title': 'Sertifikat Saya',

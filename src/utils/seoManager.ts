@@ -92,37 +92,74 @@ export class SEOManager {
         return {
           ...baseSchema,
           '@type': 'Person',
+          '@id': `${this.siteUrl}/#person`,
           name: this.primaryKeyword,
+          alternateName: ['madaldho', 'Aldho', 'Muhammad Ali Ridho', 'M. Ali Ridho'],
           url: this.siteUrl,
-          image: `${this.siteUrl}/profile-photo.jpg`,
-          jobTitle: 'Tech Enthusiast & Full Stack Developer',
-          description: 'Tech Enthusiast exploring AI, IoT, Web Development, and more. Building the future one project at a time.',
+          image: {
+            '@type': 'ImageObject',
+            '@id': `${this.siteUrl}/#primaryimage`,
+            url: `${this.siteUrl}/profile-photo.jpg`,
+            contentUrl: `${this.siteUrl}/profile-photo.jpg`,
+            caption: `${this.primaryKeyword} - Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia`
+          },
+          jobTitle: 'Vibe Coder, Digital Marketer & Tech Enthusiast',
+          description: `${this.primaryKeyword} adalah Vibe Coder, Digital Marketer, dan Tech Enthusiast dari Indonesia yang fokus pada AI, Web Development, Digital Marketing, dan teknologi emerging. Dikenal juga sebagai madaldho.`,
+          nationality: {
+            '@type': 'Country',
+            name: 'Indonesia'
+          },
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Jakarta',
+            addressCountry: 'ID'
+          },
           knowsAbout: [
+            'Digital Marketing',
+            'Social Media Marketing',
+            'Content Creation',
             'Web Development',
-            'Mobile Development',
-            'Internet of Things (IoT)',
+            'Mobile Development', 
             'Artificial Intelligence',
-            'Machine Learning',
             'JavaScript',
             'TypeScript',
             'React',
+            'Next.js',
+            'Astro',
             'Node.js',
             'Python',
-            'Arduino',
-            'ESP32'
+            'Flutter',
+            'Supabase',
+            'Firebase'
+          ],
+          hasOccupation: [
+            {
+              '@type': 'Occupation',
+              name: 'Vibe Coder'
+            },
+            {
+              '@type': 'Occupation',
+              name: 'Digital Marketer',
+              occupationalCategory: '13-1161.00'
+            },
+            {
+              '@type': 'Occupation',
+              name: 'Tech Enthusiast'
+            }
           ],
           sameAs: [
-            'https://github.com/muhamadaliridho',
+            'https://github.com/madaldho',
             'https://linkedin.com/in/muhamadaliridho',
-            'https://twitter.com/muhamadaliridho'
+            'https://twitter.com/muhamadaliridho',
+            this.siteUrl
           ],
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': this.siteUrl
+          },
           worksFor: {
             '@type': 'Organization',
-            name: 'Freelance Developer'
-          },
-          alumniOf: {
-            '@type': 'EducationalOrganization',
-            name: 'Tech University'
+            name: 'Freelance'
           }
         };
 
@@ -188,13 +225,13 @@ export class SEOManager {
       return titleStr;
     }
 
-    // For homepage
+    // For homepage - nama di depan untuk branding personal yang kuat
     if (titleStr.toLowerCase().includes('home') || titleStr === 'Muhamad Ali Ridho') {
-      return `${this.primaryKeyword} - Tech Enthusiast | AI, IoT & Web Development Portfolio`;
+      return `${this.primaryKeyword} | Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia`;
     }
 
-    // For blog posts and other pages
-    return `${titleStr} | ${this.primaryKeyword} - Tech Blog`;
+    // For blog posts and other pages - nama tetap di akhir tapi dengan format yang lebih baik
+    return `${titleStr} | ${this.primaryKeyword}`;
   }
 
   // Optimize description for SEO
@@ -204,7 +241,7 @@ export class SEOManager {
     
     // Ensure description contains primary keyword
     if (!desc.toLowerCase().includes(this.primaryKeyword.toLowerCase())) {
-      return `${desc} Learn more from ${this.primaryKeyword}, a tech enthusiast exploring AI, IoT, and web development.`;
+      return `${desc} Learn more from ${this.primaryKeyword}, a vibe coder, digital marketer, and tech enthusiast.`;
     }
 
     return desc;
@@ -214,16 +251,15 @@ export class SEOManager {
   private generateKeywords(tags?: string[]): string[] {
     const baseKeywords = [
       this.primaryKeyword,
+      'Vibe Coder',
+      'Digital Marketer',
+      'Digital Marketing',
       'Tech Enthusiast',
-      'Full Stack Developer',
       'Web Development',
       'AI Development',
-      'IoT Projects',
-      'JavaScript Developer',
-      'React Developer',
-      'Node.js Developer',
+      'Content Creator',
       'Tech Blog',
-      'Programming Portfolio'
+      'Portfolio Indonesia'
     ];
 
     if (tags && tags.length > 0) {

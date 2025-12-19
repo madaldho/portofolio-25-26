@@ -96,13 +96,37 @@ const breadcrumbSchema =
     ? seoManager.generateBreadcrumbSchema(breadcrumbs)
     : null;
 
-// Generate keywords based on language
-const keywords = localizedMeta.keywords + (tags ? ", " + tags.join(", ") : "");
+// Generate ProfilePage schema for homepage (helps with Knowledge Panel)
+const isHomepage =
+  Astro.url.pathname === "/" ||
+  Astro.url.pathname === "/id/" ||
+  Astro.url.pathname === "/id";
 
-// Generate image URL
+// Generate image URL (moved up for profilePageSchema to use)
 const imageUrl = image.startsWith("http")
   ? image
   : new URL(image, Astro.site).toString();
+
+const profilePageSchema = isHomepage
+  ? {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "@id": `${Astro.site}#profilepage`,
+      name: "Muhamad Ali Ridho | Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia",
+      description: optimizedDescription,
+      url: Astro.site?.toString() || "https://muhamadaliridho.me",
+      mainEntity: {
+        "@id": `${Astro.site}#person`,
+      },
+      dateCreated: "2024-01-01",
+      dateModified: new Date().toISOString().split("T")[0],
+      image: imageUrl,
+      inLanguage: lang === "id" ? "id-ID" : "en-US",
+    }
+  : null;
+
+// Generate keywords based on language
+const keywords = localizedMeta.keywords + (tags ? ", " + tags.join(", ") : "");
 ---
 
 <!-- Primary Meta Tags -->
@@ -184,6 +208,14 @@ const imageUrl = image.startsWith("http")
     <script
       type="application/ld+json"
       set:html={JSON.stringify(breadcrumbSchema)}
+    />
+  )
+}
+{
+  profilePageSchema && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(profilePageSchema)}
     />
   )
 }
