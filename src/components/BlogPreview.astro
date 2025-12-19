@@ -194,6 +194,20 @@ const latestPosts = blogPosts
     color: var(--color-dark-bg);
   }
 
+  /* Card title and link for light mode */
+  :global(body.light) #blog .card-elevated h3 {
+    color: #1F2937;
+  }
+  
+  :global(body.light) #blog .card-elevated h3 a {
+    color: #1F2937;
+  }
+  
+  :global(body.light) #blog .card-elevated:hover h3,
+  :global(body.light) #blog .card-elevated h3 a:hover {
+    color: #C62D00;
+  }
+
   /* Light mode primary text - darker for contrast */
   :global(body.light) #blog .text-primary {
     color: #C62D00 !important;
@@ -202,6 +216,12 @@ const latestPosts = blogPosts
   /* Ensure read more link has good contrast */
   :global(body.light) #blog a.text-primary:hover {
     color: #FF3D00 !important; /* Brighter on hover is fine */
+  }
+  
+  /* Tag badges in light mode */
+  :global(body.light) #blog .bg-white\/5 {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    color: #374151 !important;
   }
   
   /* Ensure reading time badge stays white in light mode */

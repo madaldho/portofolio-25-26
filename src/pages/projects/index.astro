@@ -297,3 +297,50 @@ const categories = [
     });
   });
 </script>
+
+<style>
+  /* Light mode styles for projects page */
+  :global(body.light) main {
+    background-color: var(--color-light-bg);
+  }
+  
+  :global(body.light) h1,
+  :global(body.light) h2,
+  :global(body.light) h3 {
+    color: #1F2937;
+  }
+  
+  /* Card title */
+  :global(body.light) .card-elevated h3 {
+    color: #1F2937;
+  }
+  
+  :global(body.light) .card-elevated:hover h3,
+  :global(body.light) .card-elevated h3 a:hover {
+    color: #C62D00;
+  }
+  
+  /* Tech stack tags */
+  :global(body.light) .bg-white\/5 {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    color: #374151 !important;
+  }
+  
+  /* Filter buttons */
+  :global(body.light) .filter-btn {
+    background-color: #FFFFFF;
+    border-color: #E5E7EB;
+    color: #1F2937;
+  }
+  
+  :global(body.light) .filter-btn:hover {
+    border-color: #C62D00;
+    color: #C62D00;
+  }
+  
+  :global(body.light) .filter-btn[data-active="true"] {
+    background-color: #C62D00;
+    border-color: #C62D00;
+    color: white;
+  }
+</style>

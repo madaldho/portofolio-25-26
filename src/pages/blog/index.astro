@@ -194,7 +194,8 @@ const sortedPosts = blogPosts.sort((a, b) =>
     background-color: var(--color-light-bg);
   }
   
-  :global(body.light) .bg-gradient-to-br {
+  :global(body.light) .bg-gradient-to-br,
+  :global(body.light) .bg-linear-to-br {
     background: linear-gradient(to bottom right, var(--color-light-bg), var(--color-light-surface), var(--color-light-bg));
   }
   
@@ -202,6 +203,23 @@ const sortedPosts = blogPosts.sort((a, b) =>
   :global(body.light) h2,
   :global(body.light) h3 {
     color: var(--color-dark-bg);
+  }
+  
+  /* Card title and link hover */
+  :global(body.light) .card-elevated h2 a,
+  :global(body.light) .card-elevated h2 {
+    color: #1F2937;
+  }
+  
+  :global(body.light) .card-elevated h2 a:hover,
+  :global(body.light) .card-elevated:hover h2 {
+    color: #C62D00;
+  }
+  
+  /* Tag badges in light mode */
+  :global(body.light) .bg-white\/5 {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    color: #374151 !important;
   }
   
   /* Ensure reading time badge stays white in light mode */
