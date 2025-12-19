@@ -31,6 +31,12 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://muhamadaliridho.me/blog/Membuat form pendaftaran online gratis menggunakan Google Form</loc>
+    <lastmod>2025-12-19</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://muhamadaliridho.me/blog/how-to-crate-mail-bussines</loc>
     <lastmod>2025-12-17</lastmod>
     <priority>0.8</priority>
@@ -45,6 +51,12 @@
   <url>
     <loc>https://muhamadaliridho.me/blog/deploy-telegram-bot-cloudflare-workers</loc>
     <lastmod>2025-12-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://muhamadaliridho.me/id/blog/Membuat form pendaftaran online gratis menggunakan Google Form</loc>
+    <lastmod>2025-12-19</lastmod>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
@@ -67,14 +79,14 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/projects/ai-chat-assistant</loc>
-    <lastmod>2024-09-20</lastmod>
+    <loc>https://muhamadaliridho.me/projects/e-commerce-platform</loc>
+    <lastmod>2024-08-05</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/projects/e-commerce-platform</loc>
-    <lastmod>2024-08-05</lastmod>
+    <loc>https://muhamadaliridho.me/projects/ai-chat-assistant</loc>
+    <lastmod>2024-09-20</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -85,14 +97,8 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/projects/smart-home-dashboard</loc>
-    <lastmod>2024-06-15</lastmod>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://muhamadaliridho.me/projects/task-management-app</loc>
-    <lastmod>2024-07-12</lastmod>
+    <loc>https://muhamadaliridho.me/projects/portfolio-website</loc>
+    <lastmod>2024-12-01</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -103,14 +109,20 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://muhamadaliridho.me/projects/smart-home-dashboard</loc>
+    <lastmod>2024-06-15</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://muhamadaliridho.me/projects/machine-learning-classifier</loc>
     <lastmod>2024-05-30</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://muhamadaliridho.me/projects/portfolio-website</loc>
-    <lastmod>2024-12-01</lastmod>
+    <loc>https://muhamadaliridho.me/projects/task-management-app</loc>
+    <lastmod>2024-07-12</lastmod>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>

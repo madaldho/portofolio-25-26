@@ -9,7 +9,7 @@
     <language>en-us</language>
     <managingEditor>aldhoproject@gmail.com (Muhamad Ali Ridho)</managingEditor>
     <webMaster>aldhoproject@gmail.com (Muhamad Ali Ridho)</webMaster>
-    <lastBuildDate>Fri, 19 Dec 2025 12:04:54 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 19 Dec 2025 14:27:07 GMT</lastBuildDate>
     <atom:link href="https://muhamadaliridho.me/rss.xml" rel="self" type="application/rss+xml"/>
     <image>
       <url>https://muhamadaliridho.me/og-image.png</url>
@@ -23,6 +23,16 @@
     <category>AI</category>
     <category>IoT</category>
     <category>Programming</category>
+    <item>
+      <title><![CDATA[Free online registration form using Google Forms]]></title>
+      <description><![CDATA[Step‑by‑step guide to creating a free online registration form using Google Forms, complete with a photo upload feature and automatic data export to Excel.]]></description>
+      <content:encoded><![CDATA[Step‑by‑step guide to creating a free online registration form using Google Forms, complete with a photo upload feature and automatic data export to Excel.]]></content:encoded>
+      <link>https://muhamadaliridho.me/blog/Membuat form pendaftaran online gratis menggunakan Google Form</link>
+      <guid isPermaLink="true">https://muhamadaliridho.me/blog/Membuat form pendaftaran online gratis menggunakan Google Form</guid>
+      <pubDate>Fri, 19 Dec 2025 12:25:42 GMT</pubDate>
+      <author>aldhoproject@gmail.com (Muhamad Ali Ridho)</author>
+      <category>Technology</category>
+    </item>
     <item>
       <title><![CDATA[How to Create a Free Business Email with Your Own Domain & Cloudflare (Without Hosting) ]]></title>
       <description><![CDATA[Want to have a professional email address like admin@yourbusiness.com with no monthly fees? Follow this complete guide to set up a free business email using Cloudflare Email Routing and Gmail. Simple and cost‑effective! ]]></description>
