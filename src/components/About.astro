@@ -41,7 +41,7 @@ try {
   console.warn('Error fetching profile in About:', error);
 }
 
-const techStackRegistry = [
+const techStackIcons = [
   { name: 'HTML5', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
   { name: 'CSS3', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
   { name: 'JavaScript', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
@@ -52,46 +52,8 @@ const techStackRegistry = [
   { name: 'Git', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
   { name: 'GitHub', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
   { name: 'Node.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-  { name: 'Python', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-  { name: 'TypeScript', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-  { name: 'Next.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-  { name: 'Vue.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
-  { name: 'Docker', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-  // Marketing & Tools
-  { name: 'Meta Ads', url: 'https://cdn.simpleicons.org/meta/white' },
-  { name: 'TikTok Ads', url: 'https://cdn.simpleicons.org/tiktok/white' },
-  { name: 'ChatGPT', url: 'https://cdn.simpleicons.org/openai/white' },
-  { name: 'Perplexity', url: 'https://cdn.simpleicons.org/perplexity/white' },
-  { name: 'Canva', url: 'https://upload.wikimedia.org/wikipedia/he/5/56/Canva-logo.png' },
-  { name: 'CapCut', url: 'https://upload.wikimedia.org/wikipedia/id/3/36/CapCut_logo.png' },
-  { name: 'Midjourney', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Midjourney_Emblem.png' },
   { name: 'Scalev', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBHqowxZQosIfhFyaPXD0GkB69QhplsxR_gQ&s' },
 ];
-
-let techStackIcons = techStackRegistry.slice(0, 16); // Default set
-
-// If profile data has skills, filter and map them
-if (profileData.skills && profileData.skills.length > 0) {
-  techStackIcons = profileData.skills.map(skillName => {
-    // Find icon in registry (case-insensitive)
-    const registeredIcon = techStackRegistry.find(icon => 
-      icon.name.toLowerCase() === skillName.toLowerCase()
-    );
-
-    // If found, use it. If not, try to generate a fallback URL from Simple Icons or DevIcon
-    if (registeredIcon) {
-      return registeredIcon;
-    } else {
-      // Fallback: Try to fetch from Simple Icons (common for tech brands)
-      // Note: This matches the user's existing pattern for some icons
-      const slug = skillName.toLowerCase().replace(/\./g, 'dot').replace(/\s+/g, '');
-      return {
-        name: skillName,
-        url: `https://cdn.simpleicons.org/${slug}/white`
-      };
-    }
-  });
-}
 ---
 
 <section id="about" class="py-24 relative overflow-hidden bg-dark-bg">
