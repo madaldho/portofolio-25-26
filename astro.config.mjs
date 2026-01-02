@@ -17,10 +17,14 @@ export default defineConfig({
     isr: {
       // On-demand ISR with bypass token for Contentful webhooks
       bypassToken: process.env.ISR_BYPASS_TOKEN || 'muhamad-ali-ridho-isr-token-2024',
-      // Cache pages for 24 hours by default
-      expiration: 60 * 60 * 24, // 24 hours
-      // Exclude API routes from caching
-      exclude: [/^\/api\/.+/],
+      // Cache pages for 1 hour by default for better performance
+      expiration: 60 * 60, // 1 hour
+      // Exclude API routes and admin pages from caching
+      exclude: [
+        /^\/api\/.+/,
+        /^\/admin-aldho\/.+/,
+        /^\/id\/admin-aldho\/.+/
+      ],
     },
   }),
   
@@ -90,7 +94,7 @@ export default defineConfig({
     defaultStrategy: 'viewport',
   },
   
-  // Experimental features for optimization
+  // Experimental features for optimization (Astro 5.x)
   experimental: {
     svgo: {
       plugins: [

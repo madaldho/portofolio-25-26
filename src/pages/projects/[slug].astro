@@ -56,7 +56,56 @@ export async function getStaticPaths() {
   return projects;
 }
 
-const { project } = Astro.props;
+// Get project data (for SSR mode)
+let projectData: ContentfulSimpleProject | null = null;
+
+// In SSR mode, getStaticPaths is ignored, so we need to fetch the project directly
+if (Astro.props.project) {
+  projectData = Astro.props.project;
+} else {
+  // SSR mode: fetch project by slug
+  const { slug } = Astro.params;
+  if (slug) {
+    try {
+      projectData = await getSimpleProject(slug, false, "en-US");
+      console.log(
+        "Fetched project data for slug:",
+        slug,
+        projectData ? "SUCCESS" : "NOT FOUND"
+      );
+    } catch (error) {
+      console.warn(`Error fetching project "${slug}":`, error);
+    }
+  }
+}
+
+// If no project found, create fallback data to prevent crashes
+if (!projectData) {
+  console.warn("No project data found for slug:", Astro.params.slug);
+
+  // Create fallback project data to prevent crashes
+  const fallbackSlug = Astro.params.slug || "unknown-project";
+  projectData = {
+    sys: {
+      id: "fallback",
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z",
+    },
+    fields: {
+      title: "Project Not Found",
+      slug: fallbackSlug,
+      description: "This project could not be loaded. Please check back later.",
+      content:
+        "## Project Not Available\n\nThis project is currently not available. Please check back later or contact us if you believe this is an error.",
+      category: "other",
+      technologies: ["Unknown"],
+      featured: false,
+    },
+  } as ContentfulSimpleProject;
+}
+
+// Use projectData for the rest of the component
+const project = projectData;
 
 // Category colors
 const categoryColors: Record<string, string> = {
@@ -69,12 +118,16 @@ const categoryColors: Record<string, string> = {
 
 // Get thumbnail URL
 function getThumbnailUrl(): string {
-  if (project.fields.thumbnail?.fields?.file?.url) {
-    const url = project.fields.thumbnail.fields.file.url;
-    return url.startsWith("//") ? `https:${url}` : url;
-  }
-  if (project.fields.imageUrl) {
-    return project.fields.imageUrl;
+  try {
+    if (project?.fields?.thumbnail?.fields?.file?.url) {
+      const url = project.fields.thumbnail.fields.file.url;
+      return url.startsWith("//") ? `https:${url}` : url;
+    }
+    if (project?.fields?.imageUrl) {
+      return project.fields.imageUrl;
+    }
+  } catch (error) {
+    console.warn("Error getting thumbnail URL:", error);
   }
   return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=600&fit=crop&crop=entropy&auto=format&q=80";
 }
@@ -83,13 +136,28 @@ import { formatMarkdown } from "../../utils/markdownFormatter";
 
 // Get gallery images
 function getGalleryImages(): string[] {
-  if (!project.fields.gallery) return [];
-  return project.fields.gallery
-    .map((asset) => {
-      const url = asset.fields?.file?.url || "";
-      return url.startsWith("//") ? `https:${url}` : url;
-    })
-    .filter(Boolean);
+  try {
+    if (!project?.fields?.gallery || !Array.isArray(project.fields.gallery))
+      return [];
+    return project.fields.gallery
+      .map((asset) => {
+        // Check if asset exists and has the required structure
+        if (
+          !asset ||
+          !asset.fields ||
+          !asset.fields.file ||
+          !asset.fields.file.url
+        ) {
+          return "";
+        }
+        const url = asset.fields.file.url;
+        return url.startsWith("//") ? `https:${url}` : url;
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.warn("Error getting gallery images:", error);
+    return [];
+  }
 }
 
 const galleryImages = getGalleryImages();

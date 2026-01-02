@@ -10,14 +10,24 @@ const translatePath = useTranslatedPath(lang);
 
 // Try to get projects from Contentful first, fallback to static content
 let projects: any[] = [];
-let isUsingContentful = false;
 
 try {
   if (isContentfulConfigured()) {
     const contentfulProjects = await getSimpleProjects(false, locale);
     if (contentfulProjects.length > 0) {
-      // Transform Contentful projects to match expected structure
+      // Transform Contentful projects to match expected structure with data validation
       projects = contentfulProjects.map(project => {
+        // Skip projects with poor quality data
+        if (!project.fields.title || 
+            !project.fields.description || 
+            project.fields.title.trim().length < 3 ||
+            project.fields.description.trim().length < 10 ||
+            (project.fields.technologies && project.fields.technologies.some((tech: string) => 
+              tech.length < 2 || ['apa', 'aja', 'lah', 'test', 'dummy'].includes(tech.toLowerCase())
+            ))) {
+          return null; // Skip this project
+        }
+
         // Get image: prefer uploaded asset, then imageUrl field, then default
         let thumbnailUrl = `https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
         if (project.fields.thumbnail?.fields?.file?.url) {
@@ -27,24 +37,45 @@ try {
         } else if (project.fields.imageUrl) {
           thumbnailUrl = project.fields.imageUrl;
         }
+
+        // Normalize category to ensure it's valid
+        let category = project.fields.category;
+        if (!category || !['web', 'mobile', 'iot', 'ai-ml', 'other'].includes(category)) {
+          // Try to infer category from title or technologies
+          const title = project.fields.title.toLowerCase();
+          const techs = (project.fields.technologies || []).join(' ').toLowerCase();
+          
+          if (title.includes('web') || title.includes('website') || techs.includes('react') || techs.includes('astro') || techs.includes('html')) {
+            category = 'web';
+          } else if (title.includes('mobile') || title.includes('app') || techs.includes('react native') || techs.includes('flutter')) {
+            category = 'mobile';
+          } else if (title.includes('iot') || title.includes('arduino') || title.includes('esp32') || techs.includes('mqtt')) {
+            category = 'iot';
+          } else if (title.includes('ai') || title.includes('ml') || title.includes('machine learning') || techs.includes('python') || techs.includes('tensorflow')) {
+            category = 'ai-ml';
+          } else {
+            category = 'other';
+          }
+        }
         
         return {
           id: project.sys.id,
           slug: project.fields.slug,
           data: {
-            title: project.fields.title,
-            description: project.fields.description,
-            category: project.fields.category,
+            title: project.fields.title.trim(),
+            description: project.fields.description.trim(),
+            category: category,
             featured: project.fields.featured,
             publishedAt: project.sys.createdAt,
             thumbnail: thumbnailUrl,
-            technologies: project.fields.technologies || getDefaultTechnologies(project.fields.category),
+            technologies: project.fields.technologies?.filter((tech: string) => 
+              tech && tech.trim().length > 1 && !['apa', 'aja', 'lah', 'test', 'dummy'].includes(tech.toLowerCase().trim())
+            ) || getDefaultTechnologies(category),
             liveUrl: project.fields.liveUrl || undefined,
             sourceUrl: project.fields.sourceUrl || undefined
           }
         };
-      });
-      isUsingContentful = true;
+      }).filter(Boolean); // Remove null entries
     }
   }
 } catch (error) {
@@ -91,41 +122,31 @@ function getDefaultTechnologies(category: string): string[] {
   return techMap[category] || techMap.other;
 }
 
-function getDefaultLiveUrl(category: string): string | undefined {
-  const urlMap: Record<string, string | undefined> = {
-    web: 'https://muhamadaliridho.me',
-    mobile: undefined,
-    iot: undefined,
-    'ai-ml': undefined,
-    other: undefined
-  };
-  return urlMap[category];
-}
-
 const sortedProjects = projects.sort((a, b) => 
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 );
 
-// Extract unique categories from projects
+// Define proper category mapping first
+const categoryMapping: Record<string, string> = {
+  'web': 'Web Development',
+  'mobile': 'Mobile Development', 
+  'iot': 'IoT Projects',
+  'ai-ml': 'AI & Machine Learning',
+  'other': 'Other Projects'
+};
+
+// Extract unique categories from projects and clean them up
 const uniqueCategories = [
   ...new Set(projects.map((project) => project.data.category).filter(Boolean)),
-];
+].filter(cat => cat && cat.trim() !== '' && categoryMapping[cat]); // Only include mapped categories
 
-// Create category objects with labels
+// Create category objects with proper labels
 const categories = [
-  { id: "all", label: t("category.all" as any) },
-  ...uniqueCategories.map((cat) => {
-    // Try to get translation, fallback to formatted text
-    const translationKey = `category.${cat}`;
-    const translatedLabel = t(translationKey as any);
-    
-    // Check if translation exists
-    const label = translatedLabel !== translationKey 
-      ? translatedLabel 
-      : cat.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
-    return { id: cat, label };
-  }),
+  { id: "all", label: t("category.all" as any) || "All Projects" },
+  ...uniqueCategories.map((cat) => ({
+    id: cat,
+    label: categoryMapping[cat]
+  }))
 ];
 
 const categoryColors: Record<string, string> = {
@@ -135,9 +156,14 @@ const categoryColors: Record<string, string> = {
   'ai-ml': '#6366F1',
   other: '#F59E0B',
 };
+
+// Add CSS custom properties for category colors
+const categoryColorVars = Object.entries(categoryColors)
+  .map(([key, color]) => `--color-cat-${key}: ${color}`)
+  .join('; ');
 ---
 
-<section id="projects" class="section-padding relative">
+<section id="projects" class="section-padding relative" style={categoryColorVars}>
   <div class="max-w-7xl mx-auto px-6">
     <!-- Section Header -->
     <div class="text-center mb-12">
@@ -190,7 +216,7 @@ const categoryColors: Record<string, string> = {
                   class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
                   style={{ background: `var(--color-cat-${project.data.category})` }}
                 >
-                  {project.data.category.toUpperCase()}
+                  {categoryMapping[project.data.category] || project.data.category.toUpperCase()}
             </div>
             <!-- Mobile: No Overlay needed as buttons are moved below -->
             <!-- Desktop Hover Overlay for aesthetic depth (optional, or remove if redundant) -->

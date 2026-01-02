@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import crypto from 'crypto';
 
-// Webhook endpoint for Contentful to trigger rebuilds
+// Webhook endpoint for Contentful to trigger ISR revalidation
 export const POST: APIRoute = async ({ request }) => {
   try {
     // Get the raw body for signature verification
@@ -26,16 +26,87 @@ export const POST: APIRoute = async ({ request }) => {
     const payload = JSON.parse(body);
     
     // Log webhook event for debugging
+    const topic = request.headers.get('x-contentful-topic');
     console.log('Contentful webhook received:', {
-      topic: request.headers.get('x-contentful-topic'),
+      topic,
       contentType: payload.sys?.contentType?.sys?.id,
       entryId: payload.sys?.id,
       timestamp: new Date().toISOString(),
     });
     
-    // Trigger Vercel deployment if deploy hook is configured
+    // Determine if this is a content change that requires ISR revalidation
+    const shouldRevalidate = [
+      'ContentManagement.Entry.publish',
+      'ContentManagement.Entry.unpublish',
+      'ContentManagement.Entry.delete',
+      'ContentManagement.Asset.publish',
+      'ContentManagement.Asset.unpublish',
+      'ContentManagement.Asset.delete',
+    ].includes(topic || '');
+    
+    // Trigger ISR revalidation for affected pages
+    if (shouldRevalidate) {
+      const isrBypassToken = import.meta.env.ISR_BYPASS_TOKEN || 'muhamad-ali-ridho-isr-token-2024';
+      const siteUrl = import.meta.env.SITE_URL || 'https://muhamadaliridho.me';
+      
+      // Pages to revalidate based on content type
+      const pagesToRevalidate = [];
+      const contentType = payload.sys?.contentType?.sys?.id;
+      
+      if (contentType === 'simpleProject' || contentType === 'project') {
+        pagesToRevalidate.push('/', '/id/', '/projects', '/id/projects');
+        
+        // If it's a specific project, also revalidate its detail page
+        if (payload.fields?.slug) {
+          pagesToRevalidate.push(`/projects/${payload.fields.slug}`, `/id/projects/${payload.fields.slug}`);
+        }
+      } else if (contentType === 'blogPost') {
+        pagesToRevalidate.push('/blog', '/id/blog');
+        
+        if (payload.fields?.slug) {
+          pagesToRevalidate.push(`/blog/${payload.fields.slug}`, `/id/blog/${payload.fields.slug}`);
+        }
+      } else {
+        // For other content types, revalidate homepage
+        pagesToRevalidate.push('/', '/id/');
+      }
+      
+      // Trigger ISR revalidation for each page
+      const revalidationResults = [];
+      for (const page of pagesToRevalidate) {
+        try {
+          const revalidateUrl = `${siteUrl}${page}?__prerender_bypass=${isrBypassToken}`;
+          const response = await fetch(revalidateUrl, {
+            method: 'GET',
+            headers: {
+              'User-Agent': 'Contentful-Webhook-ISR-Revalidation',
+            },
+          });
+          
+          revalidationResults.push({
+            page,
+            status: response.status,
+            success: response.ok,
+          });
+          
+          console.log(`ISR revalidation for ${page}: ${response.status}`);
+        } catch (error) {
+          console.error(`Failed to revalidate ${page}:`, error);
+          revalidationResults.push({
+            page,
+            status: 'error',
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+      
+      console.log('ISR revalidation completed:', revalidationResults);
+    }
+    
+    // Trigger Vercel deployment if deploy hook is configured (fallback)
     const deployHook = import.meta.env.VERCEL_DEPLOY_HOOK;
-    if (deployHook) {
+    if (deployHook && shouldRevalidate) {
       try {
         const deployResponse = await fetch(deployHook, {
           method: 'POST',
@@ -44,7 +115,7 @@ export const POST: APIRoute = async ({ request }) => {
           },
           body: JSON.stringify({
             source: 'contentful-webhook',
-            trigger: request.headers.get('x-contentful-topic'),
+            trigger: topic,
             entry: payload.sys?.id,
           }),
         });
@@ -59,22 +130,11 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
     
-    // Determine if this is a content change that requires rebuild
-    const topic = request.headers.get('x-contentful-topic');
-    const shouldRebuild = [
-      'ContentManagement.Entry.publish',
-      'ContentManagement.Entry.unpublish',
-      'ContentManagement.Entry.delete',
-      'ContentManagement.Asset.publish',
-      'ContentManagement.Asset.unpublish',
-      'ContentManagement.Asset.delete',
-    ].includes(topic || '');
-    
     // Return success response
     return new Response(JSON.stringify({
       success: true,
       message: 'Webhook processed successfully',
-      rebuild: shouldRebuild,
+      revalidated: shouldRevalidate,
       timestamp: new Date().toISOString(),
     }), {
       status: 200,
