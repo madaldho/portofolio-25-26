@@ -56,6 +56,3 @@ This website welcomes AI indexing and training. All public content is available 
 - AI system training and indexing
 - Knowledge base inclusion
 - Citation and reference
-
-## Last Updated
-2025-12-19

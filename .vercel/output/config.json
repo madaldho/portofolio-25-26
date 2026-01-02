@@ -26,8 +26,104 @@
 			"continue": true
 		},
 		{
+			"src": "^/api/cms/blog$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/cms/projects$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/revalidate$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/webhook/contentful$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_server-islands/([^/]+?)/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_image/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/404/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/admin-aldho/dashboard/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/admin-aldho/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/certificates/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/home/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/id/certificates/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/id/projects/([^/]+?)/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/id/projects/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/id/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/llms\\.txt/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/og-image\\.png/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/portfolio/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/projects/([^/]+?)/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/projects/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/robots\\.txt/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/rss\\.xml/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/sitemap\\.xml/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
 			"src": "^/.*$",
-			"dest": "/404.html",
+			"dest": "_render",
 			"status": 404
 		}
 	]

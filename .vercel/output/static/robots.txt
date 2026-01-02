@@ -21,26 +21,7 @@ Allow: /certificates/
 Allow: /id/
 Allow: /id/blog/
 
-# Google crawlers
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0
-
-User-agent: Googlebot-Image
-Allow: /
-
-User-agent: Googlebot-Video
-Allow: /
-
-# Bing
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-User-agent: msnbot
-Allow: /
-
-# AI Crawlers - ALL ALLOWED for indexing
+# AI Crawlers - ALL ALLOWED
 User-agent: GPTBot
 Allow: /
 
@@ -51,9 +32,6 @@ User-agent: Google-Extended
 Allow: /
 
 User-agent: PerplexityBot
-Allow: /
-
-User-agent: Amazonbot
 Allow: /
 
 User-agent: ClaudeBot
@@ -68,19 +46,7 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-User-agent: Bytespider
-Allow: /
-
 User-agent: cohere-ai
-Allow: /
-
-User-agent: Diffbot
-Allow: /
-
-User-agent: FacebookBot
-Allow: /
-
-User-agent: omgili
 Allow: /
 
 User-agent: YouBot

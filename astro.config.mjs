@@ -6,7 +6,23 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL || 'https://muhamadaliridho.me',
-  adapter: vercel(),
+  output: 'server', // Full SSR mode for dynamic content
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+    speedInsights: {
+      enabled: true,
+    },
+    isr: {
+      // On-demand ISR with bypass token for Contentful webhooks
+      bypassToken: process.env.ISR_BYPASS_TOKEN || 'muhamad-ali-ridho-isr-token-2024',
+      // Cache pages for 24 hours by default
+      expiration: 60 * 60 * 24, // 24 hours
+      // Exclude API routes from caching
+      exclude: [/^\/api\/.+/],
+    },
+  }),
   
   // Internationalization configuration
   i18n: {
@@ -21,7 +37,6 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto',
     assets: '_astro',
-    // assetsPrefix removed to ensure Vercel previews work correctly
   },
   
   // Vite configuration for performance
@@ -86,6 +101,7 @@ export default defineConfig({
         },
       ],
     },
+    clientPrerender: true,
   },
   
   // Security headers and redirects
