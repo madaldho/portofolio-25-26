@@ -26,26 +26,6 @@
 			"continue": true
 		},
 		{
-			"src": "^/api/cms/blog$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/api/cms/projects$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/api/revalidate$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/api/webhook/contentful$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/admin-aldho/dashboard$",
-			"dest": "_render"
-		},
-		{
 			"src": "^/_server-islands/([^/]+?)/?$",
 			"dest": "_render"
 		},
@@ -58,7 +38,27 @@
 			"dest": "/_isr?x_astro_path=$0"
 		},
 		{
+			"src": "^/admin-aldho/dashboard/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
 			"src": "^/admin-aldho/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/api/cms/blog/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/api/cms/projects/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/api/revalidate/?$",
+			"dest": "/_isr?x_astro_path=$0"
+		},
+		{
+			"src": "^/api/webhook/contentful/?$",
 			"dest": "/_isr?x_astro_path=$0"
 		},
 		{

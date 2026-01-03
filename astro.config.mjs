@@ -8,23 +8,9 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://muhamadaliridho.me',
   output: 'server', // Full SSR mode for dynamic content
   adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-    speedInsights: {
-      enabled: true,
-    },
+    // ISR with caching for better performance
     isr: {
-      // On-demand ISR with bypass token for Contentful webhooks
-      bypassToken: process.env.ISR_BYPASS_TOKEN || 'muhamad-ali-ridho-isr-token-2024',
-      // Cache pages for 1 hour by default for better performance
-      expiration: 60 * 60, // 1 hour
-      // Exclude API routes and admin pages from caching
-      exclude: [
-        /^\/api\/.+/,
-        /^\/admin-aldho\/.+/,
-        /^\/id\/admin-aldho\/.+/
-      ],
+      expiration: 60, // Cache for 60 seconds, then revalidate
     },
   }),
   
