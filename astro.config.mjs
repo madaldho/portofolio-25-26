@@ -16,10 +16,10 @@ export default defineConfig({
 
   adapter: vercel(),
 
-  // Internationalization configuration
+  // Single language - Indonesian only
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'id'],
+    defaultLocale: 'id',
+    locales: ['id'],
     routing: {
       prefixDefaultLocale: false,
     },
