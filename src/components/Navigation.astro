@@ -1,15 +1,5 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
-import LanguagePicker from "./LanguagePicker.astro";
-import {
-  getLangFromUrl,
-  useTranslations,
-  useTranslatedPath,
-} from "../i18n/utils";
-
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-const translatePath = useTranslatedPath(lang);
 
 interface NavLink {
   label: string;
@@ -17,12 +7,12 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { label: t("nav.home"), href: translatePath("/") },
-  { label: t("nav.about"), href: translatePath("/#about") },
-  { label: t("nav.projects"), href: translatePath("/#projects") },
-  { label: t("nav.blog"), href: translatePath("/blog") },
-  { label: t("nav.certificates"), href: translatePath("/#certificates") },
-  { label: t("nav.contact"), href: translatePath("/#contact") },
+  { label: "Beranda", href: "/" },
+  { label: "Tentang", href: "/#about" },
+  { label: "Proyek", href: "/#projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "Sertifikat", href: "/#certificates" },
+  { label: "Kontak", href: "/#contact" },
 ];
 ---
 
@@ -56,13 +46,13 @@ const navLinks: NavLink[] = [
         ))
       }
       <a
-        href={translatePath("/#contact")}
+        href="/#contact"
         class="nav-cta px-5 py-2 bg-primary hover:bg-primary-light text-white text-sm font-medium
                rounded-full transition-all duration-300 shadow-lg hover:shadow-primary/25 focus-ring"
         data-section="contact"
         data-cursor-hover
       >
-        {t("nav.contact")}
+        Kontak
       </a>
       <div class="flex items-center gap-3">
         <ThemeToggle />
@@ -75,15 +65,16 @@ const navLinks: NavLink[] = [
       class="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5
              rounded-lg hover:bg-dark-surface transition-colors focus-ring"
       aria-label="Toggle menu"
+      aria-expanded="false"
     >
       <span
-        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300"
+        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 origin-center"
       ></span>
       <span
-        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300"
+        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 origin-center"
       ></span>
       <span
-        class="hamburger-line w-4 h-0.5 bg-white transition-all duration-300 self-end mr-2"
+        class="hamburger-line w-6 h-0.5 bg-white transition-all duration-300 origin-center"
       ></span>
     </button>
   </nav>
@@ -227,15 +218,19 @@ const navLinks: NavLink[] = [
     // Mobile menu toggle
     const mobileMenuBtn = document.getElementById("mobile-menu-btn");
     const mobileMenu = document.getElementById("mobile-menu");
-    const hamburgerLines = document.querySelectorAll(".hamburger-line");
+    const hamburgerLines = mobileMenuBtn?.querySelectorAll(".hamburger-line");
     const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
     const mobileNavCta = document.querySelector(".mobile-nav-cta");
     const mobileControls = document.getElementById("mobile-controls");
     let isMenuOpen = false;
 
     function toggleMobileMenu() {
-      console.log("Toggle mobile menu called, current state:", isMenuOpen);
       isMenuOpen = !isMenuOpen;
+
+      // Update aria-expanded
+      if (mobileMenuBtn) {
+        mobileMenuBtn.setAttribute("aria-expanded", isMenuOpen.toString());
+      }
 
       if (mobileMenu) {
         if (isMenuOpen) {
@@ -250,7 +245,7 @@ const navLinks: NavLink[] = [
               setTimeout(() => {
                 link.classList.remove("opacity-0", "translate-y-4");
                 link.classList.add("opacity-100", "translate-y-0");
-              }, index * 100);
+              }, index * 80);
             });
 
             // Animate CTA button
@@ -258,7 +253,7 @@ const navLinks: NavLink[] = [
               setTimeout(() => {
                 mobileNavCta.classList.remove("opacity-0", "translate-y-4");
                 mobileNavCta.classList.add("opacity-100", "translate-y-0");
-              }, mobileNavLinks.length * 100);
+              }, mobileNavLinks.length * 80);
             }
 
             // Animate controls
@@ -268,7 +263,7 @@ const navLinks: NavLink[] = [
                   mobileControls.classList.remove("opacity-0", "translate-y-4");
                   mobileControls.classList.add("opacity-100", "translate-y-0");
                 },
-                (mobileNavLinks.length + 1) * 100
+                (mobileNavLinks.length + 1) * 80
               );
             }
           }, 100);
@@ -298,25 +293,28 @@ const navLinks: NavLink[] = [
         }
       }
 
-      // Animate hamburger
-      if (hamburgerLines.length >= 3) {
+      // Animate hamburger to X
+      if (hamburgerLines && hamburgerLines.length >= 3) {
         if (isMenuOpen) {
-          hamburgerLines[0].classList.add("rotate-45", "translate-y-2");
-          hamburgerLines[1].classList.add("opacity-0");
-          hamburgerLines[2].classList.add(
-            "-rotate-45",
-            "-translate-y-2",
-            "w-6"
-          );
+          // Transform to X
+          (hamburgerLines[0] as HTMLElement).style.transform =
+            "translateY(8px) rotate(45deg)";
+          (hamburgerLines[1] as HTMLElement).style.opacity = "0";
+          (hamburgerLines[2] as HTMLElement).style.transform =
+            "translateY(-8px) rotate(-45deg)";
         } else {
-          hamburgerLines[0].classList.remove("rotate-45", "translate-y-2");
-          hamburgerLines[1].classList.remove("opacity-0");
-          hamburgerLines[2].classList.remove(
-            "-rotate-45",
-            "-translate-y-2",
-            "w-6"
-          );
+          // Reset to hamburger
+          (hamburgerLines[0] as HTMLElement).style.transform = "";
+          (hamburgerLines[1] as HTMLElement).style.opacity = "";
+          (hamburgerLines[2] as HTMLElement).style.transform = "";
         }
+      }
+    }
+
+    // Close menu function
+    function closeMobileMenu() {
+      if (isMenuOpen) {
+        toggleMobileMenu();
       }
     }
 
@@ -328,14 +326,14 @@ const navLinks: NavLink[] = [
         !mobileMenu.contains(e.target as Node) &&
         !mobileMenuBtn?.contains(e.target as Node)
       ) {
-        toggleMobileMenu();
+        closeMobileMenu();
       }
     }
 
     // Close menu on escape key
     function handleEscapeKey(e: KeyboardEvent) {
       if (e.key === "Escape" && isMenuOpen) {
-        toggleMobileMenu();
+        closeMobileMenu();
       }
     }
 
@@ -344,11 +342,6 @@ const navLinks: NavLink[] = [
       const target = e.currentTarget as HTMLAnchorElement;
       const href = target.getAttribute("href");
       const currentPath = window.location.pathname;
-
-      // Always close mobile menu if it's open (failsafe)
-      if (target.classList.contains("mobile-nav-link") && isMenuOpen) {
-        toggleMobileMenu();
-      }
 
       // Handle links with hash (like /#about)
       if (href?.includes("#")) {
@@ -368,6 +361,10 @@ const navLinks: NavLink[] = [
 
         if (isSamePage) {
           e.preventDefault();
+
+          // Close mobile menu first
+          closeMobileMenu();
+
           const element = document.getElementById(hash);
 
           if (element) {
@@ -379,13 +376,18 @@ const navLinks: NavLink[] = [
             // Update URL hash without scroll jump
             history.pushState(null, "", `#${hash}`);
           }
+        } else {
+          // Different page - close menu and let browser navigate
+          closeMobileMenu();
         }
-        // Else: let browser navigate normally
       } else if (href === "/") {
         // Home link
         if (currentPath === "/") {
           e.preventDefault();
+          closeMobileMenu();
           window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          closeMobileMenu();
         }
       }
     }
@@ -401,7 +403,6 @@ const navLinks: NavLink[] = [
       mobileMenuBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("Mobile menu button clicked");
         toggleMobileMenu();
       });
     }
@@ -410,16 +411,50 @@ const navLinks: NavLink[] = [
     document.addEventListener("click", handleOutsideClick);
     document.addEventListener("keydown", handleEscapeKey);
 
-    // Navigation links
+    // Navigation links (including mobile)
     document.querySelectorAll(".nav-link, .mobile-nav-link").forEach((link) => {
       link.addEventListener("click", handleNavClick);
     });
 
+    // Mobile CTA button - close menu and navigate
+    if (mobileNavCta) {
+      mobileNavCta.addEventListener("click", (e) => {
+        const href = (mobileNavCta as HTMLAnchorElement).getAttribute("href");
+        const currentPath = window.location.pathname;
+
+        if (href?.includes("#")) {
+          const [path, hash] = href.split("#");
+          const normalizedCurrentPath = currentPath === "/" ? "/" : currentPath;
+          const normalizedTargetPath = path || "/";
+
+          if (
+            normalizedCurrentPath === normalizedTargetPath ||
+            normalizedCurrentPath === "/"
+          ) {
+            e.preventDefault();
+            closeMobileMenu();
+
+            setTimeout(() => {
+              const element = document.getElementById(hash);
+              if (element) {
+                const offsetTop = element.offsetTop - 80;
+                window.scrollTo({
+                  top: offsetTop,
+                  behavior: "smooth",
+                });
+                history.pushState(null, "", `#${hash}`);
+              }
+            }, 300);
+          } else {
+            closeMobileMenu();
+          }
+        }
+      });
+    }
+
     // Initial calls
     handleScroll();
     updateActiveSection();
-
-    console.log("Navigation script initialized");
   });
 </script>
 
