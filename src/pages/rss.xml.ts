@@ -5,7 +5,7 @@ import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 export const GET: APIRoute = async () => {
   const siteUrl = 'https://muhamadaliridho.me';
   const siteTitle = 'Muhamad Ali Ridho - Tech Blog';
-  const siteDescription = 'Latest tech insights, tutorials, and thoughts from Muhamad Ali Ridho, a tech enthusiast exploring AI, IoT, and web development.';
+  const siteDescription = 'Wawasan teknologi terbaru, tutorial, dan pemikiran dari Muhamad Ali Ridho, seorang tech enthusiast yang mengeksplorasi AI, IoT, dan web development.';
   
   try {
     // Fetch blog posts from Contentful
@@ -45,7 +45,7 @@ export const GET: APIRoute = async () => {
     <title><![CDATA[${siteTitle}]]></title>
     <description><![CDATA[${siteDescription}]]></description>
     <link>${siteUrl}</link>
-    <language>en-us</language>
+    <language>id</language>
     <managingEditor>aldhoproject@gmail.com (Muhamad Ali Ridho)</managingEditor>
     <webMaster>aldhoproject@gmail.com (Muhamad Ali Ridho)</webMaster>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
@@ -83,7 +83,7 @@ ${items}
     <title><![CDATA[${siteTitle}]]></title>
     <description><![CDATA[${siteDescription}]]></description>
     <link>${siteUrl}</link>
-    <language>en-us</language>
+    <language>id</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   </channel>
 </rss>`;

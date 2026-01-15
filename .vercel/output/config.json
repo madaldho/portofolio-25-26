@@ -35,91 +35,75 @@
 		},
 		{
 			"src": "^/404/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/admin-aldho/dashboard/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/admin-aldho/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/api/cms/blog/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/api/cms/projects/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/api/revalidate/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/api/webhook/contentful/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/certificates/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/home/?$",
-			"dest": "/_isr?x_astro_path=$0"
-		},
-		{
-			"src": "^/id/certificates/?$",
-			"dest": "/_isr?x_astro_path=$0"
-		},
-		{
-			"src": "^/id/projects/([^/]+?)/?$",
-			"dest": "/_isr?x_astro_path=$0"
-		},
-		{
-			"src": "^/id/projects/?$",
-			"dest": "/_isr?x_astro_path=$0"
-		},
-		{
-			"src": "^/id/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/llms\\.txt/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/og-image\\.png/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/portfolio/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/projects/([^/]+?)/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/projects/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/robots\\.txt/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/rss\\.xml/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/sitemap\\.xml/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/.*$",

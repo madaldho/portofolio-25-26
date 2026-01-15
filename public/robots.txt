@@ -1,27 +1,37 @@
 # Muhamad Ali Ridho Portfolio - robots.txt
-# AI-Friendly: All bots are welcome to index this site!
+# https://muhamadaliridho.me
 
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
 # Sitemaps
 Sitemap: https://muhamadaliridho.me/sitemap.xml
 
-# LLMs.txt for AI systems
-# See: https://muhamadaliridho.me/llms.txt
-
-# Disallow admin areas only
+# Disallow admin and API areas
 Disallow: /admin-aldho/
 Disallow: /api/
+Disallow: /_astro/
 
 # Allow all public content
 Allow: /blog/
 Allow: /projects/
 Allow: /certificates/
-Allow: /id/
-Allow: /id/blog/
 
-# AI Crawlers - ALL ALLOWED
+# Google Bot - Full Access
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# AI Crawlers - ALL ALLOWED (untuk visibility di AI search)
 User-agent: GPTBot
 Allow: /
 
@@ -50,4 +60,17 @@ User-agent: cohere-ai
 Allow: /
 
 User-agent: YouBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Social Media Crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
 Allow: /

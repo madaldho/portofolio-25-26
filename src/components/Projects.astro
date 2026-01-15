@@ -4,7 +4,7 @@ import { getSimpleProjects, isContentfulConfigured } from '../utils/contentful';
 import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
@@ -38,21 +38,24 @@ try {
           thumbnailUrl = project.fields.imageUrl;
         }
 
-        // Normalize category to ensure it's valid
+        // Normalize category - accept all valid Contentful categories
         let category = project.fields.category;
-        if (!category || !['web', 'mobile', 'iot', 'ai-ml', 'other'].includes(category)) {
+        const validCategories = ['web', 'mobile', 'landing page', 'design', 'video', 'other'];
+        if (!category || !validCategories.includes(category)) {
           // Try to infer category from title or technologies
           const title = project.fields.title.toLowerCase();
           const techs = (project.fields.technologies || []).join(' ').toLowerCase();
           
-          if (title.includes('web') || title.includes('website') || techs.includes('react') || techs.includes('astro') || techs.includes('html')) {
+          if (title.includes('landing') || title.includes('page')) {
+            category = 'landing page';
+          } else if (title.includes('design') || title.includes('ui') || title.includes('ux') || techs.includes('figma')) {
+            category = 'design';
+          } else if (title.includes('video') || title.includes('motion') || techs.includes('premiere') || techs.includes('after effects')) {
+            category = 'video';
+          } else if (title.includes('web') || title.includes('website') || techs.includes('react') || techs.includes('astro') || techs.includes('html')) {
             category = 'web';
           } else if (title.includes('mobile') || title.includes('app') || techs.includes('react native') || techs.includes('flutter')) {
             category = 'mobile';
-          } else if (title.includes('iot') || title.includes('arduino') || title.includes('esp32') || techs.includes('mqtt')) {
-            category = 'iot';
-          } else if (title.includes('ai') || title.includes('ml') || title.includes('machine learning') || techs.includes('python') || techs.includes('tensorflow')) {
-            category = 'ai-ml';
           } else {
             category = 'other';
           }
@@ -126,34 +129,36 @@ const sortedProjects = projects.sort((a, b) =>
   new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
 );
 
-// Define proper category mapping first
+// Define proper category mapping first - includes all Contentful categories
 const categoryMapping: Record<string, string> = {
   'web': 'Web Development',
   'mobile': 'Mobile Development', 
-  'iot': 'IoT Projects',
-  'ai-ml': 'AI & Machine Learning',
+  'landing page': 'Landing Page',
+  'design': 'Design',
+  'video': 'Video',
   'other': 'Other Projects'
 };
 
 // Extract unique categories from projects and clean them up
 const uniqueCategories = [
   ...new Set(projects.map((project) => project.data.category).filter(Boolean)),
-].filter(cat => cat && cat.trim() !== '' && categoryMapping[cat]); // Only include mapped categories
+].filter(cat => cat && cat.trim() !== ''); // Include all categories from projects
 
 // Create category objects with proper labels
 const categories = [
   { id: "all", label: t("category.all" as any) || "All Projects" },
   ...uniqueCategories.map((cat) => ({
     id: cat,
-    label: categoryMapping[cat]
+    label: categoryMapping[cat] || cat.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
   }))
 ];
 
 const categoryColors: Record<string, string> = {
   web: '#FF3D00',
   mobile: '#EC4899',
-  iot: '#10B981',
-  'ai-ml': '#6366F1',
+  'landing page': '#8B5CF6',
+  design: '#06B6D4',
+  video: '#EF4444',
   other: '#F59E0B',
 };
 
@@ -200,7 +205,7 @@ const categoryColorVars = Object.entries(categoryColors)
           class="project-card group card-elevated"
           data-category={project.data.category}
           data-cursor-hover
-          style={index >= 3 ? "display: none;" : ""}
+          style={index >= 6 ? "display: none;" : ""}
         >
           <!-- Thumbnail -->
           <div class="relative aspect-video overflow-hidden">
@@ -324,14 +329,14 @@ const categoryColorVars = Object.entries(categoryColors)
       filterBtns.forEach((b) => b.setAttribute('data-active', 'false'));
       btn.setAttribute('data-active', 'true');
       
-      // Filter projects
+      // Filter projects - show up to 6 projects per category
       let visibleCount = 0;
       
       projectCards.forEach((card) => {
         const cardCategory = card.getAttribute('data-category');
         const isMatch = category === 'all' || cardCategory === category;
 
-        if (isMatch && visibleCount < 3) {
+        if (isMatch && visibleCount < 6) {
           visibleCount++;
           (card as HTMLElement).style.display = 'block';
           // Small timeout to allow display:block to apply before opacity transition

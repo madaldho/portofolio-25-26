@@ -503,7 +503,7 @@ import ProjectForm from "../../components/admin/ProjectForm.astro";
             </div>
             ${recentActivity
               .map((item) => {
-                const title = item.fields.title?.["en-US"] || "Untitled";
+                const title = item.fields.title?.["id-ID"] || "Untitled";
                 const type =
                   item.contentType === "blogPost" ? "Blog Post" : "Project";
                 const date = new Date(item.updatedAt).toLocaleDateString();
@@ -601,7 +601,7 @@ import ProjectForm from "../../components/admin/ProjectForm.astro";
       const contentTypeId = type === "blog" ? "blogPost" : "simpleProject";
       const listHtml = content
         .map((item) => {
-          const title = item.fields.title?.["en-US"] || "Untitled";
+          const title = item.fields.title?.["id-ID"] || "Untitled";
           const status =
             item.status === "published" ? "✅ Published" : "📝 Draft";
           const editUrl = `https://app.contentful.com/spaces/hbrrn0bf99r5/entries/${item.id}`;

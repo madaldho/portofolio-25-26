@@ -3,17 +3,19 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
 
+import sitemap from '@astrojs/sitemap';
+
+import partytown from '@astrojs/partytown';
+
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL || 'https://muhamadaliridho.me',
-  output: 'server', // Full SSR mode for dynamic content
-  adapter: vercel({
-    // ISR with caching for better performance
-    isr: {
-      expiration: 60, // Cache for 60 seconds, then revalidate
-    },
-  }),
-  
+
+  // Full SSR mode for dynamic content
+  output: 'server',
+
+  adapter: vercel(),
+
   // Internationalization configuration
   i18n: {
     defaultLocale: 'en',
@@ -22,13 +24,13 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
-  
+
   // Build optimizations for Vercel
   build: {
     inlineStylesheets: 'auto',
     assets: '_astro',
   },
-  
+
   // Vite configuration for performance
   vite: {
     build: {
@@ -52,7 +54,7 @@ export default defineConfig({
       'import.meta.env.SITE_DESCRIPTION': JSON.stringify(process.env.SITE_DESCRIPTION || 'Portfolio of Muhamad Ali Ridho, a Tech Enthusiast exploring AI, IoT, Web Development, and more.'),
     },
   },
-  
+
   // Enhanced image optimization
   image: {
     domains: ['images.unsplash.com', 'images.ctfassets.net'],
@@ -73,13 +75,13 @@ export default defineConfig({
       },
     },
   },
-  
+
   // Prefetch configuration for better performance
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'viewport',
   },
-  
+
   // Experimental features for optimization (Astro 5.x)
   experimental: {
     svgo: {
@@ -93,10 +95,12 @@ export default defineConfig({
     },
     clientPrerender: true,
   },
-  
+
   // Security headers and redirects
   redirects: {
     '/home': '/',
     '/portfolio': '/',
   },
+
+  integrations: [sitemap(), partytown()],
 });

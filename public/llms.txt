@@ -1,58 +1,57 @@
-# Muhamad Ali Ridho - Tech Portfolio
-> Professional portfolio website for Muhamad Ali Ridho, a tech enthusiast from Jakarta, Indonesia specializing in web development, AI/ML, IoT, and emerging technologies.
+# Muhamad Ali Ridho - Portfolio
+> Portfolio website Muhamad Ali Ridho, Vibe Coder, Digital Marketer & Tech Enthusiast dari Jakarta, Indonesia.
 
-## About
-Muhamad Ali Ridho is a passionate tech enthusiast and developer based in Jakarta, Indonesia. This portfolio showcases projects, skills, certifications, and blog posts about technology, programming, and innovation.
+## Tentang
+Muhamad Ali Ridho (dikenal juga sebagai madaldho atau Aldho) adalah Vibe Coder, Digital Marketer, dan Tech Enthusiast dari Jakarta, Indonesia. Fokus pada Web Development, Digital Marketing, AI, dan teknologi emerging.
 
-## Key Information
-- **Name**: Muhamad Ali Ridho
-- **Location**: Jakarta, Indonesia
-- **Expertise**: Web Development, AI/ML, IoT, Cloud Computing, Mobile Development
-- **Languages**: Indonesian (Native), English (Professional)
+## Informasi Utama
+- **Nama**: Muhamad Ali Ridho
+- **Alias**: madaldho, Aldho, M. Ali Ridho
+- **Lokasi**: Jakarta, Indonesia
+- **Keahlian**: Web Development, Digital Marketing, SEO, AI, Content Creation
+- **Bahasa**: Indonesia (Native), English (Professional)
 
-## Sections
+## Halaman
 
-### Home (/)
-The main landing page featuring an introduction, skills overview, featured projects, and contact information.
+### Beranda (/)
+Landing page utama dengan perkenalan, keahlian, proyek unggulan, dan informasi kontak.
+
+### Proyek (/projects)
+Showcase proyek yang sudah selesai termasuk website, landing page, aplikasi web, dan solusi digital marketing.
 
 ### Blog (/blog)
-Technical articles, tutorials, and insights about web development, AI, IoT, and technology trends. Available in both English and Indonesian.
+Artikel teknis, tutorial, dan insight tentang web development, digital marketing, AI, dan tren teknologi.
 
-### Projects (/projects)
-A showcase of completed projects including web applications, mobile apps, IoT solutions, and AI/ML implementations.
+### Sertifikat (/certificates)
+Sertifikasi profesional dan pencapaian dari berbagai platform.
 
-### Certificates (/certificates)
-Professional certifications and achievements from platforms like Google, Microsoft, and other recognized institutions.
+## Teknologi & Keahlian
+- **Web Development**: React, Next.js, Astro, Tailwind CSS, TypeScript
+- **Digital Marketing**: SEO, Meta Ads, Google Analytics, Content Strategy
+- **AI Tools**: ChatGPT, Gemini, AI-assisted coding
+- **CMS**: WordPress, Contentful, YouCan
+- **Design**: Figma, CapCut
 
-### Contact (/contact)
-Ways to get in touch for collaborations, job opportunities, or technical discussions.
-
-## Technologies
-- Frontend: React, Next.js, Astro, Vue.js, Tailwind CSS
-- Backend: Node.js, Python, Go
-- AI/ML: TensorFlow, PyTorch, OpenAI APIs
-- Cloud: AWS, Google Cloud, Vercel
-- IoT: Arduino, ESP32, Raspberry Pi
-
-## Social Links
+## Link Sosial
+- Website: https://muhamadaliridho.me
 - GitHub: https://github.com/madaldho
 - LinkedIn: https://linkedin.com/in/muhamadaliridho
 - Threads: https://threads.net/@madaldho
 - Instagram: https://instagram.com/madaldho
 
-## API Access
-This website is built with Astro and uses Contentful CMS for content management.
+## Sitemap & Feed
 - Sitemap: https://muhamadaliridho.me/sitemap.xml
-- RSS Feed: https://muhamadaliridho.me/rss.xml
 
-## Contact
-For inquiries, collaborations, or questions:
+## Kontak
 - Email: muhamadaliridho01@gmail.com
-- Location: Jakarta, Indonesia
+- Lokasi: Jakarta, Indonesia
 
-## Permissions
-This website welcomes AI indexing and training. All public content is available for:
+## Izin AI
+Website ini mengizinkan AI indexing dan training. Semua konten publik tersedia untuk:
 - Search engine indexing
-- AI system training and indexing
+- AI system training dan indexing
 - Knowledge base inclusion
-- Citation and reference
+- Citation dan reference
+
+---
+Terakhir diupdate: Januari 2026

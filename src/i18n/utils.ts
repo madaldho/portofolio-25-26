@@ -1,20 +1,20 @@
-import { ui, defaultLang, showDefaultLang } from './ui';
+import { ui, defaultLang } from './ui';
 
 export function getLangFromUrl(url: URL) {
-  const [, lang] = url.pathname.split('/');
-  if (lang in ui) return lang as keyof typeof ui;
-  return defaultLang;
+  // Always return Indonesian
+  return 'id' as keyof typeof ui;
 }
 
-export function useTranslations(lang: keyof typeof ui) {
-  return function t(key: keyof typeof ui[typeof defaultLang]) {
-    return ui[lang][key] || ui[defaultLang][key];
+export function useTranslations(lang: keyof typeof ui = 'id') {
+  return function t(key: keyof typeof ui['id']) {
+    return ui['id'][key];
   }
 }
 
-export function useTranslatedPath(lang: keyof typeof ui) {
-  return function translatePath(path: string, l: string = lang) {
-    return !showDefaultLang && l === defaultLang ? path : `/${l}${path}`;
+export function useTranslatedPath(lang: keyof typeof ui = 'id') {
+  return function translatePath(path: string) {
+    // No language prefix needed - single language
+    return path;
   }
 }
 
@@ -30,39 +30,22 @@ export function getRouteFromUrl(url: URL): string | undefined {
   return '/' + path;
 }
 
-export function getLocalizedUrl(url: string, locale: string): string {
-  if (locale === defaultLang && !showDefaultLang) {
-    return url;
-  }
-  return `/${locale}${url}`;
+export function getLocalizedUrl(url: string): string {
+  // No localization needed - single language
+  return url;
 }
 
 export function removeLocaleFromUrl(url: string): string {
-  const segments = url.split('/');
-  if (segments[1] in ui) {
-    segments.splice(1, 1);
-  }
-  return segments.join('/') || '/';
+  return url;
 }
 
-export function getCurrentLocale(url: URL): keyof typeof ui {
-  return getLangFromUrl(url);
+export function getCurrentLocale(): keyof typeof ui {
+  return 'id';
 }
 
-export function getAlternateLanguages(currentUrl: URL) {
-  const currentLang = getLangFromUrl(currentUrl);
-  const route = removeLocaleFromUrl(currentUrl.pathname);
-  
-  return Object.keys(ui).map(lang => ({
-    lang,
-    url: getLocalizedUrl(route, lang),
-    label: ui[lang as keyof typeof ui]['common.language'] || lang,
-  })).filter(item => item.lang !== currentLang);
-}
-
-// Helper untuk mendapatkan metadata berdasarkan bahasa
-export function getLocalizedMetadata(lang: keyof typeof ui) {
-  const t = useTranslations(lang);
+// Helper untuk mendapatkan metadata
+export function getLocalizedMetadata() {
+  const t = useTranslations('id');
   
   return {
     title: t('seo.title'),
@@ -71,10 +54,8 @@ export function getLocalizedMetadata(lang: keyof typeof ui) {
   };
 }
 
-// Helper untuk format tanggal berdasarkan bahasa
-export function formatDate(date: Date | string, lang: keyof typeof ui): string {
-  const locale = lang === 'id' ? 'id-ID' : 'en-US';
-  
+// Helper untuk format tanggal (Indonesian)
+export function formatDate(date: Date | string): string {
   let dateObj: Date;
   if (typeof date === 'string') {
     dateObj = new Date(date);
@@ -84,19 +65,17 @@ export function formatDate(date: Date | string, lang: keyof typeof ui): string {
   
   // Check if date is valid
   if (isNaN(dateObj.getTime())) {
-    return lang === 'id' ? 'Tanggal tidak valid' : 'Invalid date';
+    return 'Tanggal tidak valid';
   }
   
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat('id-ID', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   }).format(dateObj);
 }
 
-// Helper untuk format angka berdasarkan bahasa
-export function formatNumber(number: number, lang: keyof typeof ui): string {
-  const locale = lang === 'id' ? 'id-ID' : 'en-US';
-  
-  return new Intl.NumberFormat(locale).format(number);
+// Helper untuk format angka (Indonesian)
+export function formatNumber(number: number): string {
+  return new Intl.NumberFormat('id-ID').format(number);
 }

@@ -13,7 +13,7 @@ let isUsingContentful = false;
 try {
   if (isContentfulConfigured()) {
     // Try rich text posts first (blogPost content type)
-    const richTextPosts = await getBlogPosts(false, 'en-US');
+    const richTextPosts = await getBlogPosts(false, 'id-ID');
     if (richTextPosts.length > 0) {
       blogPosts = richTextPosts.map(post => {
         // Get image: prefer uploaded asset, then default
@@ -132,7 +132,7 @@ const sortedPosts = blogPosts.sort((a, b) =>
               <div class="p-6">
                 <!-- Date -->
                 <time class="text-primary text-sm font-mono">
-                  {new Date(post.data.publishDate).toLocaleDateString('en-US', {
+                  {new Date(post.data.publishDate).toLocaleDateString('id-ID', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'

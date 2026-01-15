@@ -67,12 +67,12 @@ export class CMSManager {
         id: `blog_${Date.now()}`,
         contentType: 'blogPost',
         fields: {
-          title: { 'en-US': data.title },
-          slug: { 'en-US': data.slug },
-          excerpt: { 'en-US': data.excerpt },
-          content: { 'en-US': data.content },
-          tags: { 'en-US': data.tags },
-          publishDate: { 'en-US': data.publishDate },
+          title: { 'id-ID': data.title },
+          slug: { 'id-ID': data.slug },
+          excerpt: { 'id-ID': data.excerpt },
+          content: { 'id-ID': data.content },
+          tags: { 'id-ID': data.tags },
+          publishDate: { 'id-ID': data.publishDate },
         },
         status: data.status,
         createdAt: new Date().toISOString(),
@@ -116,11 +116,11 @@ export class CMSManager {
         id: `project_${Date.now()}`,
         contentType: 'simpleProject',
         fields: {
-          title: { 'en-US': data.title },
-          slug: { 'en-US': data.slug },
-          description: { 'en-US': data.description },
-          category: { 'en-US': data.category },
-          featured: { 'en-US': data.featured },
+          title: { 'id-ID': data.title },
+          slug: { 'id-ID': data.slug },
+          description: { 'id-ID': data.description },
+          category: { 'id-ID': data.category },
+          featured: { 'id-ID': data.featured },
         },
         status: 'draft',
         createdAt: new Date().toISOString(),
@@ -153,7 +153,7 @@ export class CMSManager {
       // Update fields
       Object.keys(data).forEach(key => {
         if (data[key as keyof typeof data] !== undefined) {
-          entry.fields[key] = { 'en-US': data[key as keyof typeof data] };
+          entry.fields[key] = { 'id-ID': data[key as keyof typeof data] };
         }
       });
 
@@ -220,12 +220,12 @@ export class CMSManager {
             id: post.sys.id,
             contentType: 'blogPost' as const,
             fields: {
-              title: { 'en-US': post.fields.title },
-              slug: { 'en-US': post.fields.slug },
-              excerpt: { 'en-US': post.fields.excerpt },
-              content: { 'en-US': post.fields.content },
-              tags: { 'en-US': post.fields.tags },
-              publishDate: { 'en-US': post.fields.publishDate }
+              title: { 'id-ID': post.fields.title },
+              slug: { 'id-ID': post.fields.slug },
+              excerpt: { 'id-ID': post.fields.excerpt },
+              content: { 'id-ID': post.fields.content },
+              tags: { 'id-ID': post.fields.tags },
+              publishDate: { 'id-ID': post.fields.publishDate }
             },
             status: 'published' as const,
             createdAt: post.sys.createdAt,
@@ -254,11 +254,11 @@ export class CMSManager {
             id: project.sys.id,
             contentType: 'simpleProject' as const,
             fields: {
-              title: { 'en-US': project.fields.title },
-              slug: { 'en-US': project.fields.slug },
-              description: { 'en-US': project.fields.description },
-              category: { 'en-US': project.fields.category },
-              featured: { 'en-US': project.fields.featured }
+              title: { 'id-ID': project.fields.title },
+              slug: { 'id-ID': project.fields.slug },
+              description: { 'id-ID': project.fields.description },
+              category: { 'id-ID': project.fields.category },
+              featured: { 'id-ID': project.fields.featured }
             },
             status: 'published' as const,
             createdAt: project.sys.createdAt,

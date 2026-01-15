@@ -43,7 +43,7 @@ const navLinks: NavLink[] = [
     <!-- Desktop Navigation -->
     <div class="hidden md:flex items-center gap-6">
       {
-        navLinks.map((link) => (
+        navLinks.slice(0, -1).map((link) => (
           <a
             href={link.href}
             class="nav-link text-sm font-medium text-white/70 hover:text-white 
@@ -55,8 +55,16 @@ const navLinks: NavLink[] = [
           </a>
         ))
       }
+      <a
+        href={translatePath("/#contact")}
+        class="nav-cta px-5 py-2 bg-primary hover:bg-primary-light text-white text-sm font-medium
+               rounded-full transition-all duration-300 shadow-lg hover:shadow-primary/25 focus-ring"
+        data-section="contact"
+        data-cursor-hover
+      >
+        {t("nav.contact")}
+      </a>
       <div class="flex items-center gap-3">
-        <LanguagePicker />
         <ThemeToggle />
       </div>
     </div>
@@ -123,18 +131,22 @@ const navLinks: NavLink[] = [
       <!-- Divider -->
       <div class="w-full max-w-sm h-px bg-white/10 my-4 shrink-0"></div>
 
-      <!-- Language and Theme controls -->
+      <!-- CTA Button Mobile -->
+      <a
+        href="/#contact"
+        class="mobile-nav-cta w-full max-w-sm py-4 px-6 bg-primary hover:bg-primary-light text-white text-lg font-bold
+               rounded-xl transition-all duration-300 shadow-lg hover:shadow-primary/25 text-center
+               opacity-0 translate-y-4 shrink-0"
+        style="animation-delay: 0.35s"
+      >
+        💬 Hubungi Saya
+      </a>
+
+      <!-- Theme control only -->
       <div
         id="mobile-controls"
-        class="flex items-center justify-center gap-6 opacity-0 translate-y-4 transition-all duration-300 w-full max-w-sm shrink-0"
+        class="flex items-center justify-center gap-6 opacity-0 translate-y-4 transition-all duration-300 w-full max-w-sm shrink-0 mt-4"
       >
-        <div class="flex flex-col items-center gap-2">
-          <span class="text-xs text-white/70 uppercase tracking-wider"
-            >Language</span
-          >
-          <LanguagePicker />
-        </div>
-        <div class="w-px h-12 bg-white/10"></div>
         <div class="flex flex-col items-center gap-2">
           <span class="text-xs text-white/70 uppercase tracking-wider"
             >Theme</span
@@ -217,6 +229,7 @@ const navLinks: NavLink[] = [
     const mobileMenu = document.getElementById("mobile-menu");
     const hamburgerLines = document.querySelectorAll(".hamburger-line");
     const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+    const mobileNavCta = document.querySelector(".mobile-nav-cta");
     const mobileControls = document.getElementById("mobile-controls");
     let isMenuOpen = false;
 
@@ -240,12 +253,23 @@ const navLinks: NavLink[] = [
               }, index * 100);
             });
 
+            // Animate CTA button
+            if (mobileNavCta) {
+              setTimeout(() => {
+                mobileNavCta.classList.remove("opacity-0", "translate-y-4");
+                mobileNavCta.classList.add("opacity-100", "translate-y-0");
+              }, mobileNavLinks.length * 100);
+            }
+
             // Animate controls
             if (mobileControls) {
-              setTimeout(() => {
-                mobileControls.classList.remove("opacity-0", "translate-y-4");
-                mobileControls.classList.add("opacity-100", "translate-y-0");
-              }, mobileNavLinks.length * 100);
+              setTimeout(
+                () => {
+                  mobileControls.classList.remove("opacity-0", "translate-y-4");
+                  mobileControls.classList.add("opacity-100", "translate-y-0");
+                },
+                (mobileNavLinks.length + 1) * 100
+              );
             }
           }, 100);
         } else {
@@ -259,6 +283,12 @@ const navLinks: NavLink[] = [
             link.classList.add("opacity-0", "translate-y-4");
             link.classList.remove("opacity-100", "translate-y-0");
           });
+
+          // Reset CTA
+          if (mobileNavCta) {
+            mobileNavCta.classList.add("opacity-0", "translate-y-4");
+            mobileNavCta.classList.remove("opacity-100", "translate-y-0");
+          }
 
           // Reset controls
           if (mobileControls) {
@@ -398,6 +428,11 @@ const navLinks: NavLink[] = [
     width: 100%;
   }
 
+  /* Desktop CTA button */
+  .nav-cta {
+    white-space: nowrap;
+  }
+
   :global(body.light) .nav-link {
     color: rgba(10, 10, 10, 0.7);
   }
@@ -405,6 +440,15 @@ const navLinks: NavLink[] = [
   :global(body.light) .nav-link:hover,
   :global(body.light) .nav-link.active {
     color: rgb(10, 10, 10);
+  }
+
+  :global(body.light) .nav-cta {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  :global(body.light) .nav-cta:hover {
+    background-color: #c62d00;
   }
 
   :global(body.light) #navbar.bg-dark-bg\/80 {
@@ -429,6 +473,11 @@ const navLinks: NavLink[] = [
     color: rgb(10, 10, 10);
     background-color: rgba(0, 0, 0, 0.05);
     border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(body.light) .mobile-nav-cta {
+    background-color: var(--color-primary);
+    color: white;
   }
 
   :global(body.light) #mobile-menu .bg-white\/20,

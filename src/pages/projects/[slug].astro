@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
   try {
     if (isContentfulConfigured()) {
-      const contentfulProjects = await getSimpleProjects(false, "en-US");
+      const contentfulProjects = await getSimpleProjects(false, "id-ID");
       projects = contentfulProjects.map((project) => ({
         params: { slug: project.fields.slug },
         props: { project },
@@ -67,7 +67,7 @@ if (Astro.props.project) {
   const { slug } = Astro.params;
   if (slug) {
     try {
-      projectData = await getSimpleProject(slug, false, "en-US");
+      projectData = await getSimpleProject(slug, false, "id-ID");
       console.log(
         "Fetched project data for slug:",
         slug,

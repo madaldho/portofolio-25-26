@@ -1,13 +1,12 @@
 ---
 import { profile as defaultProfile } from "../data/profile";
 import { socialLinks } from "../data/socials";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { useTranslations } from "../i18n/utils";
 import { getProfile, isContentfulConfigured } from "../utils/contentful";
 
 const currentYear = new Date().getFullYear();
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-const locale = lang === "id" ? "id-ID" : "en-US";
+const t = useTranslations("id");
+const locale = "id-ID";
 
 let profileName = defaultProfile.name;
 

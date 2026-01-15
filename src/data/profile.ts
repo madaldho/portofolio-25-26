@@ -48,7 +48,7 @@ When I'm not coding, you'll find me researching the latest tech trends, experime
       "Saya mengembangkan aplikasi web",
       "Saya menyukai teknologi baru",
     ],
-    bio: `Tech enthusiast yang bersemangat dengan minat mendalam pada artificial intelligence, Internet of Things (IoT), dan web development. Saya suka mengeksplorasi teknologi baru dan menciptakan solusi inovatif yang membuat perbedaan.
+    bio: `Tech enthusiast yang bersemangat dengan minat mendalam pada artificial intelligence, digital marketing dan web development. Saya suka mengeksplorasi teknologi baru dan menciptakan solusi inovatif yang membuat perbedaan.
 
 Dari membangun aplikasi bertenaga AI hingga mengembangkan sistem IoT dan menciptakan pengalaman web modern - saya menikmati seluruh teknologi stack. Setiap proyek adalah kesempatan untuk mempelajari sesuatu yang baru dan mendorong batas-batas dari apa yang mungkin.
 

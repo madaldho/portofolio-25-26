@@ -76,7 +76,7 @@ export class SEOManager {
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
-    <meta name="language" content="English" />
+    <meta name="language" content="Indonesian" />
     <meta name="revisit-after" content="7 days" />
     `;
   }
@@ -94,17 +94,19 @@ export class SEOManager {
           '@type': 'Person',
           '@id': `${this.siteUrl}/#person`,
           name: this.primaryKeyword,
-          alternateName: ['madaldho', 'Aldho', 'Muhammad Ali Ridho', 'M. Ali Ridho'],
+          alternateName: ['madaldho', 'Aldho', 'Muhammad Ali Ridho', 'M. Ali Ridho', 'Ali Ridho'],
           url: this.siteUrl,
           image: {
             '@type': 'ImageObject',
             '@id': `${this.siteUrl}/#primaryimage`,
             url: `${this.siteUrl}/profile-photo.jpg`,
             contentUrl: `${this.siteUrl}/profile-photo.jpg`,
+            width: 400,
+            height: 400,
             caption: `${this.primaryKeyword} - Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia`
           },
-          jobTitle: 'Vibe Coder, Digital Marketer & Tech Enthusiast',
-          description: `${this.primaryKeyword} adalah Vibe Coder, Digital Marketer, dan Tech Enthusiast dari Indonesia yang fokus pada AI, Web Development, Digital Marketing, dan teknologi emerging. Dikenal juga sebagai madaldho.`,
+          jobTitle: 'Vibe Coder & Digital Marketer',
+          description: `${this.primaryKeyword} adalah Vibe Coder, Digital Marketer, dan Tech Enthusiast dari Indonesia yang fokus pada AI, Web Development, Digital Marketing, dan teknologi emerging.`,
           nationality: {
             '@type': 'Country',
             name: 'Indonesia'
@@ -112,11 +114,13 @@ export class SEOManager {
           address: {
             '@type': 'PostalAddress',
             addressLocality: 'Jakarta',
+            addressRegion: 'DKI Jakarta',
             addressCountry: 'ID'
           },
           knowsAbout: [
             'Digital Marketing',
             'Social Media Marketing',
+            'SEO',
             'Content Creation',
             'Web Development',
             'Mobile Development', 
@@ -128,38 +132,31 @@ export class SEOManager {
             'Astro',
             'Node.js',
             'Python',
-            'Flutter',
-            'Supabase',
-            'Firebase'
+            'Tailwind CSS'
           ],
           hasOccupation: [
             {
               '@type': 'Occupation',
-              name: 'Vibe Coder'
+              name: 'Vibe Coder',
+              description: 'Developer yang menggunakan AI untuk coding'
             },
             {
               '@type': 'Occupation',
               name: 'Digital Marketer',
-              occupationalCategory: '13-1161.00'
-            },
-            {
-              '@type': 'Occupation',
-              name: 'Tech Enthusiast'
+              occupationalCategory: '13-1161.00',
+              description: 'Spesialis pemasaran digital dan SEO'
             }
           ],
           sameAs: [
             'https://github.com/madaldho',
             'https://linkedin.com/in/muhamadaliridho',
-            'https://twitter.com/muhamadaliridho',
+            'https://instagram.com/madaldho',
+            'https://threads.net/@madaldho',
             this.siteUrl
           ],
           mainEntityOfPage: {
             '@type': 'WebPage',
             '@id': this.siteUrl
-          },
-          worksFor: {
-            '@type': 'Organization',
-            name: 'Freelance'
           }
         };
 
@@ -169,18 +166,20 @@ export class SEOManager {
           '@type': 'Article',
           headline: data?.title || '',
           description: data?.description || '',
-          image: data?.image ? `${this.siteUrl}${data.image}` : `${this.siteUrl}${this.defaultImage}`,
+          image: data?.image ? (data.image.startsWith('http') ? data.image : `${this.siteUrl}${data.image}`) : `${this.siteUrl}${this.defaultImage}`,
           author: {
             '@type': 'Person',
+            '@id': `${this.siteUrl}/#person`,
             name: this.primaryKeyword,
             url: this.siteUrl
           },
           publisher: {
             '@type': 'Person',
+            '@id': `${this.siteUrl}/#person`,
             name: this.primaryKeyword,
             logo: {
               '@type': 'ImageObject',
-              url: `${this.siteUrl}/logo.png`
+              url: `${this.siteUrl}/profile-photo.jpg`
             }
           },
           datePublished: data?.publishedTime || new Date().toISOString(),
@@ -189,6 +188,7 @@ export class SEOManager {
             '@type': 'WebPage',
             '@id': `${this.siteUrl}${data?.url || ''}`
           },
+          inLanguage: 'id-ID',
           keywords: data?.tags?.join(', ') || ''
         };
 
@@ -196,16 +196,28 @@ export class SEOManager {
         return {
           ...baseSchema,
           '@type': 'WebSite',
-          name: `${this.primaryKeyword} - Tech Portfolio`,
-          description: 'Tech Enthusiast exploring AI, IoT, Web Development, and more. Building the future one project at a time.',
+          '@id': `${this.siteUrl}/#website`,
+          name: `${this.primaryKeyword} - Portfolio`,
+          alternateName: 'madaldho Portfolio',
+          description: 'Portfolio Muhamad Ali Ridho - Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia. Mengeksplorasi AI, Web Development, dan Digital Marketing.',
           url: this.siteUrl,
+          inLanguage: 'id-ID',
           author: {
             '@type': 'Person',
+            '@id': `${this.siteUrl}/#person`,
+            name: this.primaryKeyword
+          },
+          publisher: {
+            '@type': 'Person',
+            '@id': `${this.siteUrl}/#person`,
             name: this.primaryKeyword
           },
           potentialAction: {
             '@type': 'SearchAction',
-            target: `${this.siteUrl}/search?q={search_term_string}`,
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: `${this.siteUrl}/blog?q={search_term_string}`
+            },
             'query-input': 'required name=search_term_string'
           }
         };
@@ -220,28 +232,34 @@ export class SEOManager {
     // Convert to string if not already
     const titleStr = typeof title === 'string' ? title : String(title || '');
     
-    // If title already contains the primary keyword, return as is
+    // If title already contains the primary keyword, return as is (max 60 chars)
     if (titleStr.toLowerCase().includes(this.primaryKeyword.toLowerCase())) {
-      return titleStr;
+      return titleStr.length > 60 ? titleStr.substring(0, 57) + '...' : titleStr;
     }
 
     // For homepage - nama di depan untuk branding personal yang kuat
-    if (titleStr.toLowerCase().includes('home') || titleStr === 'Muhamad Ali Ridho') {
-      return `${this.primaryKeyword} | Vibe Coder, Digital Marketer & Tech Enthusiast Indonesia`;
+    if (titleStr.toLowerCase().includes('home') || titleStr === 'Muhamad Ali Ridho' || titleStr === '') {
+      return `${this.primaryKeyword} | Vibe Coder & Digital Marketer Indonesia`;
     }
 
-    // For blog posts and other pages - nama tetap di akhir tapi dengan format yang lebih baik
-    return `${titleStr} | ${this.primaryKeyword}`;
+    // For blog posts and other pages - nama tetap di akhir
+    const fullTitle = `${titleStr} | ${this.primaryKeyword}`;
+    return fullTitle.length > 60 ? `${titleStr.substring(0, 40)}... | ${this.primaryKeyword}` : fullTitle;
   }
 
-  // Optimize description for SEO
+  // Optimize description for SEO (120-160 chars optimal)
   optimizeDescription(description: string | any): string {
     // Convert to string if not already
-    const desc = typeof description === 'string' ? description : String(description || '');
+    let desc = typeof description === 'string' ? description : String(description || '');
     
     // Ensure description contains primary keyword
     if (!desc.toLowerCase().includes(this.primaryKeyword.toLowerCase())) {
-      return `${desc} Learn more from ${this.primaryKeyword}, a vibe coder, digital marketer, and tech enthusiast.`;
+      desc = `${desc} Oleh ${this.primaryKeyword}.`;
+    }
+
+    // Trim to optimal length (max 160 chars)
+    if (desc.length > 160) {
+      desc = desc.substring(0, 157) + '...';
     }
 
     return desc;

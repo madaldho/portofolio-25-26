@@ -5,7 +5,7 @@ import { getSimpleProjects, isContentfulConfigured } from '../../utils/contentfu
 import { getLangFromUrl, useTranslations } from '../../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 const t = useTranslations(lang);
 
 // Try to get projects from Contentful first, fallback to static content
@@ -15,8 +15,19 @@ try {
   if (isContentfulConfigured()) {
     const contentfulProjects = await getSimpleProjects(false, locale);
     if (contentfulProjects.length > 0) {
-      // Transform Contentful projects to match expected structure
+      // Transform Contentful projects to match expected structure with data validation
       projects = contentfulProjects.map(project => {
+        // Skip projects with poor quality data
+        if (!project.fields.title || 
+            !project.fields.description || 
+            project.fields.title.trim().length < 3 ||
+            project.fields.description.trim().length < 10 ||
+            (project.fields.technologies && project.fields.technologies.some((tech: string) => 
+              tech.length < 2 || ['apa', 'aja', 'lah', 'test', 'dummy'].includes(tech.toLowerCase())
+            ))) {
+          return null; // Skip this project
+        }
+
         // Get image: prefer uploaded asset, then imageUrl field, then default
         let thumbnailUrl = `https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80`;
         if (project.fields.thumbnail?.fields?.file?.url) {
@@ -26,23 +37,48 @@ try {
         } else if (project.fields.imageUrl) {
           thumbnailUrl = project.fields.imageUrl;
         }
+
+        // Normalize category - accept all valid Contentful categories
+        let category = project.fields.category;
+        const validCategories = ['web', 'mobile', 'landing page', 'design', 'video', 'other'];
+        if (!category || !validCategories.includes(category)) {
+          // Try to infer category from title or technologies
+          const title = project.fields.title.toLowerCase();
+          const techs = (project.fields.technologies || []).join(' ').toLowerCase();
+          
+          if (title.includes('landing') || title.includes('page')) {
+            category = 'landing page';
+          } else if (title.includes('design') || title.includes('ui') || title.includes('ux') || techs.includes('figma')) {
+            category = 'design';
+          } else if (title.includes('video') || title.includes('motion') || techs.includes('premiere') || techs.includes('after effects')) {
+            category = 'video';
+          } else if (title.includes('web') || title.includes('website') || techs.includes('react') || techs.includes('astro') || techs.includes('html')) {
+            category = 'web';
+          } else if (title.includes('mobile') || title.includes('app') || techs.includes('react native') || techs.includes('flutter')) {
+            category = 'mobile';
+          } else {
+            category = 'other';
+          }
+        }
         
         return {
           id: project.sys.id,
           slug: project.fields.slug,
           data: {
-            title: project.fields.title,
-            description: project.fields.description,
-            category: project.fields.category,
+            title: project.fields.title.trim(),
+            description: project.fields.description.trim(),
+            category: category,
             featured: project.fields.featured,
             publishedAt: project.sys.createdAt,
             thumbnail: thumbnailUrl,
-            technologies: project.fields.technologies || getDefaultTechnologies(project.fields.category),
+            technologies: project.fields.technologies?.filter((tech: string) => 
+              tech && tech.trim().length > 1 && !['apa', 'aja', 'lah', 'test', 'dummy'].includes(tech.toLowerCase().trim())
+            ) || getDefaultTechnologies(category),
             liveUrl: project.fields.liveUrl || undefined,
-            sourceUrl: project.fields.sourceUrl || 'https://github.com/muhamadaliridho'
+            sourceUrl: project.fields.sourceUrl || undefined
           }
         };
-      });
+      }).filter(Boolean); // Remove null entries
     }
   }
 } catch (error) {
@@ -111,27 +147,51 @@ const uniqueCategories = [
   ...new Set(projects.map((project) => project.data.category).filter(Boolean)),
 ];
 
+// Category mapping for display labels
+const categoryMapping: Record<string, string> = {
+  'web': 'Web Development',
+  'mobile': 'Mobile Development', 
+  'landing page': 'Landing Page',
+  'design': 'Design',
+  'video': 'Video',
+  'other': 'Other Projects'
+};
+
+// Category colors for badges
+const categoryColors: Record<string, string> = {
+  web: '#FF3D00',
+  mobile: '#EC4899',
+  'landing page': '#8B5CF6',
+  design: '#06B6D4',
+  video: '#EF4444',
+  other: '#F59E0B',
+};
+
 // Create category objects with labels
 const categories = [
   { id: "all", label: t("category.all" as any) },
   ...uniqueCategories.map((cat) => {
-    // Try to get translation, fallback to formatted text
+    // Try to get translation, fallback to mapping or formatted text
     const translationKey = `category.${cat}`;
     const translatedLabel = t(translationKey as any);
     
     // Check if translation exists (if it returns the key, it means missing)
-    // Note: This loose check assumes your i18n returns key on miss
     const label = translatedLabel !== translationKey 
       ? translatedLabel 
-      : cat.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      : categoryMapping[cat] || cat.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     return { id: cat, label };
   }),
 ];
+
+// Add CSS custom properties for category colors
+const categoryColorVars = Object.entries(categoryColors)
+  .map(([key, color]) => `--color-cat-${key.replace(' ', '-')}: ${color}`)
+  .join('; ');
 ---
 
 <Layout title={`${t('projects.title')} | Muhamad Ali Ridho`}>
-  <main class="pt-32 pb-20 px-6">
+  <main class="pt-32 pb-20 px-6" style={categoryColorVars}>
     <div class="max-w-7xl mx-auto">
       <!-- Section Header -->
       <div class="text-center mb-16">
@@ -181,43 +241,12 @@ const categories = [
               <!-- Category Badge -->
               <div 
                     class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium text-white shadow-sm"
-                    style={{ background: `var(--color-cat-${project.data.category})` }}
+                    style={{ background: categoryColors[project.data.category] || '#F59E0B' }}
                   >
-                    {project.data.category.toUpperCase()}
-                  </div>
-              <!-- Overlay on hover -->
-              <div class="absolute inset-0 bg-dark-bg/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                {project.data.liveUrl && (
-                  <a
-                    href={project.data.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-12 h-12 rounded-full bg-primary flex items-center justify-center
-                           hover:scale-110 transition-transform"
-                    aria-label={`View live demo of ${project.data.title}`}
-                    title={t('projects.viewLive' as any)}
-                  >
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                )}
-                {project.data.sourceUrl && (
-                  <a
-                    href={project.data.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-12 h-12 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center
-                           hover:scale-110 hover:border-secondary transition-all"
-                    aria-label={`View source code of ${project.data.title} on GitHub`}
-                    title={t('projects.viewSource' as any)}
-                  >
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                  </a>
-                )}
+                    {categoryMapping[project.data.category] || project.data.category.toUpperCase()}
               </div>
+              <!-- Desktop Hover Overlay for aesthetic depth -->
+              <div class="hidden md:block absolute inset-0 bg-dark-bg/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
 
             <!-- Content -->
@@ -245,17 +274,50 @@ const categories = [
                 )}
               </div>
 
-              <!-- View Details Link -->
-              <a 
-                href={`/projects/${project.slug}`}
-                aria-label={`View details of ${project.data.title} project`}
-                class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
-              >
-                {t('projects.viewProject' as any)}
-                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </a>
+              <!-- View Details Link & Actions -->
+              <div class="flex items-center justify-between pt-4 border-t border-dark-border/30">
+                <a 
+                  href={`/projects/${project.slug}`}
+                  aria-label={`View details of ${project.data.title} project`}
+                  class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
+                >
+                  {t('projects.viewProject' as any)}
+                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+
+                <div class="flex items-center gap-3">
+                  {project.data.liveUrl && (
+                    <a
+                      href={project.data.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-subtle hover:text-primary transition-colors"
+                      aria-label={`View live demo of ${project.data.title}`}
+                      title={t('projects.viewLive' as any)}
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+                  {project.data.sourceUrl && (
+                    <a
+                      href={project.data.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-subtle hover:text-primary transition-colors"
+                      aria-label={`View source code of ${project.data.title} on GitHub`}
+                      title={t('projects.viewSource' as any)}
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
           </article>
         ))}
@@ -299,6 +361,10 @@ const categories = [
 </script>
 
 <style>
+  .project-card {
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
   /* Light mode styles for projects page */
   :global(body.light) main {
     background-color: var(--color-light-bg);
@@ -326,11 +392,11 @@ const categories = [
     color: #374151 !important;
   }
   
-  /* Filter buttons */
+  /* Filter buttons - normal state */
   :global(body.light) .filter-btn {
-    background-color: #FFFFFF;
-    border-color: #E5E7EB;
-    color: #1F2937;
+    background-color: var(--color-light-surface);
+    border-color: var(--color-light-border);
+    color: var(--color-dark-bg);
   }
   
   :global(body.light) .filter-btn:hover {
@@ -338,9 +404,15 @@ const categories = [
     color: #C62D00;
   }
   
+  /* Filter buttons - active state (MUST use !important to override data attribute styles) */
   :global(body.light) .filter-btn[data-active="true"] {
-    background-color: #C62D00;
-    border-color: #C62D00;
-    color: white;
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+  }
+
+  /* Light mode primary text - darker for contrast */
+  :global(body.light) .text-primary {
+    color: #C62D00 !important;
   }
 </style>

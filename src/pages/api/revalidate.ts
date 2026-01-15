@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ url, request }) => {
         if (body.fields?.slug) {
           const slug = typeof body.fields.slug === 'string' 
             ? body.fields.slug 
-            : body.fields.slug['en-US'] || body.fields.slug['id-ID'];
+            : body.fields.slug['id-ID'] || body.fields.slug['en-US'];
           
           if (slug) {
             routesToInvalidate.push(`/blog/${slug}`);

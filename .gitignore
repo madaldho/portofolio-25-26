@@ -95,3 +95,5 @@ lighthouse-report.html
 # Kiro specific
 .kiro/cache/
 .kiro/logs/
+.env*.local
+.kiro/settings/mcp.json

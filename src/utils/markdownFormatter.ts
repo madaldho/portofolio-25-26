@@ -58,9 +58,9 @@ export function formatMarkdown(content: string | any): string {
     if (typeof content === 'string') {
         textContent = content;
     } else if (typeof content === 'object') {
-        // Try to get localized content or fallback
-        if (content['en-US']) textContent = content['en-US'];
-        else if (content['id-ID']) textContent = content['id-ID'];
+        // Try to get localized content or fallback (prioritize id-ID)
+        if (content['id-ID']) textContent = content['id-ID'];
+        else if (content['en-US']) textContent = content['en-US'];
         else if (Object.keys(content).length > 0) textContent = Object.values(content)[0] as string || '';
     }
 

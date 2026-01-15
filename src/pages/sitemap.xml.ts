@@ -1,56 +1,48 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { contentfulClient } from '../utils/contentful';
+import { contentfulClient, getSimpleProjects } from '../utils/contentful';
 
 export const GET: APIRoute = async () => {
   const siteUrl = 'https://muhamadaliridho.me';
+  const today = new Date().toISOString().split('T')[0];
   
   try {
-    // Static pages (English)
+    // Static pages - Indonesian only (single language site)
     const staticPages = [
       {
         url: '/',
-        lastmod: new Date().toISOString().split('T')[0],
+        lastmod: today,
         priority: 1.0,
         changefreq: 'daily',
       },
       {
+        url: '/projects',
+        lastmod: today,
+        priority: 0.9,
+        changefreq: 'weekly',
+      },
+      {
         url: '/blog',
-        lastmod: new Date().toISOString().split('T')[0],
+        lastmod: today,
         priority: 0.9,
         changefreq: 'daily',
       },
       {
         url: '/certificates',
-        lastmod: new Date().toISOString().split('T')[0],
+        lastmod: today,
         priority: 0.8,
         changefreq: 'weekly',
       },
     ];
 
-    // Static pages (Indonesian)
-    const staticPagesId = [
-      {
-        url: '/id',
-        lastmod: new Date().toISOString().split('T')[0],
-        priority: 1.0,
-        changefreq: 'daily',
-      },
-      {
-        url: '/id/blog',
-        lastmod: new Date().toISOString().split('T')[0],
-        priority: 0.9,
-        changefreq: 'daily',
-      },
-    ];
-
-    // Get blog posts from Contentful
+    // Get blog posts from Contentful (Indonesian locale)
     let blogPosts: any[] = [];
     try {
       if (contentfulClient) {
         const blogEntries = await contentfulClient.getEntries({
           content_type: 'blogPost',
           limit: 1000,
+          locale: 'id-ID',
           order: ['-sys.updatedAt'],
         });
         
@@ -65,44 +57,36 @@ export const GET: APIRoute = async () => {
       console.error('Error fetching blog posts for sitemap:', error);
     }
 
-    // Get projects from content collections
+    // Get projects from Contentful
     let projects: any[] = [];
     try {
-      const projectEntries = await getCollection('projects');
-      projects = projectEntries.map((project) => ({
-        url: `/projects/${project.slug}`,
-        lastmod: project.data.publishedAt?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
-        priority: 0.7,
-        changefreq: 'monthly',
-      }));
-    } catch (error) {
-      console.error('Error fetching projects for sitemap:', error);
-    }
-
-    // Indonesian blog posts
-    let blogPostsId: any[] = [];
-    try {
       if (contentfulClient) {
-        const blogEntriesId = await contentfulClient.getEntries({
-          content_type: 'blogPost',
-          limit: 1000,
-          locale: 'id-ID',
-          order: ['-sys.updatedAt'],
-        });
-        
-        blogPostsId = blogEntriesId.items.map((post: any) => ({
-          url: `/id/blog/${post.fields.slug}`,
-          lastmod: post.sys.updatedAt.split('T')[0],
-          priority: 0.8,
-          changefreq: 'weekly',
+        const contentfulProjects = await getSimpleProjects(false, 'id-ID');
+        projects = contentfulProjects.map((project: any) => ({
+          url: `/projects/${project.fields.slug}`,
+          lastmod: project.sys.updatedAt.split('T')[0],
+          priority: 0.7,
+          changefreq: 'monthly',
         }));
       }
     } catch (error) {
-      console.error('Error fetching Indonesian blog posts for sitemap:', error);
+      console.error('Error fetching projects for sitemap:', error);
+      // Fallback to static content
+      try {
+        const staticProjects = await getCollection('projects');
+        projects = staticProjects.map((project) => ({
+          url: `/projects/${project.slug}`,
+          lastmod: project.data.publishedAt?.toISOString().split('T')[0] || today,
+          priority: 0.7,
+          changefreq: 'monthly',
+        }));
+      } catch (e) {
+        console.error('Error fetching static projects:', e);
+      }
     }
 
     // Combine all pages
-    const allPages = [...staticPages, ...staticPagesId, ...blogPosts, ...blogPostsId, ...projects];
+    const allPages = [...staticPages, ...blogPosts, ...projects];
 
     // Generate XML sitemap
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

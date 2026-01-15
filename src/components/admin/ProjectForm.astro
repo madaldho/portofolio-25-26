@@ -364,44 +364,44 @@
 
   // Populate form for editing
   function populateForm(data: any) {
-    if (titleInput) titleInput.value = data.fields.title["en-US"] || "";
-    if (slugInput) slugInput.value = data.fields.slug["en-US"] || "";
+    if (titleInput) titleInput.value = data.fields.title["id-ID"] || "";
+    if (slugInput) slugInput.value = data.fields.slug["id-ID"] || "";
 
     const descriptionInput = document.getElementById(
       "project-description"
     ) as HTMLTextAreaElement;
     if (descriptionInput)
-      descriptionInput.value = data.fields.description["en-US"] || "";
+      descriptionInput.value = data.fields.description["id-ID"] || "";
 
     const categoryInput = document.getElementById(
       "project-category"
     ) as HTMLSelectElement;
     if (categoryInput)
-      categoryInput.value = data.fields.category["en-US"] || "";
+      categoryInput.value = data.fields.category["id-ID"] || "";
 
     const technologiesInput = document.getElementById(
       "project-technologies"
     ) as HTMLInputElement;
     if (technologiesInput && data.fields.technologies) {
-      technologiesInput.value = data.fields.technologies["en-US"].join(", ");
+      technologiesInput.value = data.fields.technologies["id-ID"].join(", ");
     }
 
     const liveUrlInput = document.getElementById(
       "project-live-url"
     ) as HTMLInputElement;
-    if (liveUrlInput) liveUrlInput.value = data.fields.liveUrl?.["en-US"] || "";
+    if (liveUrlInput) liveUrlInput.value = data.fields.liveUrl?.["id-ID"] || "";
 
     const sourceUrlInput = document.getElementById(
       "project-source-url"
     ) as HTMLInputElement;
     if (sourceUrlInput)
-      sourceUrlInput.value = data.fields.sourceUrl?.["en-US"] || "";
+      sourceUrlInput.value = data.fields.sourceUrl?.["id-ID"] || "";
 
     const featuredInput = document.getElementById(
       "project-featured"
     ) as HTMLInputElement;
     if (featuredInput)
-      featuredInput.checked = data.fields.featured?.["en-US"] || false;
+      featuredInput.checked = data.fields.featured?.["id-ID"] || false;
   }
 
   // Show/hide messages

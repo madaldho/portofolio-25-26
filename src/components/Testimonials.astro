@@ -9,7 +9,7 @@ import {
 import { getLangFromUrl } from "../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === "id" ? "id-ID" : "en-US";
+const locale = "id-ID";
 
 let testimonials: ContentfulTestimonial[] = [];
 

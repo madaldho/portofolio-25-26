@@ -3,7 +3,7 @@ import { getCertificates, isContentfulConfigured, type ContentfulCertificate } f
 import { getLangFromUrl, useTranslatedPath, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 const translatePath = useTranslatedPath(lang);
 const t = useTranslations(lang);
 

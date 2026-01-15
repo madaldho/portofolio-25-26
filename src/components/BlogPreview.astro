@@ -4,7 +4,7 @@ import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import { getLangFromUrl, useTranslatedPath, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 const translatePath = useTranslatedPath(lang);
 const t = useTranslations(lang);
 

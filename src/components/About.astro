@@ -6,7 +6,7 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 
 let profileData = {
   name: 'Muhamad Ali Ridho',
@@ -42,16 +42,31 @@ try {
 }
 
 const techStackIcons = [
+  // Web Development
   { name: 'HTML5', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
   { name: 'CSS3', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
   { name: 'JavaScript', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
   { name: 'React', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
   { name: 'Astro', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/astro/astro-original.svg' },
   { name: 'Tailwind CSS', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
-  { name: 'Figma', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+  { name: 'Node.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+  // Tools & Platform
   { name: 'Git', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
   { name: 'GitHub', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
-  { name: 'Node.js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+  { name: 'Figma', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+  // AI Tools
+  { name: 'ChatGPT', url: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/chatgpt-icon.png' },
+  { name: 'Gemini', url: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-gemini-icon.png' },
+  // Digital Marketing
+  { name: 'Meta Ads', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/512px-Meta_Platforms_Inc._logo.svg.png' },
+  { name: 'Google Analytics', url: 'https://www.gstatic.com/analytics-suite/header/suite/v2/ic_analytics.svg' },
+  // CMS
+  { name: 'WordPress', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg' },
+  // Creative & Video
+  { name: 'CapCut', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAMAAACfWMssAAAAY1BMVEX///8AAABlZWVcXFxPT09ZWVmrq6vs7Oz8/Pz29vbl5eWjo6PAwMCoqKiYmJjz8/O0tLTR0dEcHByOjo53d3ff399qamqAgIA6OjqIiIglJSVUVFRxcXHY2NgKCgoXFxdDQ0MoDWZpAAABK0lEQVRIie2V23KDIBCGQZKKmnhKRA3V9P2fsqM0LIRltZed+t8ws+yHLHuQsUOH/pGyQiW4xunl0yFczgkVq0v9s/rSFMhTxi4Pzj8QkOT4pRmW5fdga5YIOAh9CqVFa/krDs4lYmfpJ3x3QvbN1i2LY3ONnWtjLKVjrO4QJpYKF3Q8shGM3nme8gS81seTJRjG9wg8dWfr+KxlAdg9pbBF0wlJYZJvYYuarzdMY3W9jWoscTHQva7YDQZRil1X7QTyOGrzcXJlnduaXfemI4Xqmk33OAXQV3EQvGzJyRsYg+oPQL/Ie0Bj1Wp2g6J02irSH+t9sEOd4HmDg4MS51BCPSwYGR2E6GFFiBiPWEeBiIFM/gLM+MN/AawqE4Grf/WI3N2chw79eX0Dt30MlldfhvYAAAAASUVORK5CYII=' },
+  // E-commerce
+  { name: 'Order Online', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/woocommerce/woocommerce-original.svg' },
+  // Other
   { name: 'Scalev', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBHqowxZQosIfhFyaPXD0GkB69QhplsxR_gQ&s' },
 ];
 ---

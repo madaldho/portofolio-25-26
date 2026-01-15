@@ -152,8 +152,8 @@ export class ContentfulWebhookManager {
     }
     
     if (typeof slugField === 'object' && slugField !== null) {
-      // Try different locales
-      return slugField['en-US'] || slugField['id-ID'] || Object.values(slugField)[0] || null;
+      // Try different locales (prioritize id-ID)
+      return slugField['id-ID'] || slugField['en-US'] || Object.values(slugField)[0] || null;
     }
     
     return null;

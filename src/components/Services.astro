@@ -3,7 +3,7 @@ import { getServices, isContentfulConfigured, fallbackServicesEn, fallbackServic
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const locale = lang === 'id' ? 'id-ID' : 'en-US';
+const locale = 'id-ID'; // Always Indonesian
 const t = useTranslations(lang);
 
 let services: ContentfulService[] = [];

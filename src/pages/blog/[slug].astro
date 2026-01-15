@@ -14,7 +14,7 @@ export async function getStaticPaths() {
   if (isContentfulConfigured()) {
     try {
       // 1. Fetch Rich Text Posts
-      const richPosts = await getBlogPosts(false, "en-US");
+      const richPosts = await getBlogPosts(false, "id-ID");
       if (richPosts && richPosts.length > 0) {
         posts.push(
           ...richPosts.map((post) => {
@@ -146,7 +146,7 @@ if (!post) {
           <div class="flex items-center gap-4 mb-4 text-sm text-muted">
             <time class="font-mono">
               {
-                new Date(post.data.publishDate).toLocaleDateString("en-US", {
+                new Date(post.data.publishDate).toLocaleDateString("id-ID", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

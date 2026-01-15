@@ -6,7 +6,7 @@ import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const locale = lang === "id" ? "id-ID" : "en-US";
+const locale = "id-ID";
 
 let profileData = {
   email: defaultProfile.email,

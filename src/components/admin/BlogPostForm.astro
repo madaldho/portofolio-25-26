@@ -361,26 +361,26 @@
 
   // Populate form for editing
   function populateForm(data: any) {
-    if (titleInput) titleInput.value = data.fields.title["en-US"] || "";
-    if (slugInput) slugInput.value = data.fields.slug["en-US"] || "";
+    if (titleInput) titleInput.value = data.fields.title["id-ID"] || "";
+    if (slugInput) slugInput.value = data.fields.slug["id-ID"] || "";
 
     const excerptInput = document.getElementById(
       "blog-excerpt"
     ) as HTMLTextAreaElement;
-    if (excerptInput) excerptInput.value = data.fields.excerpt["en-US"] || "";
+    if (excerptInput) excerptInput.value = data.fields.excerpt["id-ID"] || "";
 
     const contentInput = document.getElementById(
       "blog-content"
     ) as HTMLTextAreaElement;
-    if (contentInput) contentInput.value = data.fields.content["en-US"] || "";
+    if (contentInput) contentInput.value = data.fields.content["id-ID"] || "";
 
     const tagsInput = document.getElementById("blog-tags") as HTMLInputElement;
     if (tagsInput && data.fields.tags) {
-      tagsInput.value = data.fields.tags["en-US"].join(", ");
+      tagsInput.value = data.fields.tags["id-ID"].join(", ");
     }
 
     if (publishDateInput && data.fields.publishDate) {
-      const date = new Date(data.fields.publishDate["en-US"]);
+      const date = new Date(data.fields.publishDate["id-ID"]);
       date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
       publishDateInput.value = date.toISOString().slice(0, 16);
     }

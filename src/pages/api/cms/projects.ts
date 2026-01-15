@@ -32,11 +32,11 @@ export const POST: APIRoute = async ({ request }) => {
       id: `project_${Date.now()}`,
       contentType: 'simpleProject',
       fields: {
-        title: { 'en-US': data.title },
-        slug: { 'en-US': data.slug },
-        description: { 'en-US': data.description },
-        category: { 'en-US': data.category },
-        featured: { 'en-US': data.featured }
+        title: { 'id-ID': data.title },
+        slug: { 'id-ID': data.slug },
+        description: { 'id-ID': data.description },
+        category: { 'id-ID': data.category },
+        featured: { 'id-ID': data.featured }
       },
       status: 'draft',
       createdAt: new Date().toISOString(),
