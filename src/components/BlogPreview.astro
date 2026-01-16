@@ -222,8 +222,14 @@ const latestPosts = blogPosts
     color: #374151 !important;
   }
   
-  /* Ensure reading time badge stays white in light mode */
+  /* Ensure reading time badge stays dark bg with white text in both modes */
   .reading-time-badge {
+    background-color: rgba(10, 10, 10, 0.9) !important;
+    color: white !important;
+  }
+  
+  :global(body.light) .reading-time-badge {
+    background-color: rgba(10, 10, 10, 0.9) !important;
     color: white !important;
   }
 </style>
