@@ -23,7 +23,6 @@ interface BlogPost {
 
 // Try to get blog posts from Contentful
 let blogPosts: BlogPost[] = [];
-let isUsingContentful = false;
 
 try {
   if (isContentfulConfigured()) {
@@ -63,7 +62,6 @@ try {
           }
         };
       });
-      isUsingContentful = true;
     }
   }
 } catch (error) {

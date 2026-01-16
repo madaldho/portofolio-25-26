@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getBlogPosts, isContentfulConfigured } from "../../utils/contentful";
-import { renderRichText, calculateReadingTime } from "../../utils/richText";
+import { calculateReadingTime } from "../../utils/richText";
 import RichText from "../../components/RichText.astro";
 import { formatMarkdown } from "../../utils/markdownFormatter";
 
@@ -52,14 +52,11 @@ export async function getStaticPaths() {
                   },
                 },
                 isRichText: !post.fields.body, // Prioritize Markdown body
-                isUsingContentful: true,
               },
             };
           })
         );
       }
-
-      // Removed simple blog fetching logic
     } catch (e) {
       console.warn("Error fetching blog posts for static paths:", e);
     }
@@ -91,7 +88,6 @@ export async function getStaticPaths() {
           },
         },
         isRichText: false,
-        isUsingContentful: false,
       },
     });
   }
@@ -99,7 +95,7 @@ export async function getStaticPaths() {
   return posts;
 }
 
-const { post, isRichText, isUsingContentful } = Astro.props;
+const { post, isRichText } = Astro.props;
 
 if (!post) {
   return Astro.redirect("/404");
@@ -113,90 +109,115 @@ if (!post) {
   publishedTime={post.data.publishedAt}
   tags={post.data.tags}
 >
-  <main class="min-h-screen pt-20">
-    <!-- Hero Section -->
-    <section class="relative blog-hero">
-      <!-- Featured Image -->
-      <div class="relative h-96 overflow-hidden">
+  <main class="min-h-screen pt-24">
+    <!-- Blog Header Section -->
+    <section class="max-w-4xl mx-auto px-6 mb-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-6">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors text-sm font-medium"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Kembali ke Blog
+        </a>
+      </nav>
+
+      <!-- Tags -->
+      {
+        post.data.tags &&
+          Array.isArray(post.data.tags) &&
+          post.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-4">
+              {post.data.tags.map((tag: string) => (
+                <span class="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )
+      }
+
+      <!-- Title -->
+      <h1 class="text-display text-3xl md:text-4xl lg:text-5xl mb-4 blog-title">
+        {post.data.title}
+      </h1>
+
+      <!-- Excerpt -->
+      <p class="text-lg text-muted max-w-2xl mb-6">
+        {post.data.excerpt}
+      </p>
+
+      <!-- Meta Info -->
+      <div
+        class="flex flex-wrap items-center gap-4 text-sm text-muted pb-6 border-b border-dark-border"
+      >
+        <time class="font-mono flex items-center gap-2">
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+          {
+            new Date(post.data.publishDate).toLocaleDateString("id-ID", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          }
+        </time>
+        <span class="text-muted">•</span>
+        <span class="flex items-center gap-2">
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          {post.data.readingTime} menit baca
+        </span>
+      </div>
+    </section>
+
+    <!-- Featured Image -->
+    <section class="max-w-5xl mx-auto px-6 mb-12">
+      <div class="relative rounded-2xl overflow-hidden shadow-2xl">
         <img
           src={post.data.featuredImage}
           alt={post.data.title}
-          class="w-full h-full object-cover"
+          class="w-full h-auto aspect-video object-cover"
         />
-        <div
-          class="absolute inset-0 bg-linear-to-t from-dark-bg via-dark-bg/50 to-transparent"
-        >
-        </div>
-      </div>
-
-      <!-- Content Overlay -->
-      <div class="absolute inset-0 flex items-end">
-        <div class="max-w-4xl mx-auto px-6 pb-12 w-full">
-          <!-- Breadcrumb -->
-          <nav class="mb-4">
-            <a
-              href="/blog"
-              class="text-primary hover:text-primary-light transition-colors text-sm"
-            >
-              ← Back to Blog
-            </a>
-          </nav>
-
-          <!-- Meta Info -->
-          <div class="flex items-center gap-4 mb-4 text-sm text-muted">
-            <time class="font-mono">
-              {
-                new Date(post.data.publishDate).toLocaleDateString("id-ID", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              }
-            </time>
-            <span>•</span>
-            <span>{post.data.readingTime} min read</span>
-            {
-              isUsingContentful && (
-                <>
-                  <span>•</span>
-                </>
-              )
-            }
-          </div>
-
-          <!-- Title -->
-          <h1
-            class="text-display text-3xl md:text-4xl lg:text-5xl mb-4 text-white"
-          >
-            {post.data.title}
-          </h1>
-
-          <!-- Excerpt -->
-          <p class="text-lg text-white/80 max-w-2xl">
-            {post.data.excerpt}
-          </p>
-        </div>
       </div>
     </section>
 
     <!-- Article Content -->
-    <article class="section-padding">
+    <article class="section-padding pt-0">
       <div class="max-w-4xl mx-auto px-6">
-        <!-- Tags -->
-        {
-          post.data.tags &&
-            Array.isArray(post.data.tags) &&
-            post.data.tags.length > 0 && (
-              <div class="flex flex-wrap gap-2 mb-8">
-                {post.data.tags.map((tag: string) => (
-                  <span class="px-3 py-1 text-sm rounded-full bg-primary/10 text-primary border border-primary/20">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )
-        }
-
         <!-- Content -->
         <div class="max-w-none">
           {
@@ -224,7 +245,7 @@ if (!post) {
 
         <!-- Share Section -->
         <div class="mt-12 pt-8 border-t border-dark-border">
-          <h3 class="text-lg font-semibold mb-4">Share this article</h3>
+          <h3 class="text-lg font-semibold mb-4">Bagikan artikel ini</h3>
           <div class="flex gap-4">
             <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(`https://muhamadaliridho.me/blog/${post.slug}`)}`}
@@ -273,7 +294,7 @@ if (!post) {
                 stroke-width="2"
                 d="M15 19l-7-7 7-7"></path>
             </svg>
-            Back to Blog
+            Kembali ke Blog
           </a>
         </div>
       </div>
@@ -282,21 +303,17 @@ if (!post) {
 </BaseLayout>
 
 <style>
-  /* Rich text content styling - inherits from richText.ts utility */
-  /* Keep hero section same as dark mode for better contrast on image */
-  :global(body.light) .blog-hero .text-white {
-    color: white !important;
+  /* Blog title - theme aware */
+  .blog-title {
+    color: white;
   }
 
-  :global(body.light) .blog-hero .text-white\/80 {
-    color: rgba(255, 255, 255, 0.8) !important;
+  :global(body.light) .blog-title {
+    color: #1f2937;
   }
 
-  :global(body.light) .blog-hero .text-muted {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-
-  :global(body.light) .blog-hero .text-primary {
-    color: var(--color-primary) !important;
+  /* Border color for light mode */
+  :global(body.light) .border-dark-border {
+    border-color: #e5e7eb;
   }
 </style>
