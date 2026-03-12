@@ -128,7 +128,9 @@ export const richTextRenderOptions = {
     [INLINES.HYPERLINK]: (node: Node, next: any) => {
       const inline = node as Inline;
       const uri = inline.data?.uri || '';
-      const isExternal = uri.startsWith('http') && !uri.includes(window?.location?.hostname || '');
+      // SSR-safe external link detection — avoid window reference on server
+      const siteHostname = 'muhamadaliridho.me';
+      const isExternal = uri.startsWith('http') && !uri.includes(siteHostname);
       
       return `
         <a 
@@ -237,6 +239,75 @@ export const lightModeRichTextRenderOptions = {
     
     [BLOCKS.HR]: () => 
       `<hr class="my-8 border-light-border">`,
+    
+    [BLOCKS.EMBEDDED_ASSET]: (node: Node) => {
+      const asset = node.data?.target as ContentfulAsset;
+      if (!asset?.fields?.file) return '';
+      
+      const { file, title, description } = asset.fields;
+      const isImage = file.contentType.startsWith('image/');
+      
+      if (isImage) {
+        return `
+          <figure class="my-6">
+            <img 
+              src="${file.url}?w=800&q=80&fm=webp" 
+              alt="${title || description || 'Embedded image'}"
+              class="w-full rounded-lg shadow-lg"
+              loading="lazy"
+            />
+            ${title ? `<figcaption class="text-center text-sm text-dark-bg/60 mt-2">${title}</figcaption>` : ''}
+          </figure>
+        `;
+      }
+      
+      return `
+        <div class="my-4 p-4 border border-light-border rounded-lg bg-light-surface">
+          <a 
+            href="${file.url}" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 text-primary hover:text-primary-light transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>${title || file.fileName}</span>
+            <span class="text-xs text-dark-bg/40">(${(file.details.size / 1024 / 1024).toFixed(1)} MB)</span>
+          </a>
+        </div>
+      `;
+    },
+    
+    [INLINES.HYPERLINK]: (node: Node, next: any) => {
+      const inline = node as Inline;
+      const uri = inline.data?.uri || '';
+      const siteHostname = 'muhamadaliridho.me';
+      const isExternal = uri.startsWith('http') && !uri.includes(siteHostname);
+      
+      return `
+        <a 
+          href="${uri}" 
+          ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''}
+          class="text-primary hover:text-primary-light underline transition-colors"
+        >
+          ${next(inline.content)}
+          ${isExternal ? '<svg class="inline w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>' : ''}
+        </a>
+      `;
+    },
+    
+    [INLINES.EMBEDDED_ENTRY]: (node: Node) => {
+      const entry = node.data?.target;
+      if (!entry?.fields) return '';
+      
+      return `
+        <div class="my-4 p-4 border border-primary/20 rounded-lg bg-primary/5">
+          <h4 class="font-semibold text-primary mb-2">${entry.fields.title || 'Related Content'}</h4>
+          ${entry.fields.description ? `<p class="text-sm text-dark-bg/70">${entry.fields.description}</p>` : ''}
+        </div>
+      `;
+    },
   },
 };
 
@@ -264,11 +335,11 @@ export function extractPlainText(document: Document): string {
   
   function extractFromNode(node: Node): string {
     if (node.nodeType === 'text') {
-      return node.value || '';
+      return (node as any).value || '';
     }
     
-    if (node.content && Array.isArray(node.content)) {
-      return node.content.map(extractFromNode).join('');
+    if ('content' in node && Array.isArray((node as any).content)) {
+      return (node as any).content.map(extractFromNode).join('');
     }
     
     return '';

@@ -52,8 +52,8 @@
   --z-overlay: 100;
   --z-modal: 200;
   --z-tooltip: 250;
-  --z-cursor: 300;
-  --z-noise: 400;
+  --z-cursor: 10000; /* Cursor must be topmost */
+  --z-noise: 350; /* Noise is decorative (pointer-events: none), below cursor but above content */
 }
 
 :root {
@@ -82,7 +82,8 @@ body {
   color: white;
   overflow-x: hidden;
   max-width: 100vw;
-  cursor: none;
+  /* cursor: none is set via JS when custom cursor is available, to avoid
+     hiding the cursor for users who have JS disabled or use assistive tech */
 }
 
 /* Light mode */
@@ -534,17 +535,6 @@ body.light .success-state {
   z-index: var(--z-tooltip);
   position: absolute;
 }
-/* Infinite Marquee Animation */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-100% / 3)); }
-}
-
-.animate-marquee {
-  animation: marquee 40s linear infinite;
-  will-change: transform;
-}
-
 
 /* ============================================
    MARKDOWN CONTENT STYLING

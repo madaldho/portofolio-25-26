@@ -6,9 +6,13 @@
  * Run with: node scripts/setup-images.js
  */
 
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Image URLs for different categories
 const imageUrls = {
@@ -36,7 +40,7 @@ const createDirectories = () => {
   dirs.forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
-      console.log(`✅ Created directory: ${dir}`);
+      console.log(`Created directory: ${dir}`);
     }
   });
 };
@@ -56,7 +60,7 @@ const downloadImage = (url, filepath) => {
       
       file.on('finish', () => {
         file.close();
-        console.log(`✅ Downloaded: ${path.basename(filepath)}`);
+        console.log(`Downloaded: ${path.basename(filepath)}`);
         resolve();
       });
       
@@ -72,38 +76,36 @@ const downloadImage = (url, filepath) => {
 
 // Main setup function
 const setupImages = async () => {
-  console.log('🖼️  Setting up placeholder images...\n');
+  console.log('Setting up placeholder images...\n');
   
   try {
     // Create directories
     createDirectories();
     
     // Download profile image
-    console.log('📸 Downloading profile image...');
+    console.log('Downloading profile image...');
     await downloadImage(imageUrls.profile, 'public/images/profile.jpg');
     
     // Download project images
-    console.log('\n🚀 Downloading project images...');
+    console.log('\nDownloading project images...');
     for (const [name, url] of Object.entries(imageUrls.projects)) {
       await downloadImage(url, `public/images/projects/${name}.jpg`);
     }
     
-    console.log('\n✨ All images downloaded successfully!');
-    console.log('\n📝 Next steps:');
+    console.log('\nAll images downloaded successfully!');
+    console.log('\nNext steps:');
     console.log('1. Replace placeholder images with actual project screenshots');
     console.log('2. Add your own profile photo');
     console.log('3. Set up Contentful CMS (see CONTENTFUL_SETUP.md)');
     console.log('4. Upload images to Contentful for better management');
     
   } catch (error) {
-    console.error('❌ Error setting up images:', error.message);
+    console.error('Error setting up images:', error.message);
     process.exit(1);
   }
 };
 
 // Run the setup
-if (require.main === module) {
-  setupImages();
-}
+setupImages();
 
-module.exports = { setupImages, downloadImage };
+export { setupImages, downloadImage };

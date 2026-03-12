@@ -13,7 +13,10 @@
         "CONTENTFUL_HOST": "api.contentful.com"
       },
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "get_initial_context",
+        "search_entries"
+      ]
     }
   }
 }

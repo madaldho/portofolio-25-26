@@ -38,17 +38,17 @@ export class CMSManager {
   private useLocalStorage: boolean;
 
   constructor() {
-    this.spaceId = import.meta.env.CONTENTFUL_SPACE_ID || 'hbrrn0bf99r5';
+    this.spaceId = import.meta.env.CONTENTFUL_SPACE_ID || '';
     this.environmentId = import.meta.env.CONTENTFUL_ENVIRONMENT || 'master';
-    // Use localStorage as fallback when MCP is not available on client-side
+    // Use localStorage on client-side, API calls on server-side
     this.useLocalStorage = typeof window !== 'undefined';
   }
 
   // Blog Post Management
   async createBlogPost(data: BlogPostData): Promise<ContentEntry | null> {
     try {
-      // Try to use server-side API endpoint with Contentful MCP
-      if (!this.useLocalStorage) {
+      // Try API endpoint from client-side (relative URLs only work in browser)
+      if (this.useLocalStorage) {
         const response = await fetch('/api/cms/blog', {
           method: 'POST',
           headers: {
@@ -96,8 +96,8 @@ export class CMSManager {
 
   async createProject(data: ProjectData): Promise<ContentEntry | null> {
     try {
-      if (!this.useLocalStorage) {
-        // Try to use server-side API endpoint
+      if (this.useLocalStorage) {
+        // Try API endpoint from client-side
         const response = await fetch('/api/cms/projects', {
           method: 'POST',
           headers: {
@@ -195,12 +195,32 @@ export class CMSManager {
 
   async publishContent(id: string): Promise<boolean> {
     try {
-      const entry = await this.updateContent(id, { status: 'published' } as any);
-      if (entry) {
-        entry.publishedAt = new Date().toISOString();
-        entry.status = 'published';
+      // Get existing content first
+      const blogPosts = this.getFromLocalStorage('blogPosts');
+      const projects = this.getFromLocalStorage('projects');
+      
+      let entry = blogPosts.find((p: ContentEntry) => p.id === id) || 
+                  projects.find((p: ContentEntry) => p.id === id);
+      
+      if (!entry) {
+        throw new Error('Content not found');
       }
-      return !!entry;
+
+      // Set status and publishedAt
+      entry.status = 'published';
+      entry.publishedAt = new Date().toISOString();
+      entry.updatedAt = new Date().toISOString();
+
+      // Persist changes back to localStorage
+      if (entry.contentType === 'blogPost') {
+        const updated = blogPosts.map((p: ContentEntry) => p.id === id ? entry : p);
+        localStorage.setItem('cms_blogPosts', JSON.stringify(updated));
+      } else {
+        const updated = projects.map((p: ContentEntry) => p.id === id ? entry : p);
+        localStorage.setItem('cms_projects', JSON.stringify(updated));
+      }
+
+      return true;
     } catch (error) {
       console.error('Error publishing content:', error);
       return false;
@@ -313,14 +333,16 @@ export class CMSManager {
     }
   }
 
-  // Generate slug from title
+  // Generate slug from title (supports unicode/Indonesian characters)
   static generateSlug(title: string): string {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[^\w\s-]/g, '')         // Remove non-word chars except spaces and hyphens
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim();
+      .replace(/^-+|-+$/g, '');         // Trim leading/trailing hyphens
   }
 
   // Validate blog post data

@@ -78,22 +78,8 @@ export default defineConfig({
 
   // Prefetch configuration for better performance
   prefetch: {
-    prefetchAll: true,
+    prefetchAll: false,
     defaultStrategy: 'viewport',
-  },
-
-  // Experimental features for optimization (Astro 5.x)
-  experimental: {
-    svgo: {
-      plugins: [
-        'preset-default',
-        {
-          name: 'removeViewBox',
-          active: false,
-        },
-      ],
-    },
-    clientPrerender: true,
   },
 
   // Security headers and redirects

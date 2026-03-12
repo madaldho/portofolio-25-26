@@ -1,5 +1,12 @@
 export type Theme = 'light' | 'dark';
 
+// Storage interface that unifies localStorage and mock storage
+interface StorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
 const THEME_KEY = 'theme';
 
 // Mock localStorage for testing
@@ -16,15 +23,23 @@ export function disableMockStorage(): void {
   mockStorage = {};
 }
 
-function getStorage(): Storage | Record<string, string> {
+function getStorage(): StorageLike {
   if (useMockStorage) {
     return {
       getItem: (key: string) => mockStorage[key] ?? null,
       setItem: (key: string, value: string) => { mockStorage[key] = value; },
       removeItem: (key: string) => { delete mockStorage[key]; },
-    } as unknown as Storage;
+    };
   }
-  return typeof localStorage !== 'undefined' ? localStorage : mockStorage as unknown as Storage;
+  if (typeof localStorage !== 'undefined') {
+    return localStorage;
+  }
+  // SSR fallback — in-memory storage
+  return {
+    getItem: (key: string) => mockStorage[key] ?? null,
+    setItem: (key: string, value: string) => { mockStorage[key] = value; },
+    removeItem: (key: string) => { delete mockStorage[key]; },
+  };
 }
 
 export function getStoredTheme(): Theme | null {

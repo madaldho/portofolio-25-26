@@ -341,14 +341,31 @@ function validatePage(filePath, pageName) {
 }
 
 // Validate critical pages
+// In SSR mode (output: 'server'), Astro doesn't generate static HTML files.
+// The dist directory contains server entry code, not pre-rendered HTML.
 const distPath = './dist';
 if (!existsSync(distPath)) {
-  console.error('❌ Build directory not found. Run "npm run build" first.');
+  console.error('Build directory not found. Run "npm run build" first.');
   process.exit(1);
 }
 
-// Validate homepage
-validatePage(join(distPath, 'index.html'), 'Homepage');
+// Check if this is an SSR build (no index.html in dist root)
+const homepagePath = join(distPath, 'index.html');
+if (!existsSync(homepagePath)) {
+  console.log('SSR mode detected — no static HTML files in dist/.');
+  console.log('SEO validation requires a running server in SSR mode.');
+  console.log('');
+  console.log('To validate SEO:');
+  console.log('  1. Run: npm run preview');
+  console.log('  2. In another terminal: npm run lighthouse');
+  console.log('  3. Or use: curl -s http://localhost:4321 | node scripts/validate-seo.js --stdin');
+  console.log('');
+  console.log('SEO validation skipped for SSR build.');
+  process.exit(0);
+}
+
+// Validate homepage (only reached in static/hybrid builds)
+validatePage(homepagePath, 'Homepage');
 
 // Validate blog pages (if they exist)
 const blogPath = join(distPath, 'blog');

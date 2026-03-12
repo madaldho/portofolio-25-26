@@ -1,6 +1,16 @@
 // SEO Manager for optimizing content for "Muhamad Ali Ridho" keyword
 // Handles meta tags, schema markup, and SEO optimization
 
+// HTML attribute escaper to prevent XSS in generated meta tags
+function escapeHtmlAttr(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export interface SEOData {
   title: string;
   description: string;
@@ -45,32 +55,39 @@ export class SEOManager {
     const canonicalUrl = `${this.siteUrl}${page.url}`;
     const imageUrl = page.image ? `${this.siteUrl}${page.image}` : `${this.siteUrl}${this.defaultImage}`;
 
+    const safeTitle = escapeHtmlAttr(title);
+    const safeDesc = escapeHtmlAttr(description);
+    const safeCanonical = escapeHtmlAttr(canonicalUrl);
+    const safeImage = escapeHtmlAttr(imageUrl);
+    const safeKeywords = escapeHtmlAttr(this.generateKeywords(page.tags).join(', '));
+    const safeType = escapeHtmlAttr(page.type || 'website');
+
     return `
     <!-- Primary Meta Tags -->
-    <title>${title}</title>
-    <meta name="title" content="${title}" />
-    <meta name="description" content="${description}" />
-    <meta name="keywords" content="${this.generateKeywords(page.tags).join(', ')}" />
-    <meta name="author" content="${this.primaryKeyword}" />
-    <link rel="canonical" href="${canonicalUrl}" />
+    <title>${safeTitle}</title>
+    <meta name="title" content="${safeTitle}" />
+    <meta name="description" content="${safeDesc}" />
+    <meta name="keywords" content="${safeKeywords}" />
+    <meta name="author" content="${escapeHtmlAttr(this.primaryKeyword)}" />
+    <link rel="canonical" href="${safeCanonical}" />
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="${page.type || 'website'}" />
-    <meta property="og:url" content="${canonicalUrl}" />
-    <meta property="og:title" content="${title}" />
-    <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="${imageUrl}" />
-    <meta property="og:site_name" content="${this.primaryKeyword} - Tech Portfolio" />
-    ${page.publishedTime ? `<meta property="article:published_time" content="${page.publishedTime}" />` : ''}
-    ${page.modifiedTime ? `<meta property="article:modified_time" content="${page.modifiedTime}" />` : ''}
-    ${page.author ? `<meta property="article:author" content="${page.author}" />` : ''}
+    <meta property="og:type" content="${safeType}" />
+    <meta property="og:url" content="${safeCanonical}" />
+    <meta property="og:title" content="${safeTitle}" />
+    <meta property="og:description" content="${safeDesc}" />
+    <meta property="og:image" content="${safeImage}" />
+    <meta property="og:site_name" content="${escapeHtmlAttr(this.primaryKeyword)} - Tech Portfolio" />
+    ${page.publishedTime ? `<meta property="article:published_time" content="${escapeHtmlAttr(page.publishedTime)}" />` : ''}
+    ${page.modifiedTime ? `<meta property="article:modified_time" content="${escapeHtmlAttr(page.modifiedTime)}" />` : ''}
+    ${page.author ? `<meta property="article:author" content="${escapeHtmlAttr(page.author)}" />` : ''}
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="${canonicalUrl}" />
-    <meta name="twitter:title" content="${title}" />
-    <meta name="twitter:description" content="${description}" />
-    <meta name="twitter:image" content="${imageUrl}" />
+    <meta name="twitter:url" content="${safeCanonical}" />
+    <meta name="twitter:title" content="${safeTitle}" />
+    <meta name="twitter:description" content="${safeDesc}" />
+    <meta name="twitter:image" content="${safeImage}" />
     <meta name="twitter:creator" content="@muhamadaliridho" />
     
     <!-- Additional SEO -->
@@ -223,7 +240,7 @@ export class SEOManager {
         };
 
       default:
-        return baseSchema;
+        return { ...baseSchema, '@type': 'WebPage' };
     }
   }
 
@@ -361,18 +378,28 @@ Crawl-delay: 1`;
 
   // Optimize content for keyword density
   optimizeContentForKeyword(content: string, targetKeyword: string = this.primaryKeyword): string {
-    const words = content.split(' ');
-    const keywordCount = content.toLowerCase().split(targetKeyword.toLowerCase()).length - 1;
-    const keywordDensity = (keywordCount / words.length) * 100;
+    // Count keyword occurrences (case-insensitive)
+    const lowerContent = content.toLowerCase();
+    const lowerKeyword = targetKeyword.toLowerCase();
+    let keywordCount = 0;
+    let searchStart = 0;
+    while (true) {
+      const idx = lowerContent.indexOf(lowerKeyword, searchStart);
+      if (idx === -1) break;
+      keywordCount++;
+      searchStart = idx + lowerKeyword.length;
+    }
+
+    // Calculate density based on total words, accounting for multi-word keywords
+    const totalWords = content.split(/\s+/).filter(w => w.length > 0).length;
+    const keywordWordCount = targetKeyword.split(/\s+/).length;
+    // Each occurrence covers keywordWordCount words
+    const keywordDensity = totalWords > 0 ? ((keywordCount * keywordWordCount) / totalWords) * 100 : 0;
 
     // Optimal keyword density is 1-2%
-    if (keywordDensity < 1) {
-      // Add keyword naturally if density is too low
-      const sentences = content.split('. ');
-      if (sentences.length > 2) {
-        sentences[1] += ` This article by ${targetKeyword} explores`;
-        return sentences.join('. ');
-      }
+    if (keywordDensity < 1 && totalWords > 20) {
+      // Add keyword attribution at the end instead of injecting mid-sentence
+      return `${content}\n\n— ${targetKeyword}`;
     }
 
     return content;

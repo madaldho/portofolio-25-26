@@ -6,7 +6,7 @@ const projectsCollection = defineCollection({
     title: z.string().min(1),
     description: z.string().min(1),
     thumbnail: z.string().min(1),
-    category: z.enum(['web', 'mobile', 'iot', 'ai-ml', 'other']),
+    category: z.enum(['web', 'mobile', 'iot', 'ai-ml', 'design', 'video', 'landing page', 'other']),
     technologies: z.array(z.string()).min(1),
     liveUrl: z.string().url().optional(),
     sourceUrl: z.string().url().optional(),
@@ -21,7 +21,7 @@ export const collections = {
 };
 
 // Export types for use in components
-export type ProjectCategory = 'web' | 'mobile' | 'iot' | 'ai-ml' | 'other';
+export type ProjectCategory = 'web' | 'mobile' | 'iot' | 'ai-ml' | 'design' | 'video' | 'landing page' | 'other';
 
 export interface ProjectFrontmatter {
   title: string;

@@ -12,7 +12,7 @@ export function useTranslations(lang: keyof typeof ui = 'id') {
 }
 
 export function useTranslatedPath(lang: keyof typeof ui = 'id') {
-  return function translatePath(path: string) {
+  return function translatePath(path: string, _targetLang?: string) {
     // No language prefix needed - single language
     return path;
   }
@@ -44,8 +44,8 @@ export function getCurrentLocale(): keyof typeof ui {
 }
 
 // Helper untuk mendapatkan metadata
-export function getLocalizedMetadata() {
-  const t = useTranslations('id');
+export function getLocalizedMetadata(lang: keyof typeof ui = 'id') {
+  const t = useTranslations(lang);
   
   return {
     title: t('seo.title'),

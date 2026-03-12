@@ -10,9 +10,8 @@
     "astro": "astro",
     "setup:images": "node scripts/setup-images.js",
     "test": "vitest",
-    "build:analyze": "astro build --analyze",
     "lighthouse": "lighthouse http://localhost:4321 --output html --output-path ./lighthouse-report.html",
-    "perf:audit": "npm run build && npm run preview & sleep 5 && npm run lighthouse && kill %1",
+    "perf:audit": "npm run build && (npm run preview &) && sleep 5 && npm run lighthouse; kill %1",
     "seo:validate": "node scripts/validate-seo.js",
     "optimize:build": "node scripts/optimize-build.js",
     "deploy:vercel": "npm run build && vercel --prod"

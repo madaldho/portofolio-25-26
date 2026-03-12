@@ -8,11 +8,15 @@ export const GET: APIRoute = async () => {
   const siteDescription = 'Wawasan teknologi terbaru, tutorial, dan pemikiran dari Muhamad Ali Ridho, seorang tech enthusiast yang mengeksplorasi AI, IoT, dan web development.';
   
   try {
+    if (!contentfulClient) {
+      throw new Error('Contentful client not initialized');
+    }
+    
     // Fetch blog posts from Contentful
     const blogEntries = await contentfulClient.getEntries({
       content_type: 'blogPost',
       limit: 20,
-      order: '-sys.createdAt',
+      order: ['-sys.createdAt'],
     });
 
     const items = blogEntries.items.map((post: any) => {

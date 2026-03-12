@@ -61,11 +61,11 @@ Ketika saya tidak coding, Anda akan menemukan saya meneliti tren teknologi terba
 };
 
 // Helper function to get profile based on language
-export function getProfile(lang: 'en' | 'id' = 'en'): Profile {
+export function getProfile(lang: 'en' | 'id' = 'id'): Profile {
   return profiles[lang];
 }
 
-// Backward compatibility - default to English profile
-export const profile: Profile = profiles.en;
+// Default to Indonesian profile (site is Indonesian-only)
+export const profile: Profile = profiles.id;
 
 export default profile;

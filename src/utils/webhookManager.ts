@@ -1,4 +1,4 @@
-import { mcp_contentful_get_initial_context } from '../../../.kiro/settings/mcp.json';
+import crypto from 'crypto';
 
 interface WebhookConfig {
   name: string;
@@ -72,15 +72,17 @@ export class ContentfulWebhookManager {
    */
   validateWebhookSignature(payload: string, signature: string, secret: string): boolean {
     try {
-      // Implement HMAC SHA-256 signature validation
-      // This is a simplified version - in production, use proper crypto validation
-      const crypto = require('crypto');
       const expectedSignature = crypto
         .createHmac('sha256', secret)
         .update(payload)
         .digest('hex');
       
-      return signature === expectedSignature;
+      // Use timing-safe comparison to prevent timing attacks
+      if (signature.length !== expectedSignature.length) return false;
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expectedSignature)
+      );
     } catch (error) {
       console.error('Signature validation error:', error);
       return false;
@@ -90,15 +92,16 @@ export class ContentfulWebhookManager {
   /**
    * Process webhook payload and determine what to revalidate
    */
-  processWebhookPayload(payload: any): {
+  processWebhookPayload(payload: Record<string, unknown>): {
     contentType: string;
     action: string;
     entryId: string;
     routesToRevalidate: string[];
   } {
-    const contentType = payload.sys?.contentType?.sys?.id || 'unknown';
-    const action = payload.sys?.type || 'unknown';
-    const entryId = payload.sys?.id || 'unknown';
+    const sys = payload.sys as Record<string, unknown> | undefined;
+    const contentType = ((sys?.contentType as Record<string, unknown>)?.sys as Record<string, unknown>)?.id as string || 'unknown';
+    const action = sys?.type as string || 'unknown';
+    const entryId = sys?.id as string || 'unknown';
     
     const routesToRevalidate: string[] = ['/'];
 
@@ -106,13 +109,14 @@ export class ContentfulWebhookManager {
     switch (contentType) {
       case 'blogPost':
       case 'simpleBlog':
-        routesToRevalidate.push('/blog', '/id/blog');
+        routesToRevalidate.push('/blog');
         
         // Add specific blog post route if slug is available
-        if (payload.fields?.slug) {
-          const slug = this.extractSlugFromField(payload.fields.slug);
+        const fields = payload.fields as Record<string, unknown> | undefined;
+        if (fields?.slug) {
+          const slug = this.extractSlugFromField(fields.slug);
           if (slug) {
-            routesToRevalidate.push(`/blog/${slug}`, `/id/blog/${slug}`);
+            routesToRevalidate.push(`/blog/${slug}`);
           }
         }
         break;
@@ -128,7 +132,6 @@ export class ContentfulWebhookManager {
 
       default:
         // For unknown content types, just revalidate main pages
-        routesToRevalidate.push('/id');
         break;
     }
 
@@ -146,14 +149,16 @@ export class ContentfulWebhookManager {
   /**
    * Extract slug from Contentful field (handles both string and localized object)
    */
-  private extractSlugFromField(slugField: any): string | null {
+  private extractSlugFromField(slugField: unknown): string | null {
     if (typeof slugField === 'string') {
       return slugField;
     }
     
     if (typeof slugField === 'object' && slugField !== null) {
+      const obj = slugField as Record<string, unknown>;
       // Try different locales (prioritize id-ID)
-      return slugField['id-ID'] || slugField['en-US'] || Object.values(slugField)[0] || null;
+      const value = obj['id-ID'] || obj['en-US'] || Object.values(obj)[0];
+      return typeof value === 'string' ? value : null;
     }
     
     return null;
@@ -162,14 +167,15 @@ export class ContentfulWebhookManager {
   /**
    * Log webhook activity for debugging
    */
-  logWebhookActivity(payload: any, result: any): void {
+  logWebhookActivity(payload: Record<string, unknown>, result: unknown): void {
     const timestamp = new Date().toISOString();
+    const sys = payload.sys as Record<string, unknown> | undefined;
     const logData = {
       timestamp,
-      contentType: payload.sys?.contentType?.sys?.id,
-      action: payload.sys?.type,
-      entryId: payload.sys?.id,
-      environment: payload.sys?.environment?.sys?.id,
+      contentType: ((sys?.contentType as Record<string, unknown>)?.sys as Record<string, unknown>)?.id,
+      action: sys?.type,
+      entryId: sys?.id,
+      environment: ((sys?.environment as Record<string, unknown>)?.sys as Record<string, unknown>)?.id,
       result
     };
 

@@ -26,9 +26,9 @@ export const socialLinks: SocialLink[] = [
   },
   {
     platform: "Email",
-    url: "mailto:hi@muhamadaliridho.me",
+    url: "mailto:aldhoproject@gmail.com",
     icon: "mail",
-    username: "hi@muhamadaliridho.me",
+    username: "aldhoproject@gmail.com",
   },
 ];
 

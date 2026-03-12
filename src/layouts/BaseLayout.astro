@@ -98,13 +98,18 @@ const {
 
     <!-- Theme Script (prevent flash) -->
     <script is:inline>
-      const theme =
-        localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches
-          ? "light"
-          : "dark");
-      document.documentElement.classList.toggle("light", theme === "light");
-      document.body?.classList.toggle("light", theme === "light");
+      (function() {
+        var theme =
+          localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: light)").matches
+            ? "light"
+            : "dark");
+        document.documentElement.classList.toggle("light", theme === "light");
+        // document.body is not available yet in <head>, defer body class
+        document.addEventListener("DOMContentLoaded", function() {
+          document.body.classList.toggle("light", theme === "light");
+        });
+      })();
     </script>
   </head>
   <body class="min-h-screen">
