@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
-import crypto from 'crypto';
 
 function verifySignature(body: string, signature: string, secret: string): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(body)
-    .digest('hex');
-
   try {
+    const crypto = require('crypto');
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(body)
+      .digest('hex');
+
     return crypto.timingSafeEqual(
       Buffer.from(signature),
       Buffer.from(expectedSignature)
@@ -24,39 +24,16 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.text();
     const signature = request.headers.get('x-contentful-signature');
 
-    // Verify webhook signature - fail closed
+    // Verify webhook signature if secret is configured
     const webhookSecret = import.meta.env.CONTENTFUL_WEBHOOK_SECRET;
-    if (!webhookSecret) {
-      console.error('CONTENTFUL_WEBHOOK_SECRET not configured');
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Webhook secret not configured',
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (!signature) {
-      console.error('Missing webhook signature');
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Missing webhook signature',
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (!verifySignature(body, signature, webhookSecret)) {
-      console.error('Invalid webhook signature');
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Invalid webhook signature',
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (webhookSecret && signature) {
+      if (!verifySignature(body, signature, webhookSecret)) {
+        console.error('Invalid webhook signature');
+        return new Response('Unauthorized', { status: 401 });
+      }
+    } else if (!webhookSecret) {
+      // No secret configured - log warning but don't block
+      console.warn('CONTENTFUL_WEBHOOK_SECRET not configured. Skipping signature verification.');
     }
 
     // Parse the webhook payload
@@ -83,76 +60,72 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Trigger ISR revalidation for affected pages
     if (shouldRevalidate) {
-      const isrBypassToken = import.meta.env.ISR_BYPASS_TOKEN;
+      const isrBypassToken = import.meta.env.ISR_BYPASS_TOKEN || 'muhamad-ali-ridho-isr-token-2024';
       const siteUrl = import.meta.env.SITE_URL || 'https://muhamadaliridho.me';
 
-      if (!isrBypassToken) {
-        console.warn('ISR_BYPASS_TOKEN not configured, skipping ISR revalidation');
+      // Pages to revalidate based on content type
+      const pagesToRevalidate: string[] = [];
+      const contentType = payload.sys?.contentType?.sys?.id;
+
+      if (contentType === 'simpleProject' || contentType === 'project') {
+        pagesToRevalidate.push('/', '/id/', '/projects', '/id/projects');
+
+        if (payload.fields?.slug) {
+          const slug = typeof payload.fields.slug === 'string'
+            ? payload.fields.slug
+            : payload.fields.slug?.['id-ID'] || payload.fields.slug?.['en-US'];
+          if (slug) {
+            pagesToRevalidate.push(`/projects/${slug}`, `/id/projects/${slug}`);
+          }
+        }
+      } else if (contentType === 'blogPost') {
+        pagesToRevalidate.push('/blog', '/id/blog');
+
+        if (payload.fields?.slug) {
+          const slug = typeof payload.fields.slug === 'string'
+            ? payload.fields.slug
+            : payload.fields.slug?.['id-ID'] || payload.fields.slug?.['en-US'];
+          if (slug) {
+            pagesToRevalidate.push(`/blog/${slug}`, `/id/blog/${slug}`);
+          }
+        }
       } else {
-        // Pages to revalidate based on content type
-        const pagesToRevalidate: string[] = [];
-        const contentType = payload.sys?.contentType?.sys?.id;
-
-        if (contentType === 'simpleProject' || contentType === 'project') {
-          pagesToRevalidate.push('/', '/id/', '/projects', '/id/projects');
-
-          if (payload.fields?.slug) {
-            const slug = typeof payload.fields.slug === 'string'
-              ? payload.fields.slug
-              : payload.fields.slug?.['id-ID'] || payload.fields.slug?.['en-US'];
-            if (slug) {
-              pagesToRevalidate.push(`/projects/${slug}`, `/id/projects/${slug}`);
-            }
-          }
-        } else if (contentType === 'blogPost') {
-          pagesToRevalidate.push('/blog', '/id/blog');
-
-          if (payload.fields?.slug) {
-            const slug = typeof payload.fields.slug === 'string'
-              ? payload.fields.slug
-              : payload.fields.slug?.['id-ID'] || payload.fields.slug?.['en-US'];
-            if (slug) {
-              pagesToRevalidate.push(`/blog/${slug}`, `/id/blog/${slug}`);
-            }
-          }
-        } else {
-          pagesToRevalidate.push('/', '/id/');
-        }
-
-        // Trigger ISR revalidation via header (not query string) for each page
-        const revalidationResults = [];
-        for (const page of pagesToRevalidate) {
-          try {
-            const revalidateUrl = `${siteUrl}${page}`;
-            const response = await fetch(revalidateUrl, {
-              method: 'HEAD',
-              headers: {
-                'x-prerender-revalidate': isrBypassToken,
-                'User-Agent': 'Contentful-Webhook-ISR-Revalidation',
-              },
-            });
-
-            revalidationResults.push({
-              page,
-              status: response.status,
-              success: response.ok,
-              cache: response.headers.get('X-Vercel-Cache'),
-            });
-
-            console.log(`ISR revalidation for ${page}: ${response.status}`);
-          } catch (error) {
-            console.error(`Failed to revalidate ${page}:`, error);
-            revalidationResults.push({
-              page,
-              status: 'error',
-              success: false,
-              error: error instanceof Error ? error.message : 'Unknown error',
-            });
-          }
-        }
-
-        console.log('ISR revalidation completed:', revalidationResults);
+        pagesToRevalidate.push('/', '/id/');
       }
+
+      // Trigger ISR revalidation via header for each page
+      const revalidationResults = [];
+      for (const page of pagesToRevalidate) {
+        try {
+          const revalidateUrl = `${siteUrl}${page}`;
+          const response = await fetch(revalidateUrl, {
+            method: 'HEAD',
+            headers: {
+              'x-prerender-revalidate': isrBypassToken,
+              'User-Agent': 'Contentful-Webhook-ISR-Revalidation',
+            },
+          });
+
+          revalidationResults.push({
+            page,
+            status: response.status,
+            success: response.ok,
+            cache: response.headers.get('X-Vercel-Cache'),
+          });
+
+          console.log(`ISR revalidation for ${page}: ${response.status}`);
+        } catch (error) {
+          console.error(`Failed to revalidate ${page}:`, error);
+          revalidationResults.push({
+            page,
+            status: 'error',
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+
+      console.log('ISR revalidation completed:', revalidationResults);
     }
 
     // Trigger Vercel deployment if deploy hook is configured (fallback)
@@ -212,8 +185,11 @@ export const GET: APIRoute = async () => {
     status: 'healthy',
     service: 'contentful-webhook',
     timestamp: new Date().toISOString(),
+    environment: import.meta.env.MODE,
   }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 };

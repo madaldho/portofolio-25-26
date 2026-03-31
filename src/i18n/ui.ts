@@ -114,18 +114,14 @@ export const ui = {
     'skills.tools.desc': 'Memanfaatkan alat canggih untuk menyederhanakan alur kerja dan meningkatkan produktivitas.',
 
     // Journey Descriptions (Data)
-    'journey.2020.title': 'Memulai Perjalanan Digital',
-    'journey.2020.desc': 'Mulai menjelajahi dunia kreativitas digital. Belajar desain web dasar dan menemukan passion dalam komunikasi visual.',
-    'journey.2021.title': 'Proyek Web Pertama',
-    'journey.2021.desc': 'Membangun website pertama menggunakan HTML, CSS, dan JavaScript. Mulai memahami dasar-dasar pengalaman pengguna (UX).',
-    'journey.2022.title': 'Desain & Pemasaran',
-    'journey.2022.desc': 'Merambah ke desain grafis dan pemasaran digital. Belajar menciptakan pengalaman brand yang kohesif di berbagai platform.',
-    'journey.2023.title': 'Pekerjaan Freelance',
-    'journey.2023.desc': 'Mulai mengerjakan proyek freelance. Membantu bisnis kecil membangun kehadiran digital mereka.',
-    'journey.2024.title': 'Mengembangkan Keahlian',
-    'journey.2024.desc': 'Memperdalam keahlian dalam framework web modern dan alat desain tingkat lanjut. Fokus menciptakan pengalaman digital yang berdampak.',
-    'journey.2025.title': 'Perjalanan Berlanjut',
-    'journey.2025.desc': 'Selalu belajar, selalu berkarya. Bersemangat untuk mengambil tantangan baru dan membantu lebih banyak brand sukses secara digital.',
+    'journey.2017.title': 'PERMADANA Management Services Section',
+    'journey.2017.desc': 'Membantu majalah, pertanian, perpustakaan dan dokumentasi.',
+    'journey.2018.title': 'Belajar Videografer & Editor',
+    'journey.2018.desc': 'Saya belajar cara mengedit video untuk kebutuhan sekolah.',
+    'journey.2019-2020.title': 'Digital Marketer',
+    'journey.2019-2020.desc': 'Saya mencoba dunia pemasaran digital online yang sangat berkembang pesat.',
+    'journey.2021-2024.title': 'Web Developer',
+    'journey.2021-2024.desc': 'Saya belajar membuat website dari CMS wordpress online undangan sampai coding sekarang.',
     
     // Additional Section Headers
     'section.blog.label': 'Dari Blog Saya',

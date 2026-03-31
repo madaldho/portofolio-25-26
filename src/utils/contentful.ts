@@ -145,7 +145,7 @@ export interface ContentfulProfile {
 // Create Contentful clients
 const createContentfulClient = (preview = false): ContentfulClientApi<undefined> => {
   const config: ContentfulConfig = {
-    spaceId: import.meta.env.CONTENTFUL_SPACE_ID || '',
+    spaceId: import.meta.env.CONTENTFUL_SPACE_ID || 'hbrrn0bf99r5',
     accessToken: preview
       ? import.meta.env.CONTENTFUL_PREVIEW_TOKEN || ''
       : import.meta.env.CONTENTFUL_ACCESS_TOKEN || '',

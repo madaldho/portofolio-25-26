@@ -25,6 +25,12 @@ export const socialLinks: SocialLink[] = [
     username: "@madaldho",
   },
   {
+    platform: "YouTube",
+    url: "https://www.youtube.com/@madaldho",
+    icon: "youtube",
+    username: "@madaldho",
+  },
+  {
     platform: "Email",
     url: "mailto:aldhoproject@gmail.com",
     icon: "mail",
